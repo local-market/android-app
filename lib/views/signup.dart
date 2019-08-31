@@ -187,7 +187,7 @@ class Signup extends StatelessWidget {
                               ),
                               children: [
                                 TextSpan(
-                                    text:"I already have an account? click here to "
+                                    text:"Already have an account? click here to "
                                 ),
                                 TextSpan(
                                   text: "login!",
