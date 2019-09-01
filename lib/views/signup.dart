@@ -1,16 +1,25 @@
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
 import "package:local_market/views/Login.dart";
+import "package:local_market/controller/user.dart";
 
-class Signup extends StatelessWidget {
-  Signup({Key key}) : super(key: key);
+class Signup extends StatefulWidget {
+  @override
+  _SignupState createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   TextEditingController _fullNameTextController = new TextEditingController();
   TextEditingController _emailTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
   TextEditingController _confirmPasswordTextController = new TextEditingController();
+  user _user = new user();
 
   @override
   Widget build(BuildContext context) {
+
+    _user.ifLoggedIn(context);
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -163,7 +172,13 @@ class Signup extends StatelessWidget {
                         color: Colors.red.withOpacity(0.8),
                         elevation: 0.8,
                         child: MaterialButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            var error = await _user.registerWithEmail(_emailTextController.text, _passwordTextController.text);
+                            print(error);
+                            if(error == '-1'){
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+                            }
+                          },
                           minWidth: MediaQuery.of(context).size.width,
                           child: Text(
                             "Signup",

@@ -1,14 +1,26 @@
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
 import "package:local_market/views/signup.dart";
+import "package:local_market/controller/user.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import "package:local_market/views/home.dart";
 
-class Login extends StatelessWidget {
-  Login({Key key}) : super(key: key);
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+
+class _LoginState extends State<Login> {
   TextEditingController _emailTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
+  user _user = new user();
 
   @override
   Widget build(BuildContext context) {
+
+    _user.ifLoggedIn(context);
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -101,7 +113,14 @@ class Login extends StatelessWidget {
                         color: Colors.red.withOpacity(0.8),
                         elevation: 0.8,
                         child: MaterialButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                             List currentUser = await _user.loginWithEmail(_emailTextController.text, _passwordTextController.text);
+                             if(currentUser[0] != null){
+                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+                             }else{
+                               print(currentUser[1]);
+                             }
+                          },
                           minWidth: MediaQuery.of(context).size.width,
                           child: Text(
                             "Login",
