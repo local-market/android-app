@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
 import "package:local_market/views/signup.dart";
-import "package:local_market/controller/user.dart";
+import "package:local_market/controller/user_controller.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:local_market/views/home.dart";
 
@@ -12,14 +12,16 @@ class Login extends StatefulWidget {
 
 
 class _LoginState extends State<Login> {
+  final _formKey = GlobalKey<FormState>();
   TextEditingController _emailTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
-  user _user = new user();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  String error = "";
+  bool hidePassword = true;
 
   @override
   Widget build(BuildContext context) {
 
-    _user.ifLoggedIn(context);
 
     return Scaffold(
       body: Stack(
@@ -28,7 +30,7 @@ class _LoginState extends State<Login> {
             padding: const EdgeInsets.only(),
             child: new Center(
               child: Form(
-                key: null,
+                key: _formKey,
                 child: ListView(
 //                  mainAxisAlignment: MainAxisAlignment.center,
                   shrinkWrap: true,
@@ -55,13 +57,14 @@ class _LoginState extends State<Login> {
                           child: ListTile(
                             title: TextFormField(
                               controller: _emailTextController,
+                              autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Email",
                                   icon: Icon(Icons.alternate_email),
                                   border: InputBorder.none),
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
-                                if (value.isEmpty) {
+                                if (!value.isEmpty) {
                                   Pattern pattern =
                                       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
                                   RegExp regex = new RegExp(pattern);
@@ -88,6 +91,8 @@ class _LoginState extends State<Login> {
                           child: ListTile(
                             title: TextFormField(
                               controller: _passwordTextController,
+                              obscureText: hidePassword,
+                              autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Password",
                                   icon: Icon(Icons.lock_outline),
@@ -102,10 +107,25 @@ class _LoginState extends State<Login> {
                                   return null;
                               },
                             ),
+                            trailing: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
+                              setState(() {
+                                hidePassword = !hidePassword;
+                              });
+                            }),
                           ),
                         ),
                       ),
                     ),
+
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(error, style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.w400, fontSize: 14
+                          ),),
+                        )
+                    ),
+
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
@@ -113,13 +133,8 @@ class _LoginState extends State<Login> {
                         color: Colors.red.withOpacity(0.8),
                         elevation: 0.8,
                         child: MaterialButton(
-                          onPressed: () async {
-                             List currentUser = await _user.loginWithEmail(_emailTextController.text, _passwordTextController.text);
-                             if(currentUser[0] != null){
-                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
-                             }else{
-                               print(currentUser[1]);
-                             }
+                          onPressed: () {
+                            validateForm();
                           },
                           minWidth: MediaQuery.of(context).size.width,
                           child: Text(
@@ -182,5 +197,40 @@ class _LoginState extends State<Login> {
         ],
       ),
     );
+  }
+
+  void validateForm() async {
+    FormState _formState = _formKey.currentState;
+    if(_formState.validate()){
+      await firebaseAuth.signInWithEmailAndPassword(
+          email: _emailTextController.text,
+          password: _passwordTextController.text).then((user){
+            if(user == null){
+              print("Hello World");
+              setState(() {
+                error = "Invalid email or password";
+              });
+            }else{
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+            }
+      }).catchError((e){
+        if(e.code == "ERROR_USER_NOT_FOUND"){
+          error = "Invalid email or password";
+        }
+        print("Error: login page: " + e.toString());
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    ifLoggedIn();
+  }
+
+  void ifLoggedIn() async {
+    FirebaseUser user = await firebaseAuth.currentUser();
+    if(user != null){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+    }
   }
 }
