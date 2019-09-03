@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:local_market/controller/user_controller.dart";
 import "package:firebase_auth/firebase_auth.dart";
+import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
 
 import 'add_product.dart';
@@ -13,7 +14,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   UserController userController = new UserController();
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final Utils _utils = new Utils();
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +46,13 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void initState(){
-    ifNotLoggedIn();
+  void initState() {
+    super.initState();
+    check();
   }
 
-  void ifNotLoggedIn() async{
-    FirebaseUser user = await firebaseAuth.currentUser();
-    if(user == null){
+  void check() async {
+    if(!(await _utils.isLoggedIn())){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
     }
   }

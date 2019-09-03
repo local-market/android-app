@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import "package:local_market/controller/product_controller.dart";
+import 'package:local_market/utils/utils.dart';
+
+import 'Login.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -18,6 +21,7 @@ class _AddProductState extends State<AddProduct> {
   var inStock = true;
   File _productImage = null;
   final ProductController _productController = new ProductController();
+  final Utils _utils = new Utils();
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +146,18 @@ class _AddProductState extends State<AddProduct> {
       ),
     );
   }
+  
+  @override
+  void initState() {
+    super.initState();
+    check();
+  }
+
+  void check() async {
+    if(!(await _utils.isLoggedIn())){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+    }
+  }
 
   void _selectImage(Future<File> pickImage) async {
     File temp = await pickImage;
@@ -165,6 +181,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void validateAndUpload() {
+    check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       if(_productImage != null){
