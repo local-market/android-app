@@ -3,6 +3,8 @@ import "package:local_market/controller/user_controller.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:local_market/views/login.dart";
 
+import 'add_product.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -18,15 +20,27 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: Material(
-          color: Colors.red,
-          child: MaterialButton(onPressed: (){
-            userController.logout();
-          }, child: Text("Logout", style: TextStyle(
-            color:Colors.white,
-          ),)),
-        ),
-      ),
+        child: ListView(
+          children: <Widget>[
+            Material(
+              color: Colors.red,
+              child: MaterialButton(onPressed: (){
+                userController.logout();
+              }, child: Text("Logout", style: TextStyle(
+                color:Colors.white,
+              ),)),
+            ),
+            Material(
+              color: Colors.red,
+              child: MaterialButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduct()));
+              }, child: Text("Add Product", style: TextStyle(
+                color:Colors.white,
+              ),)),
+            ),
+          ],
+        )
+      )
     );
   }
 
