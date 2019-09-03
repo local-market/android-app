@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
-import "package:local_market/views/Login.dart";
 import "package:local_market/controller/user_controller.dart";
 
 import 'home.dart';
@@ -104,6 +103,8 @@ class _SignupState extends State<Signup> {
                                   } else {
                                     return null;
                                   }
+                                }else {
+                                  return "This field cannot be empty";
                                 }
                               },
                             ),
@@ -234,7 +235,6 @@ class _SignupState extends State<Signup> {
     FormState formState = _formKey.currentState;
     Map values = {};
     if(formState.validate()){
-      formState.reset();
       FirebaseUser user = await firebaseAuth.currentUser();
       if(user == null){
         firebaseAuth.createUserWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text).then((user){
@@ -245,6 +245,7 @@ class _SignupState extends State<Signup> {
             "vendor" : "false"
           };
           userController.createUser(values);
+          formState.reset();
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
         }).catchError((e){
           if(e.code == "ERROR_EMAIL_ALREADY_IN_USE"){

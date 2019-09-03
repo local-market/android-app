@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
+import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/signup.dart";
-import "package:local_market/controller/user_controller.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:local_market/views/home.dart";
 
@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String error = "";
   bool hidePassword = true;
+  final Utils _utils = new Utils();
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +171,8 @@ class _LoginState extends State<Login> {
                               )
                             ]
                           ),
-                        )),
+                        )
+                      ),
 //                    Padding(
 //                      padding: const EdgeInsets.all(8.0),
 //                      child: Material(
@@ -224,12 +226,12 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    ifLoggedIn();
+    super.initState();
+    check();
   }
 
-  void ifLoggedIn() async {
-    FirebaseUser user = await firebaseAuth.currentUser();
-    if(user != null){
+  void check() async {
+    if((await _utils.isLoggedIn())){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
     }
   }
