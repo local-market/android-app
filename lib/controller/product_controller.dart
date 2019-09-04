@@ -33,10 +33,10 @@ class ProductController {
     });
   }
 
-  Future<List<Object> > getWithPattern(String pattern) async {
+  Future<List<Map<String, String> > > getWithPattern(String pattern) async {
     pattern = pattern.toLowerCase();
 
-    List<Object> results = new List<Object>();
+    List<Map<String, String> > results = new List<Map<String, String> >();
 
     QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('name').startAt([pattern]).endAt([pattern + '\uf8ff']).getDocuments();
     // print(document.toString());
@@ -47,6 +47,28 @@ class ProductController {
         "image" : doc.data['image']
       });
     });
+    return results;
+  }
+
+  Future<List<Map<String, String> > > getRelated(String pattern) async {
+    List<Map<String, String> > results = new List<Map<String, String> >();
+    Map<String, bool> dp = new Map<String, bool>();
+    pattern = pattern.toLowerCase();
+    final relatedPatterns = pattern.split(' ');
+    for(var i = 0; i < relatedPatterns.length; i++){
+      QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('name').startAt([pattern]).endAt([pattern + '\uf8ff']).getDocuments();
+      snapshot.documents.forEach((doc){
+        print('dp : ' + dp[doc.data['id']].toString());
+        if(dp[doc.data['id']] == null){
+          results.add({
+            "id" : doc.data['id'],
+            "name" : doc.data['name'],
+            "image" : doc.data['image']
+          });
+          dp[doc.data['id']] = true;
+        }
+      });
+    }
     return results;
   }
 }

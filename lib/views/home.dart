@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/products.dart';
+import 'package:local_market/components/search_bar.dart';
 import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
@@ -51,7 +52,9 @@ class _HomeState extends State<Home> {
                 Icons.search,
                 color: Colors.white,
               ),
-              onPressed: null),
+              onPressed: (){
+                showSearch(context: context, delegate: SearchBar());
+              }),
           new IconButton(
               icon: Icon(
                 Icons.shopping_cart,
