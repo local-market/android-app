@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/product_controller.dart";
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -25,6 +26,7 @@ class _AddProductState extends State<AddProduct> {
   final ProductController _productController = new ProductController();
   final Utils _utils = new Utils();
   final UserController userController = new UserController();
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +129,7 @@ class _AddProductState extends State<AddProduct> {
                 // borderRadius: BorderRadius.circular(20.0),
                 color: Colors.red.withOpacity(0.8),
                 elevation: 0.8,
-                child: MaterialButton(
+                child: _loading ? CircularLoadingButton() : MaterialButton(
                   onPressed: () {
                     validateAndUpload();
                   },
@@ -185,6 +187,9 @@ class _AddProductState extends State<AddProduct> {
 
   void validateAndUpload() async {
     check();
+    setState(() {
+      _loading = true;
+    });
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       if(_productImage != null){
@@ -197,11 +202,17 @@ class _AddProductState extends State<AddProduct> {
         }).then((value){
           _formState.reset();
           Fluttertoast.showToast(msg: "Product added");
+          setState(() {
+            _loading = true;
+          });
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddProduct()));
         }).catchError((e){
           print(e.toString());
         });
       }else{
+        setState(() {
+          _loading = false;
+        });
         Fluttertoast.showToast(msg:"Image must be selected");
       }
     }

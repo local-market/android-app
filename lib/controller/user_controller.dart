@@ -14,9 +14,6 @@ class UserController {
     _firestore.collection(ref).document(uid).setData(values).catchError((e){
       print(e.toString());
     });
-    // _database.reference().child('$ref/$uid').set(values).catchError((e) {
-    //   print(e.toString());
-    // });
   }
 
   void logout() async {

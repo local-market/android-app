@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/products.dart';
+import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
 import 'add_product.dart';
@@ -15,8 +15,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  UserController userController = new UserController();
+  final UserController userController = new UserController();
   final Utils _utils = new Utils();
+  final ProductController _productController = new ProductController();
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +180,9 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     check();
+    _productController.getWithPattern("H").then((results){
+      print(results.toString());
+    });
   }
 
   void check() async {

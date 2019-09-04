@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
+import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/signup.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -19,6 +20,7 @@ class _LoginState extends State<Login> {
   String error = "";
   bool hidePassword = true;
   final Utils _utils = new Utils();
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,8 @@ class _LoginState extends State<Login> {
                                   } else {
                                     return null;
                                   }
+                                }else{
+                                  return "This field cannot be empty";
                                 }
                               },
                             ),
@@ -133,7 +137,7 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(20.0),
                         color: Colors.red.withOpacity(0.8),
                         elevation: 0.8,
-                        child: MaterialButton(
+                        child: _loading ? CircularLoadingButton() : MaterialButton(
                           onPressed: () {
                             validateForm();
                           },
@@ -202,6 +206,9 @@ class _LoginState extends State<Login> {
   }
 
   void validateForm() async {
+    setState(() {
+      _loading = true;
+    });
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       await firebaseAuth.signInWithEmailAndPassword(
@@ -210,16 +217,27 @@ class _LoginState extends State<Login> {
             if(user == null){
               print("Hello World");
               setState(() {
+                _loading = false;
                 error = "Invalid email or password";
               });
             }else{
+              setState(() {
+                _loading = false;
+              });
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
             }
       }).catchError((e){
         if(e.code == "ERROR_USER_NOT_FOUND"){
-          error = "Invalid email or password";
+          setState(() {
+            _loading = false;
+            error = "Invalid email or password";
+          });
         }
         print("Error: login page: " + e.toString());
+      });
+    }else{
+      setState(() {
+        _loading = false;
       });
     }
   }

@@ -18,7 +18,7 @@ class ProductController {
     _firestore.collection(ref).document(productId).setData(
       {
         "id" : productId,
-        "name" : productName,
+        "name" : productName.toLowerCase(),
         "image" : imageUrl
       }).then((value){
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
@@ -31,5 +31,22 @@ class ProductController {
     }).catchError((e){
       print(e.toString());
     });
+  }
+
+  Future<List<Object> > getWithPattern(String pattern) async {
+    pattern = pattern.toLowerCase();
+
+    List<Object> results = new List<Object>();
+
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('name').startAt([pattern]).endAt([pattern + '\uf8ff']).getDocuments();
+    // print(document.toString());
+    snapshot.documents.forEach((doc){
+      results.add({
+        "id" : doc.data['id'],
+        "name" : doc.data['name'],
+        "image" : doc.data['image']
+      });
+    });
+    return results;
   }
 }
