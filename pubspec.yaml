@@ -33,6 +33,7 @@ dependencies:
   fluttertoast: ^3.1.2
   firebase_storage: ^3.0.6
   uuid: ^2.0.2
+  flutter_spinkit: ^3.1.0
 #  firebase_firestore: ^0.12.7+1
 
 dev_dependencies:

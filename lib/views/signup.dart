@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
+import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
 
 import 'home.dart';
@@ -18,6 +19,7 @@ class _SignupState extends State<Signup> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final UserController userController = new UserController();
   bool hidePassword = true;
+  bool _loading = false;
   String error = '';
 
   @override
@@ -164,7 +166,7 @@ class _SignupState extends State<Signup> {
                         borderRadius: BorderRadius.circular(20.0),
                         color: Colors.red.withOpacity(0.8),
                         elevation: 0.8,
-                        child: MaterialButton(
+                        child: _loading ? CircularLoadingButton() :  MaterialButton(
                           onPressed: () {
                             validateForm();
                           },
@@ -232,30 +234,40 @@ class _SignupState extends State<Signup> {
   }
 
   void validateForm() async {
+    setState(() {
+      _loading = true;
+    });
     FormState formState = _formKey.currentState;
-    Map values = {};
     if(formState.validate()){
-      FirebaseUser user = await firebaseAuth.currentUser();
+      FirebaseUser user = await userController.getCurrentUser();
       if(user == null){
         firebaseAuth.createUserWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text).then((user){
-          values = {
-            "username" : _fullNameTextController.text,
+          Map<String, String> values = {
+            "username" : _fullNameTextController.text.toLowerCase(),
             "email" : _emailTextController.text,
             "uid" : user.uid.toString(),
             "vendor" : "false"
           };
           userController.createUser(values);
           formState.reset();
+          setState(() {
+            _loading = false;
+          });
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
         }).catchError((e){
           if(e.code == "ERROR_EMAIL_ALREADY_IN_USE"){
             setState(() {
+              _loading = false;
               error = "This email is already registered";
             });
           }
           print('signup page error : ' + e.toString());
         });
       }
+    }else{
+      setState(() {
+        _loading = false;
+      });
     }
   }
 }

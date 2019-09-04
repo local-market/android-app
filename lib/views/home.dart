@@ -1,8 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/products.dart';
+import 'package:local_market/components/search_bar.dart';
+import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
 import 'add_product.dart';
@@ -15,8 +16,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  UserController userController = new UserController();
+  final UserController userController = new UserController();
   final Utils _utils = new Utils();
+  final ProductController _productController = new ProductController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,9 @@ class _HomeState extends State<Home> {
                 Icons.search,
                 color: Colors.white,
               ),
-              onPressed: null),
+              onPressed: (){
+                showSearch(context: context, delegate: SearchBar());
+              }),
           new IconButton(
               icon: Icon(
                 Icons.shopping_cart,
@@ -94,6 +98,15 @@ class _HomeState extends State<Home> {
               onTap: () {},
               child: ListTile(
                 title: Text("My Order"),
+                leading: Icon(Icons.dashboard, color: Colors.pink),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduct()));
+              },
+              child: ListTile(
+                title: Text("Add Product"),
                 leading: Icon(Icons.dashboard, color: Colors.pink),
               ),
             ),
@@ -170,6 +183,9 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     check();
+    _productController.getWithPattern("H").then((results){
+      print(results.toString());
+    });
   }
 
   void check() async {
