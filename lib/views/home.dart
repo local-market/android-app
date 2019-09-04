@@ -98,6 +98,15 @@ class _HomeState extends State<Home> {
               ),
             ),
             InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduct()));
+              },
+              child: ListTile(
+                title: Text("Add Product"),
+                leading: Icon(Icons.dashboard, color: Colors.pink),
+              ),
+            ),
+            InkWell(
               onTap: () {},
               child: ListTile(
                 title: Text("Favourites"),

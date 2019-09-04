@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import "package:local_market/controller/product_controller.dart";
+import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 
 import 'Login.dart';
@@ -22,6 +24,7 @@ class _AddProductState extends State<AddProduct> {
   File _productImage = null;
   final ProductController _productController = new ProductController();
   final Utils _utils = new Utils();
+  final UserController userController = new UserController();
 
   @override
   Widget build(BuildContext context) {
@@ -180,13 +183,15 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void validateAndUpload() {
+  void validateAndUpload() async {
     check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       if(_productImage != null){
-        _productController.add(_productImage,{
-          "name": _productNameController.text,
+
+        FirebaseUser currentUser = await userController.getCurrentUser();
+
+        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(),{
           "price": _productPriceController.text,
           "inStock": inStock.toString()
         }).then((value){

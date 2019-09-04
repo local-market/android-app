@@ -235,10 +235,10 @@ class _SignupState extends State<Signup> {
     FormState formState = _formKey.currentState;
     Map values = {};
     if(formState.validate()){
-      FirebaseUser user = await firebaseAuth.currentUser();
+      FirebaseUser user = await userController.getCurrentUser();
       if(user == null){
         firebaseAuth.createUserWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text).then((user){
-          values = {
+          Map<String, String> values = {
             "username" : _fullNameTextController.text,
             "email" : _emailTextController.text,
             "uid" : user.uid.toString(),
