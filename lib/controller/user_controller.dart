@@ -21,7 +21,12 @@ class UserController {
   }
 
   Future<FirebaseUser> getCurrentUser() async {
+    print((await _firebaseAuth.currentUser()).toString());
     return (await _firebaseAuth.currentUser());
+  }
+
+  Future<DocumentSnapshot> getUser(String uid) async{
+    return (await _firestore.collection(ref).document(uid).get());
   }
 
 }

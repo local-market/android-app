@@ -183,9 +183,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     check();
-    _productController.getWithPattern("H").then((results){
-      print(results.toString());
-    });
   }
 
   void check() async {

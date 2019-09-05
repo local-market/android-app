@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/components/search_results.dart';
+
 
 class SearchBar extends SearchDelegate<String> {
 
@@ -8,6 +10,7 @@ class SearchBar extends SearchDelegate<String> {
   List<Map<String, String> > _selectedProduct = new List<Map<String, String> >();
 
   List<Map<String, String> > _products = new List<Map<String, String> >();
+  var _loading = false;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -29,24 +32,34 @@ class SearchBar extends SearchDelegate<String> {
     );
   }
 
+  dynamic data = Center(
+    child: SpinKitCircle(color: Colors.red),
+  );
+
   @override
   Widget buildResults(BuildContext context){
     // print(_selectedProduct.toString());
+    print("loading: " + _loading.toString());
 
-    _productController.getRelated(query).then((relatedProducts) {
-      print('related products : '  + relatedProducts.toString());
-      // return SearchResults(relatedProducts);
-      _selectedProduct = relatedProducts;
-    });
-    // return 
+    // return data;
     
-    if(_selectedProduct[0]['id'] == null){
+    if(_loading){
       return Center(
-        child: Text(_selectedProduct[0]['name'])
+        child: SpinKitCircle(color: Colors.red),
       );
     }else{
       return SearchResults(_selectedProduct);
     }
+
+    // return 
+    
+    // if(_selectedProduct[0]['id'] == null){
+    //   return Center(
+    //     child: Text(_selectedProduct[0]['name'])
+    //   );
+    // }else{
+    //   return SearchResults(_selectedProduct);
+    // }
   }
 
   Future<List<Map<String, String> > > generateRelatedProducts(String pattern) async {
@@ -84,11 +97,23 @@ class SearchBar extends SearchDelegate<String> {
       itemBuilder: (context, index){
         return ListTile(
           onTap: (){
-            showResults(context);
-            _selectedProduct.clear();
-            _selectedProduct.add(_productSuggestions[index]);
-            // print(_selectedProduct);
+            _loading = true;
+            // showResults(context);
             query = _productSuggestions[index]['name'];
+            _productController.getRelated(query.toLowerCase()).then((relatedProducts) {
+              // print('related products : '  + relatedProducts.toString());
+              // return SearchResults(relatedProducts);
+              _selectedProduct = relatedProducts;
+              _loading = false;
+              // data = SearchResults(_selectedProduct);
+              // buildResults(context);
+              showResults(context);
+            });
+            // showResults(context);
+            // _selectedProduct.clear();
+            // _selectedProduct.add(_productSuggestions[index]);
+            // print(_selectedProduct);
+            // query = _productSuggestions[index]['name'];
           },
           leading: Icon(Icons.search),
           title: RichText(

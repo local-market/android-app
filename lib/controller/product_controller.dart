@@ -71,4 +71,10 @@ class ProductController {
     }
     return results;
   }
+
+  Future<List<DocumentSnapshot> > getVendors(String productId) async {
+    List<Map<String, String> > results = new List<Map<String, String> >();
+    QuerySnapshot snapshot = await _firestore.collection(ref).document(productId).collection('vendors').getDocuments();
+    return snapshot.documents;
+  }
 }

@@ -10,7 +10,7 @@ class SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print('Search Result Page' + _products.toString());
-    return ListView.builder(
+    return _products.length == 0 ? Center(child: Text("No record found"),) : ListView.builder(
       itemCount: _products.length,
       itemBuilder: (context, index){
         return Padding(
@@ -19,7 +19,7 @@ class SearchResults extends StatelessWidget {
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(_products[index])));
             },
-            // leading: Image.network(_products[index]['image']),
+            leading: Image.network(_products[index]['image']),
             title: Text(_products[index]['name'])
           ),
         );

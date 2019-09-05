@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
@@ -9,7 +10,7 @@ import "package:local_market/controller/product_controller.dart";
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 
-import 'Login.dart';
+import 'login.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -195,10 +196,14 @@ class _AddProductState extends State<AddProduct> {
       if(_productImage != null){
 
         FirebaseUser currentUser = await userController.getCurrentUser();
+        DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
         _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(),{
           "price": _productPriceController.text,
-          "inStock": inStock.toString()
+          "inStock": inStock.toString(),
+          "vendorName": userDetails.data['name'],
+          "vendorId": userDetails.data['uid'],
+          "vendorAddress": userDetails.data['address']
         }).then((value){
           _formState.reset();
           Fluttertoast.showToast(msg: "Product added");

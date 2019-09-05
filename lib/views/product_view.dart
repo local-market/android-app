@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:local_market/controller/product_controller.dart';
 
 // image row and its properties
 class image extends StatelessWidget {
@@ -79,30 +81,31 @@ List<List<String>> getShop() {
   return items;
 }
 
-Widget getListView(Map<String, String> _product) {
-  var listItems = getShop();
+Widget getListView(Map<String, String> _product, List<DocumentSnapshot> _vendors) {
   var listview = ListView.separated(
-      itemCount: listItems.length + 3,
+      itemCount: _vendors.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
           return ListTile(
             title: image(_product),
           );
-        } else if (index == 1) {
-          //separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,);
-          return ListTile(
-            title: decorate(ItemName(_product)),
-          );
+        } 
+        // else if (index == 1) {
+        //   //separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,);
+        //   return ListTile(
+        //     title: decorate(ItemName(_product)),
+        //   );
 
-        } else if (index == 2) {
-          return ListTile(
-            title: decorate(tableHead()),
-          );
-        } else {
+        // } 
+        // else if (index == 1) {
+        //   return ListTile(
+        //     title: decorate(tableHead()),
+        //   );
+        // } 
+        else {
           return ListTile(
             title: decorate(
-              listTileItem(listItems[index - 3][0], listItems[index - 3][1],
-                  listItems[index - 3][2]),
+              listTileItem(_vendors[index - 1]['name'],_vendors[index - 1]['price']),
             ),
           );
         }
@@ -112,7 +115,7 @@ Widget getListView(Map<String, String> _product) {
   return listview;
 }
 
-Widget listTileItem(item, distance, price) {
+Widget listTileItem(item, price) {
   return Row(
     //mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -126,16 +129,16 @@ Widget listTileItem(item, distance, price) {
           ),
         ),
       ),
-      Expanded(
-        child: Center(
-          child: Text(
-            distance,
-            style: TextStyle(fontSize: 20, 
-            // color: Colors.lightGreenAccent
-            ),
-          ),
-        ),
-      ),
+      // Expanded(
+      //   child: Center(
+      //     child: Text(
+      //       distance,
+      //       style: TextStyle(fontSize: 20, 
+      //       // color: Colors.lightGreenAccent
+      //       ),
+      //     ),
+      //   ),
+      // ),
       Expanded(
         child: Center(
           child: Text(
@@ -205,14 +208,35 @@ class tableHead extends StatelessWidget {
   }
 }
 
-// scaffold for the whole app level column
-class ProductView extends StatelessWidget {
-
+class ProductView extends StatefulWidget {
   Map<String, String> _product;
 
-  ProductView(Map<String, String> product){
+  ProductView(Map<String, String> _product){
+    this._product = _product;
+  }
+  @override
+  _ProductViewState createState() => _ProductViewState(_product);
+}
+// scaffold for the whole app level column
+class _ProductViewState extends State<ProductView> {
+
+  Map<String, String> _product;
+  List<DocumentSnapshot> _vendors = new List<DocumentSnapshot>();
+  final ProductController _productController = new ProductController();
+
+  _ProductViewState(Map<String, String> product){
     this._product = product;
   }
+
+  @override
+  void initState(){
+    _productController.getVendors(_product['id']).then((value){
+      setState(() {
+        this._vendors = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -220,10 +244,10 @@ class ProductView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.red,
         title: Text(
-          'Product Description',
+          _product['name'],
         ),
       ),
-      body: getListView(_product),
+      body: getListView(_product, _vendors),
       // backgroundColor: Colors.grey[900],
     );
   }
