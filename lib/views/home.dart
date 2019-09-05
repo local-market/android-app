@@ -6,6 +6,7 @@ import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
+import 'package:local_market/views/my_products.dart';
 import 'add_product.dart';
 import "package:carousel_pro/carousel_pro.dart";
 
@@ -95,9 +96,11 @@ class _HomeState extends State<Home> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyProducts()));
+              },
               child: ListTile(
-                title: Text("My Order"),
+                title: Text("My Products"),
                 leading: Icon(Icons.dashboard, color: Colors.pink),
               ),
             ),
@@ -183,9 +186,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     check();
-    _productController.getWithPattern("H").then((results){
-      print(results.toString());
-    });
   }
 
   void check() async {

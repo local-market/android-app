@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/controller/product_controller.dart';
-import 'package:local_market/components/search_results.dart';
+import 'package:local_market/components/product_list_generator.dart';
+
 
 class SearchBar extends SearchDelegate<String> {
 
   final ProductController _productController = new ProductController();
   List<Map<String, String> > _selectedProduct = new List<Map<String, String> >();
-
-  List<Map<String, String> > _products = new List<Map<String, String> >();
+  Map<String, List<Map<String, String> > > _dp = new Map<String, List<Map<String, String> > >();
+  List<Map<String, String> >  _products = new List<Map<String, String> > ();
+  var _loading = false;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -29,24 +32,34 @@ class SearchBar extends SearchDelegate<String> {
     );
   }
 
+  dynamic data = Center(
+    child: SpinKitCircle(color: Colors.red),
+  );
+
   @override
   Widget buildResults(BuildContext context){
     // print(_selectedProduct.toString());
+    print("loading: " + _loading.toString());
 
-    _productController.getRelated(query).then((relatedProducts) {
-      print('related products : '  + relatedProducts.toString());
-      // return SearchResults(relatedProducts);
-      _selectedProduct = relatedProducts;
-    });
-    // return 
+    // return data;
     
-    if(_selectedProduct[0]['id'] == null){
+    if(_loading){
       return Center(
-        child: Text(_selectedProduct[0]['name'])
+        child: SpinKitCircle(color: Colors.red),
       );
     }else{
-      return SearchResults(_selectedProduct);
+      return ProductListGenerator(_selectedProduct);
     }
+
+    // return 
+    
+    // if(_selectedProduct[0]['id'] == null){
+    //   return Center(
+    //     child: Text(_selectedProduct[0]['name'])
+    //   );
+    // }else{
+    //   return SearchResults(_selectedProduct);
+    // }
   }
 
   Future<List<Map<String, String> > > generateRelatedProducts(String pattern) async {
@@ -63,7 +76,7 @@ class SearchBar extends SearchDelegate<String> {
     if(query != null && query.length == 1){
       fillProducts(query);
     }
-
+    // print(query);
     List<Map<String, String> > _productSuggestions = query.isEmpty ? _products : _products.where((product){
       return product["name"].startsWith(query.toLowerCase());
     }).toList();
@@ -84,11 +97,23 @@ class SearchBar extends SearchDelegate<String> {
       itemBuilder: (context, index){
         return ListTile(
           onTap: (){
-            showResults(context);
-            _selectedProduct.clear();
-            _selectedProduct.add(_productSuggestions[index]);
-            // print(_selectedProduct);
+            _loading = true;
+            // showResults(context);
             query = _productSuggestions[index]['name'];
+            _productController.getRelated(query.toLowerCase()).then((relatedProducts) {
+              // print('related products : '  + relatedProducts.toString());
+              // return SearchResults(relatedProducts);
+              _selectedProduct = relatedProducts;
+              _loading = false;
+              // data = SearchResults(_selectedProduct);
+              // buildResults(context);
+              showResults(context);
+            });
+            // showResults(context);
+            // _selectedProduct.clear();
+            // _selectedProduct.add(_productSuggestions[index]);
+            // print(_selectedProduct);
+            // query = _productSuggestions[index]['name'];
           },
           leading: Icon(Icons.search),
           title: RichText(
@@ -115,7 +140,10 @@ class SearchBar extends SearchDelegate<String> {
   }
 
   void fillProducts(String pattern) async {
-    _products = await _productController.getWithPattern(pattern);
+    if(_dp[pattern] == null)
+      _dp[pattern] = await _productController.getWithPattern(pattern);
+      // print(_dp[pattern]);
+      _products = _dp[pattern];
     // print(_products.toString());
   }
 
