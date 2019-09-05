@@ -201,9 +201,9 @@ class _AddProductState extends State<AddProduct> {
         _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(),{
           "price": _productPriceController.text,
           "inStock": inStock.toString(),
-          "vendorName": userDetails.data['name'],
-          "vendorId": userDetails.data['uid'],
-          "vendorAddress": userDetails.data['address']
+          // "vendorName": userDetails.data['name'],
+          "id": userDetails.data['uid'],
+          // "vendorAddress": userDetails.data['address']
         }).then((value){
           _formState.reset();
           Fluttertoast.showToast(msg: "Product added");

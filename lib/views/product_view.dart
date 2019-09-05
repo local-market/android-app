@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/controller/product_controller.dart';
 
 // image row and its properties
@@ -81,39 +82,10 @@ List<List<String>> getShop() {
   return items;
 }
 
-Widget getListView(Map<String, String> _product, List<DocumentSnapshot> _vendors) {
-  var listview = ListView.separated(
-      itemCount: _vendors.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return ListTile(
-            title: image(_product),
-          );
-        } 
-        // else if (index == 1) {
-        //   //separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,);
-        //   return ListTile(
-        //     title: decorate(ItemName(_product)),
-        //   );
-
-        // } 
-        // else if (index == 1) {
-        //   return ListTile(
-        //     title: decorate(tableHead()),
-        //   );
-        // } 
-        else {
-          return ListTile(
-            title: decorate(
-              listTileItem(_vendors[index - 1]['name'],_vendors[index - 1]['price']),
-            ),
-          );
-        }
-      },
-    separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
-      );
-  return listview;
-}
+// Widget getListView(Map<String, String> _product, List<Map<String, String> > _vendors) {
+//   var listview = 
+//   return listview;
+// }
 
 Widget listTileItem(item, price) {
   return Row(
@@ -221,8 +193,9 @@ class ProductView extends StatefulWidget {
 class _ProductViewState extends State<ProductView> {
 
   Map<String, String> _product;
-  List<DocumentSnapshot> _vendors = new List<DocumentSnapshot>();
+  List<Map<String, String> > _vendors = new List<Map<String, String> >();
   final ProductController _productController = new ProductController();
+  bool _loading = true;
 
   _ProductViewState(Map<String, String> product){
     this._product = product;
@@ -230,9 +203,12 @@ class _ProductViewState extends State<ProductView> {
 
   @override
   void initState(){
+    super.initState();
     _productController.getVendors(_product['id']).then((value){
       setState(() {
         this._vendors = value;
+        _loading = false;
+        // print("vendors details : " + value.toString());
       });
     });
   }
@@ -247,7 +223,38 @@ class _ProductViewState extends State<ProductView> {
           _product['name'],
         ),
       ),
-      body: getListView(_product, _vendors),
+      body: _loading ? ListView(
+          children: <Widget>[
+            ListTile(
+              title:image(_product),
+            ),
+            Center(
+              child: SpinKitCircle(color: Colors.red),
+            )
+          ],
+        ) : ListView.separated(
+      itemCount: _vendors.length + 1,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return ListTile(
+            title: image(_product),
+          );
+        } 
+        else {
+          print('product view loading: ' + _loading.toString());
+          if(_loading){
+            return Center(child: SpinKitCircle(color: Colors.red));
+          }else{
+            return ListTile(
+              title: decorate(
+                listTileItem(_vendors[index - 1]['name'],_vendors[index - 1]['price']),
+              ),
+            );
+          }
+        }
+      },
+    separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
+      ),
       // backgroundColor: Colors.grey[900],
     );
   }

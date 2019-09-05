@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/controller/product_controller.dart';
-import 'package:local_market/components/search_results.dart';
+import 'package:local_market/components/product_list_generator.dart';
 
 
 class SearchBar extends SearchDelegate<String> {
 
   final ProductController _productController = new ProductController();
   List<Map<String, String> > _selectedProduct = new List<Map<String, String> >();
-
-  List<Map<String, String> > _products = new List<Map<String, String> >();
+  Map<String, List<Map<String, String> > > _dp = new Map<String, List<Map<String, String> > >();
+  List<Map<String, String> >  _products = new List<Map<String, String> > ();
   var _loading = false;
 
   @override
@@ -48,7 +48,7 @@ class SearchBar extends SearchDelegate<String> {
         child: SpinKitCircle(color: Colors.red),
       );
     }else{
-      return SearchResults(_selectedProduct);
+      return ProductListGenerator(_selectedProduct);
     }
 
     // return 
@@ -76,7 +76,7 @@ class SearchBar extends SearchDelegate<String> {
     if(query != null && query.length == 1){
       fillProducts(query);
     }
-
+    // print(query);
     List<Map<String, String> > _productSuggestions = query.isEmpty ? _products : _products.where((product){
       return product["name"].startsWith(query.toLowerCase());
     }).toList();
@@ -140,7 +140,10 @@ class SearchBar extends SearchDelegate<String> {
   }
 
   void fillProducts(String pattern) async {
-    _products = await _productController.getWithPattern(pattern);
+    if(_dp[pattern] == null)
+      _dp[pattern] = await _productController.getWithPattern(pattern);
+      // print(_dp[pattern]);
+      _products = _dp[pattern];
     // print(_products.toString());
   }
 
