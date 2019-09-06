@@ -188,36 +188,32 @@ class _AddProductState extends State<AddProduct> {
 
   void validateAndUpload() async {
     check();
-    setState(() {
-      _loading = true;
-    });
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       if(_productImage != null){
-
+        setState(() {
+          _loading = true;
+        });
         FirebaseUser currentUser = await userController.getCurrentUser();
-        DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
+        // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
         _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(),{
           "price": _productPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
-          "id": userDetails.data['uid'],
+          "id": currentUser.uid.toString(),
           // "vendorAddress": userDetails.data['address']
         }).then((value){
           _formState.reset();
           Fluttertoast.showToast(msg: "Product added");
           setState(() {
-            _loading = true;
+            _loading = false;
           });
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddProduct()));
         }).catchError((e){
           print(e.toString());
         });
       }else{
-        setState(() {
-          _loading = false;
-        });
         Fluttertoast.showToast(msg:"Image must be selected");
       }
     }

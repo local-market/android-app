@@ -1,12 +1,12 @@
 import "package:flutter/material.dart";
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/products.dart';
-import 'package:local_market/components/search_bar.dart';
 import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
 import 'package:local_market/views/my_products.dart';
+import "package:local_market/views/search.dart";
 import 'add_product.dart';
 import "package:carousel_pro/carousel_pro.dart";
 
@@ -54,7 +54,7 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
               ),
               onPressed: (){
-                showSearch(context: context, delegate: SearchBar());
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
               }),
           new IconButton(
               icon: Icon(

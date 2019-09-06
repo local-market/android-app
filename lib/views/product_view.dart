@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/views/search.dart';
 
 // image row and its properties
 class image extends StatelessWidget {
@@ -222,6 +223,17 @@ class _ProductViewState extends State<ProductView> {
         title: Text(
           _product['name'],
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: Colors.white
+            ),
+            onPressed: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
+            },
+          )
+        ],
       ),
       body: _loading ? ListView(
           children: <Widget>[

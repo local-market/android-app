@@ -1,78 +1,103 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/components/product_list_generator.dart';
+import 'package:local_market/controller/product_controller.dart';
 
+class Search extends StatefulWidget {
+  @override
+  _SearchState createState() => _SearchState();
+}
 
-class SearchBar extends SearchDelegate<String> {
+class _SearchState extends State<Search> {
 
+  TextEditingController _queryTextController = new TextEditingController();
+  String query = "";
   final ProductController _productController = new ProductController();
   List<Map<String, String> > _selectedProduct = new List<Map<String, String> >();
   Map<String, List<Map<String, String> > > _dp = new Map<String, List<Map<String, String> > >();
   List<Map<String, String> >  _products = new List<Map<String, String> > ();
-  var _loading = false;
+  bool _loading = false;
+  bool _searching = true;
 
   @override
-  List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: (){
-      query = "";
-    },)];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: buildLeading(context),
+        title: TextField(
+          controller: _queryTextController,
+          autofocus: true,
+          onChanged: (value){
+            setState(() {
+              query = value;
+              _searching = true;
+            });
+          },
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: "Search"
+          ),
+        ),
+        actions: buildActions(),
       ),
-      onPressed: (){
-        close(context, null);
-      },
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _searching ? buildSuggestions(context) : buildResults(context),
+      ),
     );
   }
 
-  dynamic data = Center(
-    child: SpinKitCircle(color: Colors.red),
-  );
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      onPressed: (){
+        Navigator.pop(context);
+      },
+      icon: Icon(
+        Icons.arrow_back,
+        color: Colors.grey,
+      ),
+    );
+  }
 
-  @override
+  List<Widget> buildActions() {
+    return [
+      IconButton(
+        onPressed: (){
+          setState(() {
+            query = "";
+            _queryTextController.text = "";
+          });
+        },
+        icon: Icon(Icons.close),
+        color: Colors.grey,
+      )
+    ];
+  }
+
+  Future<void> generateProductsForResults(String pattern) async {
+    List<Map<String, String> > relatedProducts = await _productController.getRelated(pattern);
+    setState(() {
+      _selectedProduct = relatedProducts;
+      _loading = false;
+    });
+  }
+
   Widget buildResults(BuildContext context){
-    // print(_selectedProduct.toString());
-    print("loading: " + _loading.toString());
 
-    // return data;
-    
     if(_loading){
       return Center(
         child: SpinKitCircle(color: Colors.red),
       );
     }else{
-      return ProductListGenerator(_selectedProduct);
+      return ProductListGenerator(_selectedProduct, false);
     }
-
-    // return 
-    
-    // if(_selectedProduct[0]['id'] == null){
-    //   return Center(
-    //     child: Text(_selectedProduct[0]['name'])
-    //   );
-    // }else{
-    //   return SearchResults(_selectedProduct);
-    // }
   }
 
-  Future<List<Map<String, String> > > generateRelatedProducts(String pattern) async {
-    List<String> relatedQueries = query.split('');
-    relatedQueries.forEach((q) async {
-      List<Map<String, String> > tempProducts = await _productController.getWithPattern(q);
-      _selectedProduct = new List<Map<String, String> >.from(_selectedProduct)..addAll(tempProducts);
-    });
-  }
-
-  @override
   Widget buildSuggestions(BuildContext context) {
 
+    // print("Build Suggestions");
     if(query != null && query.length == 1){
       fillProducts(query);
     }
@@ -97,23 +122,13 @@ class SearchBar extends SearchDelegate<String> {
       itemBuilder: (context, index){
         return ListTile(
           onTap: (){
-            _loading = true;
-            // showResults(context);
-            query = _productSuggestions[index]['name'];
-            _productController.getRelated(query.toLowerCase()).then((relatedProducts) {
-              // print('related products : '  + relatedProducts.toString());
-              // return SearchResults(relatedProducts);
-              _selectedProduct = relatedProducts;
-              _loading = false;
-              // data = SearchResults(_selectedProduct);
-              // buildResults(context);
-              showResults(context);
+            generateProductsForResults(query.toLowerCase());
+            setState(() {
+              _loading = true;
+              _searching = false;
+              query = _productSuggestions[index]['name'];
+              _queryTextController.text = query;
             });
-            // showResults(context);
-            // _selectedProduct.clear();
-            // _selectedProduct.add(_productSuggestions[index]);
-            // print(_selectedProduct);
-            // query = _productSuggestions[index]['name'];
           },
           leading: Icon(Icons.search),
           title: RichText(
@@ -139,12 +154,11 @@ class SearchBar extends SearchDelegate<String> {
     );
   }
 
-  void fillProducts(String pattern) async {
+  Future<void> fillProducts(String pattern) async {
     if(_dp[pattern] == null)
       _dp[pattern] = await _productController.getWithPattern(pattern);
-      // print(_dp[pattern]);
-      _products = _dp[pattern];
-    // print(_products.toString());
+      setState(() {
+        _products = _dp[pattern];
+      });
   }
-
 }

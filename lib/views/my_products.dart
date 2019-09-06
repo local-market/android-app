@@ -47,7 +47,7 @@ class _MyProductsState extends State<MyProducts> {
         title: Text("My Product"),
         backgroundColor: Colors.red,
       ),
-      body: _loading ? SpinKitCircle(color: Colors.red) : ProductListGenerator(_products),
+      body: _loading ? SpinKitCircle(color: Colors.red) : ProductListGenerator(_products, true),
     );
   }
 
