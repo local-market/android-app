@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_market/utils/utils.dart';
 
 import "package:local_market/views/login.dart";
 import 'package:local_market/views/otp.dart';
@@ -11,10 +12,10 @@ import 'package:local_market/views/update_product.dart';
 
 void main() => runApp(
   new MaterialApp(
-
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      primaryColor: Colors.red.shade900
+      primaryColor: Utils().colors['theme'],
+      canvasColor: Utils().colors['drawerBackground']
     ),
     home: Login(),
   )

@@ -39,19 +39,28 @@ class _HomeState extends State<Home> {
         animationCurve: Curves.fastOutSlowIn,
         animationDuration: Duration(milliseconds: 1000),
         dotSize: 4.0,
-        dotColor: Colors.green,
+        dotColor: _utils.colors['theme'],
         indicatorBgPadding: 4.0,
       ),
     );
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       appBar: AppBar(
-        backgroundColor: Colors.red,
-        title: Text('Apni dukan'),
+        backgroundColor: _utils.colors['appBar'],
+        elevation: _utils.elevation,
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        title: Text('Apni dukan',
+          style: TextStyle(
+            color: _utils.colors['appBarText']
+          ),
+        ),
         actions: <Widget>[
           new IconButton(
               icon: Icon(
                 Icons.search,
-                color: Colors.white,
+                color: _utils.colors['appBarIcons'],
               ),
               onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
@@ -59,40 +68,41 @@ class _HomeState extends State<Home> {
           new IconButton(
               icon: Icon(
                 Icons.shopping_cart,
-                color: Colors.white,
+                color: _utils.colors['appBarIcons'],
               ),
               onPressed: null)
         ],
       ),
       drawer: new Drawer(
+        
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
               accountName: Text("Pankaj Devesh"),
               accountEmail: Text('pankajdevesh3@gmail.com'),
-              currentAccountPicture: GestureDetector(
-                child: new CircleAvatar(
-                  backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(
-                      'https://avatars1.githubusercontent.com/u/28962789'),
-                ),
-              ),
+              // currentAccountPicture: GestureDetector(
+              //   child: new CircleAvatar(
+              //     // backgroundColor: Colors.white,
+              //     // backgroundImage: NetworkImage(
+              //     //     'https://avatars1.githubusercontent.com/u/28962789'),
+              //   ),
+              // ),
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: _utils.colors['theme'],
               ),
             ),
             InkWell(
               onTap: () {},
               child: ListTile(
                 title: Text("Home"),
-                leading: Icon(Icons.person, color: Colors.pink),
+                leading: Icon(Icons.person, color: _utils.colors['drawerIcons']),
               ),
             ),
             InkWell(
               onTap: () {},
               child: ListTile(
                 title: Text("My Account"),
-                leading: Icon(Icons.shopping_basket, color: Colors.pink),
+                leading: Icon(Icons.shopping_basket, color: _utils.colors['drawerIcons']),
               ),
             ),
             InkWell(
@@ -101,7 +111,7 @@ class _HomeState extends State<Home> {
               },
               child: ListTile(
                 title: Text("My Products"),
-                leading: Icon(Icons.dashboard, color: Colors.pink),
+                leading: Icon(Icons.dashboard, color: _utils.colors['drawerIcons']),
               ),
             ),
             InkWell(
@@ -110,14 +120,14 @@ class _HomeState extends State<Home> {
               },
               child: ListTile(
                 title: Text("Add Product"),
-                leading: Icon(Icons.dashboard, color: Colors.pink),
+                leading: Icon(Icons.dashboard, color: _utils.colors['drawerIcons']),
               ),
             ),
             InkWell(
               onTap: () {},
               child: ListTile(
                 title: Text("Favourites"),
-                leading: Icon(Icons.favorite, color: Colors.pink),
+                leading: Icon(Icons.favorite, color: _utils.colors['drawerIcons']),
               ),
             ),
             Divider(),
@@ -125,7 +135,9 @@ class _HomeState extends State<Home> {
               onTap: () {},
               child: ListTile(
                 title: Text("Settings"),
-                leading: Icon(Icons.settings),
+                leading: Icon(Icons.settings,
+                  color: _utils.colors['drawerIcons'],
+                ),
               ),
             ),
             InkWell(
@@ -134,7 +146,7 @@ class _HomeState extends State<Home> {
                 title: Text("Help"),
                 leading: Icon(
                   Icons.help,
-                  color: Colors.blue,
+                  color: _utils.colors['drawerIcons'],
                 ),
               ),
             ),
@@ -144,10 +156,10 @@ class _HomeState extends State<Home> {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
               },
               child: ListTile(
-                title: Text("Logout", style: TextStyle(color: Colors.black26),),
+                title: Text("Logout"),
                 leading: Icon(
                   Icons.warning,
-                  color: Colors.yellow,
+                  color: _utils.colors['drawerIcons'],
                 ),
               ),
             ),

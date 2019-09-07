@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/product_list_generator.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/utils/utils.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -16,14 +17,18 @@ class _SearchState extends State<Search> {
   List<Map<String, String> > _selectedProduct = new List<Map<String, String> >();
   Map<String, List<Map<String, String> > > _dp = new Map<String, List<Map<String, String> > >();
   List<Map<String, String> >  _products = new List<Map<String, String> > ();
+  final Utils _utils = new Utils();
   bool _loading = false;
   bool _searching = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
+        backgroundColor: _utils.colors['appBar'],
+        elevation: _utils.elevation,
         leading: buildLeading(context),
         title: TextField(
           controller: _queryTextController,
@@ -56,24 +61,26 @@ class _SearchState extends State<Search> {
       },
       icon: Icon(
         Icons.arrow_back,
-        color: Colors.grey,
+        color: _utils.colors['searchBarIcons'],
       ),
     );
   }
 
   List<Widget> buildActions() {
-    return [
-      IconButton(
-        onPressed: (){
-          setState(() {
-            query = "";
-            _queryTextController.text = "";
-          });
-        },
-        icon: Icon(Icons.close),
-        color: Colors.grey,
-      )
-    ];
+    if(query.length > 0){
+      return [
+        IconButton(
+          onPressed: (){
+            setState(() {
+              query = "";
+              _queryTextController.text = "";
+            });
+          },
+          icon: Icon(Icons.close),
+          color: _utils.colors['searchBarIcons'],
+        )
+      ];
+    }else return [];
   }
 
   Future<void> generateProductsForResults(String pattern) async {
@@ -88,7 +95,7 @@ class _SearchState extends State<Search> {
 
     if(_loading){
       return Center(
-        child: SpinKitCircle(color: Colors.red),
+        child: SpinKitCircle(color: _utils.colors['loading']),
       );
     }else{
       return ProductListGenerator(_selectedProduct, false);
@@ -130,7 +137,9 @@ class _SearchState extends State<Search> {
               _queryTextController.text = query;
             });
           },
-          leading: Icon(Icons.search),
+          leading: Icon(Icons.search,
+            color: _utils.colors['searchBarIcons'],
+          ),
           title: RichText(
             text: TextSpan(
               

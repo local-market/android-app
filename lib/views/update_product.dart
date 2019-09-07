@@ -65,17 +65,22 @@ class _UpdateProductState extends State<UpdateProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       appBar: AppBar(
+        backgroundColor: _utils.colors['appBar'],
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
         title: Text(
           "Update Product",
           style: TextStyle(
-            color: Colors.white
+            color: _utils.colors['appBarText']
           ),
         ),
-        elevation: 0.1,
+        elevation: _utils.elevation,
       ),
       body: Center(
-        child: _pageLoading ? SpinKitCircle(color: Colors.red) : Form(
+        child: _pageLoading ? SpinKitCircle(color: _utils.colors['loading']) : Form(
           key: _formKey,
           child: ListView(
             shrinkWrap: true,
@@ -90,7 +95,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                 padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                 child: Material(
                   // color: Colors.grey.withOpacity(0.2),
-                  elevation: 0,
+                  elevation: _utils.elevation,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
                     child: Text(_productName,
@@ -105,8 +110,8 @@ class _UpdateProductState extends State<UpdateProduct> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                 child: Material(
-                  color: Colors.grey.withOpacity(0.2),
-                  elevation: 0,
+                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                  elevation: _utils.elevation,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
                     child: TextFormField(
@@ -116,7 +121,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: "Price",
-                        border: InputBorder.none
+                        // border: InputBorder.none
                       ),
                       validator: (value){
                         if(value.isEmpty){
@@ -136,16 +141,16 @@ class _UpdateProductState extends State<UpdateProduct> {
                     setState(() {
                       inStock = value;
                     });
-                  }, checkColor: Colors.white, activeColor: Colors.red,),
+                  }, checkColor: Colors.white, activeColor: _utils.colors['theme'],),
                   Text("In Stock")
                 ],)
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
                   // borderRadius: BorderRadius.circular(20.0),
-                  color: Colors.red.withOpacity(0.8),
-                  elevation: 0.8,
+                  color: _utils.colors['theme'].withOpacity(0.8),
+                  elevation: _utils.elevation,
                   child: _buttonLoading ? CircularLoadingButton() : MaterialButton(
                     onPressed: () {
                       validateAndUpdate();
@@ -155,7 +160,7 @@ class _UpdateProductState extends State<UpdateProduct> {
                       "Update Product",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: _utils.colors['buttonText'],
                         fontWeight: FontWeight.bold,
                         fontSize: 22,
                       ),

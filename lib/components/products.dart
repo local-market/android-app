@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 
 import 'package:local_market/components/product_details.dart';
+import 'package:local_market/utils/utils.dart';
 
 
 class Products extends StatefulWidget {
@@ -94,7 +95,7 @@ class Single_prod extends StatelessWidget {
             ))),
               child: GridTile(
                   footer: Container(
-                    color: Colors.white70,
+                    color: Utils().colors['pageBackground'],
                     child: ListTile(
                         leading: Text(
                           prod_name,

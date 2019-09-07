@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/signup.dart";
@@ -17,9 +18,9 @@ class _LoginState extends State<Login> {
   TextEditingController _emailTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final Utils _utils = new Utils();
   String error = "";
   bool hidePassword = true;
-  final Utils _utils = new Utils();
   bool _loading = false;
 
   @override
@@ -27,6 +28,7 @@ class _LoginState extends State<Login> {
 
 
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
           Padding(
@@ -39,12 +41,12 @@ class _LoginState extends State<Login> {
                   shrinkWrap: true,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
                         child: Image.asset(
-                          'assets/img/logo.png',
-                          width: 120,
+                          'assets/illustrations/login.png',
+                          width: 150,
                         ),
                       ),
                     ),
@@ -53,8 +55,8 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey.withOpacity(0.2),
-                        elevation: 0,
+                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                        elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -64,7 +66,8 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                   hintText: "Email",
                                   icon: Icon(Icons.alternate_email),
-                                  border: InputBorder.none),
+                                  // border: InputBorder.none
+                                ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (!value.isEmpty) {
@@ -89,8 +92,8 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey.withOpacity(0.2),
-                        elevation: 0,
+                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                        elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -101,7 +104,13 @@ class _LoginState extends State<Login> {
                               decoration: InputDecoration(
                                   hintText: "Password",
                                   icon: Icon(Icons.lock_outline),
-                                  border: InputBorder.none),
+                                    suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
+                                      setState(() {
+                                        hidePassword = !hidePassword;
+                                      });
+                                    }),
+                                  // border: InputBorder.none
+                                  ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value.isEmpty) {
@@ -112,41 +121,38 @@ class _LoginState extends State<Login> {
                                   return null;
                               },
                             ),
-                            trailing: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
-                              setState(() {
-                                hidePassword = !hidePassword;
-                              });
-                            }),
+                            // trailing: 
                           ),
                         ),
                       ),
                     ),
 
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text(error, style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.w400, fontSize: 14
-                          ),),
-                        )
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: Center(
+                    //     child: Text(error, style: TextStyle(
+                    //         color: _utils.colors['error'], fontWeight: FontWeight.w400, fontSize: 14
+                    //     ),),
+                    //   )
+                    // ),
 
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                      padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.red.withOpacity(0.8),
-                        elevation: 0.8,
+                        color: _utils.colors['theme'].withOpacity(0.8),
+                        elevation: _utils.elevation,
                         child: _loading ? CircularLoadingButton() : MaterialButton(
                           onPressed: () {
                             validateForm();
                           },
+                          
                           minWidth: MediaQuery.of(context).size.width,
                           child: Text(
                             "Login",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: _utils.colors['buttonText'],
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
                             ),
@@ -171,7 +177,7 @@ class _LoginState extends State<Login> {
                                 recognizer: TapGestureRecognizer()..onTap = (){
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => Signup()));
                                 },
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(color: _utils.colors['theme']),
                               )
                             ]
                           ),
@@ -215,10 +221,11 @@ class _LoginState extends State<Login> {
           email: _emailTextController.text,
           password: _passwordTextController.text).then((user){
             if(user == null){
-              print("Hello World");
+              // print("Hello World");
               setState(() {
                 _loading = false;
                 error = "Invalid email or password";
+                Fluttertoast.showToast(msg: error);
               });
             }else{
               setState(() {
@@ -227,10 +234,13 @@ class _LoginState extends State<Login> {
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
             }
       }).catchError((e){
+        setState(() {
+          _loading = false;
+        });
         if(e.code == "ERROR_USER_NOT_FOUND"){
           setState(() {
-            _loading = false;
             error = "Invalid email or password";
+            Fluttertoast.showToast(msg: error);
           });
         }
         print("Error: login page: " + e.toString());

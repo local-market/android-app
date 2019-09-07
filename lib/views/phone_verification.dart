@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/controller/user_controller.dart';
+import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/home.dart';
 import 'package:local_market/views/otp.dart';
 
@@ -15,8 +17,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
 
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController _phoneTextController = new TextEditingController();
-  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  UserController _userController = new UserController();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final UserController _userController = new UserController();
+  final Utils _utils = new Utils();
   String verificationId, smsCode;
   String error = '';
   bool _loading = false;
@@ -32,6 +35,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
           Center(
@@ -40,6 +44,16 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               child: ListView(
                 shrinkWrap: true,
                 children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        child: Image.asset(
+                          'assets/illustrations/mobile_verification.png',
+                          width: 150,
+                        ),
+                      ),
+                    ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                     child: Center(
@@ -68,8 +82,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                     child: Material(
                       borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.grey.withOpacity(0.2),
-                      elevation: 0,
+                      color: _utils.colors['textFieldBackground'],
+                      elevation: _utils.elevation,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
@@ -79,7 +93,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             decoration: InputDecoration(
                                 hintText: "Phone Number",
                                 icon: Icon(Icons.phone),
-                                border: InputBorder.none),
+                                // border: InputBorder.none
+                              ),
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                             keyboardType: TextInputType.number,
                             validator: (value) {
@@ -95,20 +110,20 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       ),
                     ),
                   ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: Center(
+                  //     child: Text(error, style: TextStyle(
+                  //         color: _utils.colors['error'], fontWeight: FontWeight.w400, fontSize: 14
+                  //     ),),
+                  //   )
+                  // ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(error, style: TextStyle(
-                          color: Colors.red, fontWeight: FontWeight.w400, fontSize: 14
-                      ),),
-                    )
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                     child: Material(
                       borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.red.withOpacity(0.8),
-                      elevation: 0.8,
+                      color: _utils.colors['theme'].withOpacity(0.8),
+                      elevation: _utils.elevation,
                       child: _loading ? CircularLoadingButton() :  MaterialButton(
                         onPressed: () {
                           validateAndVerify();
@@ -118,7 +133,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                           "Send",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: _utils.colors['buttonText'],
                             fontWeight: FontWeight.bold,
                             fontSize: 22,
                           ),
@@ -185,6 +200,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
       if(exception.code == "invalidCredential"){
         setState(() {
           error = "Please enter a valid phone number";
+          Fluttertoast.showToast(msg: error);
         });
       }
       print("Phone Verification Page3: " + exception.code + " : " + exception.message);

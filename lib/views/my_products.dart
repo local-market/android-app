@@ -43,11 +43,20 @@ class _MyProductsState extends State<MyProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       appBar: AppBar(
-        title: Text("My Product"),
-        backgroundColor: Colors.red,
+        elevation: _utils.elevation,
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        title: Text("My Product",
+          style: TextStyle(
+            color: _utils.colors['appBarText']
+          ),
+        ),
+        backgroundColor: _utils.colors['appBar'],
       ),
-      body: _loading ? SpinKitCircle(color: Colors.red) : ProductListGenerator(_products, true),
+      body: _loading ? SpinKitCircle(color: _utils.colors['loading']) : ProductListGenerator(_products, true),
     );
   }
 

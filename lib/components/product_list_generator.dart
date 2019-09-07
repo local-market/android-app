@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 import 'package:local_market/views/update_product.dart';
 
@@ -55,7 +56,8 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
       onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProduct(productId, productName, productImageUrl)));
       },
-      icon: Icon(Icons.edit),
+      icon: Icon(Icons.edit,
+      color: Utils().colors['icons'],),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/search.dart';
 
 // image row and its properties
@@ -17,10 +18,16 @@ class image extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-      margin: EdgeInsets.all(10),
-      height: 150,
-      child: Image.network(_product['image']),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+      child: Center(
+        child: Image.network(_product['image'], width:200)
+      ),
+    );
+    //return Container(
+    //  margin: EdgeInsets.all(10),
+    //  height: 150,
+    //  child: Image.network(_product['image']),
       // decoration: BoxDecoration(
       //   image: DecorationImage(
       //     image: AssetImage('assets/images/notebooks.jpg'),
@@ -33,7 +40,7 @@ class image extends StatelessWidget {
       //     width: 6.0,
       //   ),
       // ),
-    );
+   // );
   }
 }
 
@@ -197,6 +204,7 @@ class _ProductViewState extends State<ProductView> {
   List<Map<String, String> > _vendors = new List<Map<String, String> >();
   final ProductController _productController = new ProductController();
   bool _loading = true;
+  final Utils _utils = new Utils();
 
   _ProductViewState(Map<String, String> product){
     this._product = product;
@@ -218,16 +226,20 @@ class _ProductViewState extends State<ProductView> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: _utils.colors['appBar'],
+        elevation: _utils.elevation,
+        iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
         title: Text(
           _product['name'],
+          style: TextStyle(color: _utils.colors['appBarText']),
         ),
         actions: <Widget>[
           IconButton(
             icon: Icon(
               Icons.search,
-              color: Colors.white
+              color: _utils.colors['appBarIcons']
             ),
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
@@ -241,10 +253,11 @@ class _ProductViewState extends State<ProductView> {
               title:image(_product),
             ),
             Center(
-              child: SpinKitCircle(color: Colors.red),
+              child: SpinKitCircle(color: _utils.colors['loading']),
             )
           ],
         ) : ListView.separated(
+      shrinkWrap: true,
       itemCount: _vendors.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
@@ -255,7 +268,7 @@ class _ProductViewState extends State<ProductView> {
         else {
           print('product view loading: ' + _loading.toString());
           if(_loading){
-            return Center(child: SpinKitCircle(color: Colors.red));
+            return Center(child: SpinKitCircle(color: _utils.colors['loading']));
           }else{
             return ListTile(
               title: decorate(
