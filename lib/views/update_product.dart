@@ -67,7 +67,7 @@ class _UpdateProductState extends State<UpdateProduct> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Add Product",
+          "Update Product",
           style: TextStyle(
             color: Colors.white
           ),

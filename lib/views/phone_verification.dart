@@ -1,0 +1,222 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:local_market/components/circular_loading_button.dart';
+import 'package:local_market/controller/user_controller.dart';
+import 'package:local_market/views/home.dart';
+import 'package:local_market/views/otp.dart';
+
+class PhoneVerification extends StatefulWidget {
+  @override
+  _PhoneVerificationState createState() => _PhoneVerificationState();
+}
+
+class _PhoneVerificationState extends State<PhoneVerification> {
+
+  GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  TextEditingController _phoneTextController = new TextEditingController();
+  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  UserController _userController = new UserController();
+  String verificationId, smsCode;
+  String error = '';
+  bool _loading = false;
+
+  @override
+  void initState(){
+    super.initState();
+    setState(() {
+      _phoneTextController.text = '91';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Center(
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    child: Center(
+                      child: Text("Verify Your Number",
+                        style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.w900
+                        ),
+                      )
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(25, 8, 25, 50),
+                    child: Center(
+                      child: Text("Please enter your phone number to verify your account",
+                      textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontSize: 20,
+                          // fontWeight: FontWeight.w900
+                        ),
+                      )
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.grey.withOpacity(0.2),
+                      elevation: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: TextFormField(
+                            controller: _phoneTextController,
+                            autofocus: false,
+                            decoration: InputDecoration(
+                                hintText: "Phone Number",
+                                icon: Icon(Icons.phone),
+                                border: InputBorder.none),
+                            inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return "This field cannot be empty";
+                              } else if (value.length != 12)
+                                return "Please enter a valid phone number";
+                              else
+                                return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(error, style: TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.w400, fontSize: 14
+                      ),),
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    child: Material(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.red.withOpacity(0.8),
+                      elevation: 0.8,
+                      child: _loading ? CircularLoadingButton() :  MaterialButton(
+                        onPressed: () {
+                          validateAndVerify();
+                        },
+                        minWidth: MediaQuery.of(context).size.width,
+                        child: Text(
+                          "Send",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<void> verifyPhone() async {
+    final PhoneCodeAutoRetrievalTimeout autoRetrievalTimeout = (String verId) async {
+      this.verificationId = verId;
+      dynamic res = await Navigator.push(context, MaterialPageRoute(builder: (context) => OTP(this.verificationId, "+${_phoneTextController.text}")));
+
+      if(res['error']){
+        setState(() {
+          _loading = false;
+        });
+        print("Phone Verification Page1: " + res['data']);
+      }else{
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+      }
+    };
+
+    final PhoneCodeSent phoneCodeSent = (String verId, [int forceCodeResend]) {
+      this.verificationId = verId;
+    };
+
+    final PhoneVerificationCompleted phoneVerificationCompleted = (AuthCredential credential) async {
+      try{
+        FirebaseUser currentUser = await _userController.getCurrentUser();
+        await _userController.linkWithCredential(currentUser, credential).then((value){
+          _userController.update(currentUser.uid.toString(),{
+            "phone" : _phoneTextController.text
+          }).then((value){
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+          }).catchError((e){
+            throw e;
+          });
+        }).catchError((e){
+          throw e;
+        });
+        print("Success");
+      }catch(e){
+        setState(() {
+          _loading = false;
+        });
+        print("Phone Verification Page2: " + e.toString());
+      }
+    };
+
+    final PhoneVerificationFailed phoneVerificationFailed = (
+        AuthException exception) {
+      setState(() {
+        _loading = false;
+      });
+      if(exception.code == "invalidCredential"){
+        setState(() {
+          error = "Please enter a valid phone number";
+        });
+      }
+      print("Phone Verification Page3: " + exception.code + " : " + exception.message);
+    };
+
+    await _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: '+'+_phoneTextController.text,
+        timeout: const Duration(seconds: 0),
+        verificationCompleted: phoneVerificationCompleted,
+        verificationFailed: phoneVerificationFailed,
+        codeSent: phoneCodeSent,
+        codeAutoRetrievalTimeout: autoRetrievalTimeout
+    );
+  }
+
+  void validateAndVerify() async {
+    setState(() {
+      _loading = true;
+    });
+    FormState _formState = _formKey.currentState;
+    if(_formState.validate()){
+      await verifyPhone().catchError((e){
+        setState(() {
+          _loading = false;
+        });
+        print("Phone Verification Page4: " + e.toString());
+      });
+    }else{
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+}

@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
+import 'package:local_market/views/otp.dart';
+import 'package:local_market/views/phone_verification.dart';
 
 import 'home.dart';
 
@@ -114,6 +117,7 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
@@ -150,7 +154,6 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-
 
                     Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -246,14 +249,16 @@ class _SignupState extends State<Signup> {
             "username" : _fullNameTextController.text.toLowerCase(),
             "email" : _emailTextController.text,
             "uid" : user.uid.toString(),
-            "vendor" : "false"
+            "vendor" : "false",
+            "phone" : "",
+            "address" : ""
           };
           userController.createUser(values);
           formState.reset();
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PhoneVerification()));
         }).catchError((e){
           if(e.code == "ERROR_EMAIL_ALREADY_IN_USE"){
             setState(() {
