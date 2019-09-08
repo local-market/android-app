@@ -9,6 +9,7 @@ import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
 import 'package:local_market/views/my_products.dart';
 import "package:local_market/views/search.dart";
+import 'package:local_market/views/user_profile.dart';
 import 'add_product.dart';
 import "package:carousel_pro/carousel_pro.dart";
 
@@ -103,13 +104,9 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(16.0),
               child: Text("New"),
             ),
-
-            new Container(
-              height: 300.0,
-              child: Products(),
-            ),
           ],
-        )
+        ),
+        Products()
       ],
       drawer: getDrawer(),
     );
@@ -160,32 +157,50 @@ class _HomeState extends State<Home> {
     return Drawer(
       child: new ListView(
         children: <Widget>[
+          // ListTile(
+          //   title: Text(_utils.appName,
+          //     style: TextStyle(
+          //       color: _utils.colors['theme'],
+          //       fontSize: 20,
+          //     ),
+          //   ),
+          // ),
+          // Divider(),
           new UserAccountsDrawerHeader(
-            accountName: Text("Pankaj Devesh"),
-            accountEmail: Text('pankajdevesh3@gmail.com'),
-            // currentAccountPicture: GestureDetector(
-            //   child: new CircleAvatar(
-            //     // backgroundColor: Colors.white,
-            //     // backgroundImage: NetworkImage(
-            //     //     'https://avatars1.githubusercontent.com/u/28962789'),
-            //   ),
-            // ),
+            accountName: Text("Pankaj Devesh", style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+            accountEmail: Text('pankajdevesh3@gmail.com', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+            currentAccountPicture: GestureDetector(
+              child: new CircleAvatar(
+                backgroundColor: _utils.colors['theme'],
+                child: Text("H",
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: _utils.colors['buttonText']
+                  ),
+                ),
+                // backgroundImage: NetworkImage(
+                //     'https://avatars1.githubusercontent.com/u/28962789'),
+              ),
+            ),
             decoration: BoxDecoration(
-              color: _utils.colors['theme'],
+              color: _utils.colors['drawerHeader'],
             ),
           ),
+          Divider(),
           InkWell(
             onTap: () {},
             child: ListTile(
               title: Text("Home"),
-              leading: Icon(Icons.person, color: _utils.colors['drawerIcons']),
+              leading: Icon(Icons.home, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
+            },
             child: ListTile(
               title: Text("My Account"),
-              leading: Icon(Icons.shopping_basket, color: _utils.colors['drawerIcons']),
+              leading: Icon(Icons.account_circle, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -194,7 +209,7 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("My Products"),
-              leading: Icon(Icons.dashboard, color: _utils.colors['drawerIcons']),
+              leading: Icon(Icons.shopping_cart, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -203,14 +218,14 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("Add Product"),
-              leading: Icon(Icons.dashboard, color: _utils.colors['drawerIcons']),
+              leading: Icon(Icons.add_shopping_cart, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
             onTap: () {},
             child: ListTile(
               title: Text("Favourites"),
-              leading: Icon(Icons.favorite, color: _utils.colors['drawerIcons']),
+              leading: Icon(Icons.favorite_border, color: _utils.colors['drawerIcons']),
             ),
           ),
           Divider(),

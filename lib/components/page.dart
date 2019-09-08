@@ -121,4 +121,18 @@ class PageGrid extends StatelessWidget {
       delegate: SliverChildListDelegate(children),
     );
   }
+
+  static SliverGrid builder({@required itemCount, @required gridDelegate,@required itemBuilder}){
+
+    return SliverGrid(
+      gridDelegate: gridDelegate,
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index){
+          return itemBuilder(context, index);
+        },
+        childCount: itemCount,
+        // semanticIndexOffset: itemCount,
+      ),
+    );
+  }
 }

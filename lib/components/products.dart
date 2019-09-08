@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_market/components/page.dart';
 
 
 import 'package:local_market/components/product_details.dart';
@@ -43,7 +44,7 @@ class _ProductsState extends State<Products> {
   ];
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return PageGrid.builder(
       itemCount: product_list.length,
       gridDelegate:
           SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),

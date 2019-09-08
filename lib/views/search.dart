@@ -40,7 +40,7 @@ class _SearchState extends State<Search> {
           autofocus: true,
           autocorrect: true,
           onChanged: (value){
-            print(value);
+            // print(value);
             setState(() {
               query = value;
               _searching = true;
