@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product_list_generator.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -23,17 +25,22 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _utils.colors['pageBackground'],
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
+
+    return Page(
+      appBar: RegularAppBar(
+        brightness: Brightness.light,
         backgroundColor: _utils.colors['appBar'],
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons'],
+        ),
         elevation: _utils.elevation,
         leading: buildLeading(context),
         title: TextField(
           controller: _queryTextController,
           autofocus: true,
+          autocorrect: true,
           onChanged: (value){
+            print(value);
             setState(() {
               query = value;
               _searching = true;
@@ -47,10 +54,14 @@ class _SearchState extends State<Search> {
         ),
         actions: buildActions(),
       ),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: _searching ? buildSuggestions(context) : buildResults(context),
-      ),
+      
+      children: <Widget>[
+        _searching ? buildSuggestions(context) : buildResults(context)
+        
+        // PageItem(
+        //   child: _searching ? buildSuggestions(context) : buildResults(context),
+        //   ),
+      ],
     );
   }
 
@@ -94,7 +105,7 @@ class _SearchState extends State<Search> {
   Widget buildResults(BuildContext context){
 
     if(_loading){
-      return Center(
+      return PageItem(
         child: SpinKitCircle(color: _utils.colors['loading']),
       );
     }else{
@@ -124,7 +135,7 @@ class _SearchState extends State<Search> {
       }];
     }
 
-    return ListView.builder(
+    return PageList.builder(
       itemCount: _productSuggestions.length,
       itemBuilder: (context, index){
         return ListTile(

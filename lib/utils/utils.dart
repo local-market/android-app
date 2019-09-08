@@ -22,7 +22,7 @@ class Utils {
     "pageBackground" : Colors.white,
     "drawerBackground" : Colors.white
   };
-  final elevation = 1.0;
+  final elevation = 2.0;
 
   Future<String> uploadImage(File image, String name) async {
     StorageUploadTask task = _fireabseStorage.ref().child(name).putFile(image);

@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/search.dart';
@@ -225,16 +227,19 @@ class _ProductViewState extends State<ProductView> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      backgroundColor: _utils.colors['pageBackground'],
-      appBar: AppBar(
+
+    return Page(
+      appBar: RegularAppBar(
         backgroundColor: _utils.colors['appBar'],
         elevation: _utils.elevation,
         iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
-        title: Text(
-          _product['name'],
-          style: TextStyle(color: _utils.colors['appBarText']),
-        ),
+        brightness: Brightness.light,
+        // title: Text(
+        //   _product['name'],
+        //   style: TextStyle(
+        //     color: _utils.colors['appBarText']
+        //   ),
+        // ),
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -247,40 +252,51 @@ class _ProductViewState extends State<ProductView> {
           )
         ],
       ),
-      body: _loading ? ListView(
+      children: <Widget>[
+        _loading ? PageList(
           children: <Widget>[
             ListTile(
               title:image(_product),
+
             ),
             Center(
               child: SpinKitCircle(color: _utils.colors['loading']),
             )
           ],
-        ) : ListView.separated(
-      shrinkWrap: true,
-      itemCount: _vendors.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return ListTile(
-            title: image(_product),
-          );
-        } 
-        else {
-          print('product view loading: ' + _loading.toString());
-          if(_loading){
-            return Center(child: SpinKitCircle(color: _utils.colors['loading']));
-          }else{
+        ) : PageList.separated(
+        // shrinkWrap: true,
+        itemCount: _vendors.length + 2,
+        itemBuilder: (context, index) {
+          if (index == 0) {
             return ListTile(
-              title: decorate(
-                listTileItem(_vendors[index - 1]['name'],_vendors[index - 1]['price']),
-              ),
+              title:image(_product),
+            );
+          }else if(index == 1){
+            return ListTile(
+              title: Text(_product['name'],
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20
+                ),
+              )
             );
           }
-        }
-      },
-    separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
-      ),
-      // backgroundColor: Colors.grey[900],
+          else {
+            print('product view loading: ' + _loading.toString());
+            if(_loading){
+              return Center(child: SpinKitCircle(color: _utils.colors['loading']));
+            }else{
+              return ListTile(
+                title: decorate(
+                  listTileItem(_vendors[index - 2]['name'],_vendors[index - 2]['price']),
+                ),
+              );
+            }
+          }
+        },
+      separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
+        ),
+      ],
     );
   }
 }

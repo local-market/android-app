@@ -60,7 +60,7 @@ class _SignupState extends State<Signup> {
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
                         color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                        elevation: _utils.elevation,
+                        // elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -91,7 +91,7 @@ class _SignupState extends State<Signup> {
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
                         color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                        elevation: _utils.elevation,
+                        // elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -129,7 +129,7 @@ class _SignupState extends State<Signup> {
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
                         color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                        elevation: _utils.elevation,
+                        // elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -175,7 +175,7 @@ class _SignupState extends State<Signup> {
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
                         color: _utils.colors['theme'].withOpacity(0.8),
-                        elevation: _utils.elevation,
+                        // elevation: _utils.elevation,
                         child: _loading ? CircularLoadingButton() :  MaterialButton(
                           onPressed: () {
                             validateForm();

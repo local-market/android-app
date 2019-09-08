@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:local_market/components/page.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 import 'package:local_market/views/update_product.dart';
@@ -27,7 +28,7 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
   @override
   Widget build(BuildContext context) {
     // print('Search Result Page' + _products.toString());
-    return _products.length == 0 ? Center(child: Text("No record found"),) : ListView.separated(
+    return _products.length == 0 ? PageItem(child: Center(child: Text("No record found")),) : PageList.separated(
       itemCount: _products.length,
       itemBuilder: (context, index){
         return Padding(
@@ -36,8 +37,8 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
             onTap: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(_products[index])));
             },
-            leading: Image.network(_products[index]['image']),
-            title: Text(_products[index]['name']),
+            leading: Image.network(_products[index]['image'], width: 50,),
+            title: Text(_products[index]['name'].length > 30 ? _products[index]['name'].substring(0, 30) + '...' : _products[index]['name']),
             trailing: _edit ? editButton(_products[index]['id'], _products[index]['name'], _products[index]['image']): Text('') ,
           ),
         );

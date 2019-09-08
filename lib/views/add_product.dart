@@ -5,7 +5,9 @@ import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
+import 'package:local_market/components/page.dart';
 import "package:local_market/controller/product_controller.dart";
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -31,26 +33,26 @@ class _AddProductState extends State<AddProduct> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _utils.colors['pageBackground'],
-      appBar: AppBar(
+
+    return Page(
+      appBar: RegularAppBar(
         iconTheme: IconThemeData(
           color: _utils.colors['appBarIcons']
         ),
         backgroundColor: _utils.colors['appBar'],
-        title: Text(
-          "Add Product",
+        brightness: Brightness.light,
+        elevation: _utils.elevation,
+        title: Text("Add Product",
           style: TextStyle(
             color: _utils.colors['appBarText'],
           ),
         ),
-        elevation: _utils.elevation,
       ),
-      body: Center(
-        child: Form(
+      children: <Widget>[
+        Form(
           key: _formKey,
-          child: ListView(
-            shrinkWrap: true,
+          child: PageList(
+            // shrinkWrap: true,
             children: <Widget>[
               Row(
                 children: <Widget>[
@@ -71,8 +73,8 @@ class _AddProductState extends State<AddProduct> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                 child: Material(
-                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                  elevation: _utils.elevation,
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
                     child: TextFormField(
@@ -97,7 +99,7 @@ class _AddProductState extends State<AddProduct> {
                 padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                 child: Material(
                   color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                  elevation: _utils.elevation,
+                  // elevation: _utils.elevation,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
                     child: TextFormField(
@@ -136,7 +138,7 @@ class _AddProductState extends State<AddProduct> {
                 child: Material(
                   // borderRadius: BorderRadius.circular(20.0),
                   color: _utils.colors['theme'].withOpacity(0.8),
-                  elevation: _utils.elevation,
+                  // elevation: _utils.elevation,
                   child: _loading ? CircularLoadingButton() : MaterialButton(
                     onPressed: () {
                       validateAndUpload();
@@ -157,7 +159,7 @@ class _AddProductState extends State<AddProduct> {
             ],
           ),
         ),
-      ),
+      ],
     );
   }
   
