@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
@@ -49,8 +50,9 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          'assets/illustrations/signup.png',
+                        child: SvgPicture.asset(
+                          'assets/svg/logo.svg',
+                          color: _utils.colors['theme'],
                           width: 150,
                         ),
                       ),
@@ -175,7 +177,7 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: _utils.colors['theme'].withOpacity(0.8),
+                        color: _utils.colors['theme'],
                         // elevation: _utils.elevation,
                         child: _loading ? CircularLoadingButton() :  MaterialButton(
                           onPressed: () {

@@ -138,7 +138,7 @@ class _AddProductState extends State<AddProduct> {
                 padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
                   // borderRadius: BorderRadius.circular(20.0),
-                  color: _utils.colors['theme'].withOpacity(0.8),
+                  color: _utils.colors['theme'],
                   // elevation: _utils.elevation,
                   child: _loading ? CircularLoadingButton() : MaterialButton(
                     onPressed: () {

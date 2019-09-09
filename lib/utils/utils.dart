@@ -8,23 +8,23 @@ class Utils {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final Map<String, Color> colors = {
     "appBar" : Colors.white,
-    "theme" : Colors.deepPurple,
-    "appBarText" : Colors.deepPurple,
-    "appBarIcons" : Colors.deepPurple,
+    "theme" : Color(0xffDF1827),
+    "appBarText" : Colors.grey,
+    "appBarIcons" : Colors.grey.shade700,
     "icons" : Colors.grey.shade700,
     "textFieldBackground" : Colors.white,
     "buttonText" : Colors.white,
     "drawerIcons" : Colors.grey.shade700,
     "error" : Colors.red,
-    "loading" : Colors.deepPurple,
+    "loading" : Color(0xffDF1827),
     "loadingInverse" : Colors.white,
     "searchBarIcons" : Colors.grey.shade700,
     "pageBackground" : Colors.white,
     "drawerBackground" : Colors.white,
     "drawerHeader" : Colors.white,
-    "drawerHeaderText" : Colors.deepPurple
+    "drawerHeaderText" : Color(0xffDF1827)
   };
-  final String appName = "Local Market";
+  final String appName = "My Store";
   final double elevation = 2.0;
 
   Future<String> uploadImage(File image, String name) async {

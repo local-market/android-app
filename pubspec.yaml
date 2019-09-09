@@ -22,7 +22,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  carousel_pro: ^1.0.0
+  carousel_slider: ^1.3.1
   cupertino_icons: ^0.1.2
   firebase_core: ^0.4.0+1
 #  firebase_analytics: ^4.0.2
@@ -90,6 +90,12 @@ flutter:
     - assets/illustrations/mobile_verification.png
     - assets/illustrations/otp.png
 
+    - assets/svg/cart.svg
+    - assets/svg/logo.svg
+    - assets/svg/shopping-cart (1).svg
+    - assets/svg/phone_verification.svg
+    - assets/svg/otp.svg
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -115,3 +121,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  # Launcher icon
+flutter_icons:
+  image_page: "assets/icons/1.png"
+  android: true
+  ios: true

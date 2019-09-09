@@ -11,7 +11,7 @@ import 'package:local_market/views/my_products.dart';
 import "package:local_market/views/search.dart";
 import 'package:local_market/views/user_profile.dart';
 import 'add_product.dart';
-import "package:carousel_pro/carousel_pro.dart";
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
 
 class Home extends StatefulWidget {
@@ -26,25 +26,36 @@ class _HomeState extends State<Home> {
   final ProductController _productController = new ProductController();
 
   Widget getCarousel(){
-    return Container(
-      height: 200.0,
-      child: new Carousel(
-        boxFit: BoxFit.cover,
-        images: [
-          AssetImage('assets/img/c1.jpg'),
-          AssetImage('assets/img/m1.jpeg'),
-          AssetImage('assets/img/m2.jpg'),
-          AssetImage('assets/img/w1.jpeg'),
-          AssetImage('assets/img/w3.jpeg'),
-          AssetImage('assets/img/w4.jpeg'),
-        ],
-        autoplay: true,
-        animationCurve: Curves.fastOutSlowIn,
-        animationDuration: Duration(milliseconds: 1000),
-        dotSize: 4.0,
-        dotColor: _utils.colors['theme'],
-        indicatorBgPadding: 4.0,
-      ),
+    return CarouselSlider(
+      items: [
+        'assets/img/c1.jpg',
+        'assets/img/m1.jpeg',
+        'assets/img/m2.jpg',
+        'assets/img/w1.jpeg',
+        'assets/img/w3.jpeg',
+        'assets/img/w4.jpeg',
+      ].map((image){
+        return Builder(
+          builder: (BuildContext context){
+            return Container(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.asset(image,
+                  fit: BoxFit.cover,
+                  // width: MediaQuery.of(context).size.width,
+                ),
+              )
+            );
+          }
+        );
+      }).toList(),
+      // height: 300,
+      aspectRatio: 16/9,
+      enlargeCenterPage: true,
+      // viewportFraction: 1.0,
+      autoPlay: true,
+      reverse: false,
+      enableInfiniteScroll: true,
     );
   }
 
@@ -60,7 +71,7 @@ class _HomeState extends State<Home> {
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
           },
-          child: Text("Search..",
+          child: Text("Search for products",
             style: TextStyle(
               color: _utils.colors['appBarText']
             ),

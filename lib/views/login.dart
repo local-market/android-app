@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/utils/utils.dart';
@@ -45,12 +46,30 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          'assets/illustrations/login.png',
+                        child: SvgPicture.asset('assets/svg/logo.svg',
+                          color: _utils.colors['theme'],
                           width: 150,
                         ),
+                        // child: Image.asset(
+                        //   'assets/illustrations/login.png',
+                        //   width: 150,
+                        // ),
                       ),
                     ),
+
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
+                    //   child: Text(
+                    //     "Welcome back!",
+                    //     textAlign: TextAlign.center,
+                    //     style: TextStyle(
+                    //       color: Colors.grey.shade700,
+                    //       fontSize: 30,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   )
+                    // ),
+
 
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
@@ -141,7 +160,7 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: _utils.colors['theme'].withOpacity(0.8),
+                        color: _utils.colors['theme'],
                         // elevation: _utils.elevation,
                         child: _loading ? CircularLoadingButton() : MaterialButton(
                           onPressed: () {
