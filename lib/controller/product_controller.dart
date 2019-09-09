@@ -104,4 +104,10 @@ class ProductController {
   Future<DocumentSnapshot> getPrice(String pid, String uid) async {
     return (await _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).get());
   }
+
+  Future<void> updatePrice(String pid, String uid, Map<String, String> details) async {
+    _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).setData(details).catchError((e){
+      throw e;
+    });
+  }
 }

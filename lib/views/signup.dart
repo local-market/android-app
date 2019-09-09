@@ -1,8 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
+import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/otp.dart';
+import 'package:local_market/views/phone_verification.dart';
 
 import 'home.dart';
 
@@ -18,6 +23,7 @@ class _SignupState extends State<Signup> {
   TextEditingController _passwordTextController = new TextEditingController();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final UserController userController = new UserController();
+  final Utils _utils = new Utils();
   bool hidePassword = true;
   bool _loading = false;
   String error = '';
@@ -26,6 +32,7 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
           Padding(
@@ -38,12 +45,12 @@ class _SignupState extends State<Signup> {
                   shrinkWrap: true,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
                         child: Image.asset(
-                          'assets/img/logo.png',
-                          width: 120,
+                          'assets/illustrations/signup.png',
+                          width: 150,
                         ),
                       ),
                     ),
@@ -52,8 +59,8 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey.withOpacity(0.2),
-                        elevation: 0,
+                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                        // elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -63,7 +70,8 @@ class _SignupState extends State<Signup> {
                               decoration: InputDecoration(
                                   hintText: "Full Name",
                                   icon: Icon(Icons.person_outline),
-                                  border: InputBorder.none),
+                                  // border: InputBorder.none
+                                ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if(value.isEmpty){
@@ -82,8 +90,8 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey.withOpacity(0.2),
-                        elevation: 0,
+                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                        // elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -93,7 +101,8 @@ class _SignupState extends State<Signup> {
                               decoration: InputDecoration(
                                   hintText: "Email",
                                   icon: Icon(Icons.alternate_email),
-                                  border: InputBorder.none),
+                                  // border: InputBorder.none
+                                ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (!value.isEmpty) {
@@ -114,12 +123,13 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.grey.withOpacity(0.2),
-                        elevation: 0,
+                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                        // elevation: _utils.elevation,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
@@ -130,7 +140,13 @@ class _SignupState extends State<Signup> {
                               decoration: InputDecoration(
                                   hintText: "Password",
                                   icon: Icon(Icons.lock_outline),
-                                  border: InputBorder.none),
+                                  suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
+                                    setState(() {
+                                      hidePassword = !hidePassword;
+                                    });
+                                  }),
+                                  // border: InputBorder.none
+                                ),
                               keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value.isEmpty) {
@@ -141,31 +157,25 @@ class _SignupState extends State<Signup> {
                                   return null;
                               },
                             ),
-                            trailing: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
-                              setState(() {
-                                hidePassword = !hidePassword;
-                              });
-                            }),
                           ),
                         ),
                       ),
                     ),
 
-
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: Center(
+                    //     child: Text(error, style: TextStyle(
+                    //         color: _utils.colors['error'], fontWeight: FontWeight.w400, fontSize: 14
+                    //     ),),
+                    //   )
+                    // ),
                     Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Text(error, style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.w400, fontSize: 14
-                          ),),
-                        )
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                      padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.red.withOpacity(0.8),
-                        elevation: 0.8,
+                        color: _utils.colors['theme'].withOpacity(0.8),
+                        // elevation: _utils.elevation,
                         child: _loading ? CircularLoadingButton() :  MaterialButton(
                           onPressed: () {
                             validateForm();
@@ -175,7 +185,7 @@ class _SignupState extends State<Signup> {
                             "Signup",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: _utils.colors['buttonText'],
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
                             ),
@@ -200,7 +210,7 @@ class _SignupState extends State<Signup> {
                                 recognizer: TapGestureRecognizer()..onTap = (){
                                   Navigator.pop(context);
                                 },
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(color: _utils.colors['theme']),
                               )
                             ]
                           ),
@@ -246,19 +256,24 @@ class _SignupState extends State<Signup> {
             "username" : _fullNameTextController.text.toLowerCase(),
             "email" : _emailTextController.text,
             "uid" : user.uid.toString(),
-            "vendor" : "false"
+            "vendor" : "false",
+            "phone" : "",
+            "address" : ""
           };
           userController.createUser(values);
           formState.reset();
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PhoneVerification()));
         }).catchError((e){
+          setState((){
+            _loading = false;
+          });
           if(e.code == "ERROR_EMAIL_ALREADY_IN_USE"){
             setState(() {
-              _loading = false;
               error = "This email is already registered";
+              Fluttertoast.showToast(msg: error);
             });
           }
           print('signup page error : ' + e.toString());

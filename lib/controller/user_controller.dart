@@ -46,4 +46,14 @@ class UserController {
     }
     return results;
   }
+
+  Future<void> update(String uid, Map<String, String> details) async {
+    await _firestore.collection(ref).document(uid).updateData(details);
+  }
+
+  Future<void> linkWithCredential(FirebaseUser user, AuthCredential credential) async {
+    await user.linkWithCredential(credential).catchError((e){
+      throw e;
+    });
+  }
 }
