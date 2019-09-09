@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product_list_generator.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -42,12 +44,24 @@ class _MyProductsState extends State<MyProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("My Product"),
-        backgroundColor: Colors.red,
+
+    return Page(
+      appBar: RegularAppBar(
+        elevation: _utils.elevation,
+        brightness: Brightness.light,
+        iconTheme: IconThemeData(
+          color:_utils.colors['appBarIcons']
+        ),
+        title: Text("My Products",
+          style: TextStyle(
+            color: _utils.colors['appBarText']
+          ),
+        ),
+        backgroundColor: _utils.colors['appBar'],
       ),
-      body: _loading ? SpinKitCircle(color: Colors.red) : ProductListGenerator(_products),
+      children: <Widget>[
+        _loading ? PageItem(child:SpinKitCircle(color: _utils.colors['loading'])) : ProductListGenerator(_products, true)
+      ],
     );
   }
 
