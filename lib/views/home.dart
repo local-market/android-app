@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/horizontal_slide.dart';
@@ -24,6 +25,8 @@ class _HomeState extends State<Home> {
   final UserController userController = new UserController();
   final Utils _utils = new Utils();
   final ProductController _productController = new ProductController();
+  final UserController _userController = new UserController();
+  DocumentSnapshot _user = null;
 
   Widget getCarousel(){
     return CarouselSlider(
@@ -157,6 +160,11 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     check();
+    _userController.getCurrentUserDetails().then((user){
+      setState(() {
+        _user = user;
+      });
+    });
   }
 
   void check() async {
@@ -179,12 +187,12 @@ class _HomeState extends State<Home> {
           // ),
           // Divider(),
           new UserAccountsDrawerHeader(
-            accountName: Text("Pankaj Devesh", style: TextStyle(color: _utils.colors['drawerHeaderText']),),
-            accountEmail: Text('pankajdevesh3@gmail.com', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+            accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+            accountEmail: Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
             currentAccountPicture: GestureDetector(
               child: new CircleAvatar(
                 backgroundColor: _utils.colors['theme'],
-                child: Text("H",
+                child: Text( _user != null ? _user.data['username'][0] : "G",
                   style: TextStyle(
                     fontSize: 25,
                     color: _utils.colors['buttonText']
@@ -200,7 +208,9 @@ class _HomeState extends State<Home> {
           ),
           Divider(),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+            },
             child: ListTile(
               title: Text("Home"),
               leading: Icon(OMIcons.home, color: _utils.colors['drawerIcons']),
@@ -233,13 +243,13 @@ class _HomeState extends State<Home> {
               leading: Icon(OMIcons.addShoppingCart, color: _utils.colors['drawerIcons']),
             ),
           ),
-          InkWell(
-            onTap: () {},
-            child: ListTile(
-              title: Text("Favourites"),
-              leading: Icon(OMIcons.favoriteBorder, color: _utils.colors['drawerIcons']),
-            ),
-          ),
+          // InkWell(
+          //   onTap: () {},
+          //   child: ListTile(
+          //     title: Text("Favourites"),
+          //     leading: Icon(OMIcons.favoriteBorder, color: _utils.colors['drawerIcons']),
+          //   ),
+          // ),
           Divider(),
           InkWell(
             onTap: () {},

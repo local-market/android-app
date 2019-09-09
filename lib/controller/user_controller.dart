@@ -34,7 +34,9 @@ class UserController {
 
   Future<DocumentSnapshot> getCurrentUserDetails() async {
     FirebaseUser user = await getCurrentUser();
-    return (await getUser(user.uid.toString()));
+    if(user != null)
+      return (await getUser(user.uid.toString()));
+    else return null;
   }
 
   Future<List<Map<String, String> > > getAllProducts(String uid) async {
