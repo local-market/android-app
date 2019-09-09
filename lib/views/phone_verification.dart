@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/home.dart';
 import 'package:local_market/views/otp.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class PhoneVerification extends StatefulWidget {
   @override
@@ -48,8 +50,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          'assets/illustrations/mobile_verification.png',
+                        child: SvgPicture.asset(
+                          'assets/svg/phone_verification.svg',
+                          color: _utils.colors['theme'],
                           width: 150,
                         ),
                       ),
@@ -59,6 +62,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     child: Center(
                       child: Text("Verify Your Number",
                         style: TextStyle(
+                          color: Colors.grey.shade700,
                           fontSize: 35,
                           fontWeight: FontWeight.w900
                         ),
@@ -92,7 +96,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             autofocus: false,
                             decoration: InputDecoration(
                                 hintText: "Phone Number",
-                                icon: Icon(Icons.phone),
+                                icon: Icon(OMIcons.phone),
                                 // border: InputBorder.none
                               ),
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
@@ -122,7 +126,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                     child: Material(
                       borderRadius: BorderRadius.circular(20.0),
-                      color: _utils.colors['theme'].withOpacity(0.8),
+                      color: _utils.colors['theme'],
                       // elevation: _utils.elevation,
                       child: _loading ? CircularLoadingButton() :  MaterialButton(
                         onPressed: () {
@@ -159,7 +163,13 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         setState(() {
           _loading = false;
         });
-        print("Phone Verification Page1: " + res['data']);
+        if(res['data'].code == "ERROR_CREDENTIAL_ALREADY_IN_USE"){
+          setState(() {
+            error = "This phone is already registered";
+            Fluttertoast.showToast(msg: error);
+          });
+        }
+        print("Phone Verification Page1: " + res['data'].toString());
       }else{
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
       }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/horizontal_slide.dart';
@@ -11,7 +12,8 @@ import 'package:local_market/views/my_products.dart';
 import "package:local_market/views/search.dart";
 import 'package:local_market/views/user_profile.dart';
 import 'add_product.dart';
-import "package:carousel_pro/carousel_pro.dart";
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -23,27 +25,40 @@ class _HomeState extends State<Home> {
   final UserController userController = new UserController();
   final Utils _utils = new Utils();
   final ProductController _productController = new ProductController();
+  final UserController _userController = new UserController();
+  DocumentSnapshot _user = null;
 
   Widget getCarousel(){
-    return Container(
-      height: 200.0,
-      child: new Carousel(
-        boxFit: BoxFit.cover,
-        images: [
-          AssetImage('assets/img/c1.jpg'),
-          AssetImage('assets/img/m1.jpeg'),
-          AssetImage('assets/img/m2.jpg'),
-          AssetImage('assets/img/w1.jpeg'),
-          AssetImage('assets/img/w3.jpeg'),
-          AssetImage('assets/img/w4.jpeg'),
-        ],
-        autoplay: true,
-        animationCurve: Curves.fastOutSlowIn,
-        animationDuration: Duration(milliseconds: 1000),
-        dotSize: 4.0,
-        dotColor: _utils.colors['theme'],
-        indicatorBgPadding: 4.0,
-      ),
+    return CarouselSlider(
+      items: [
+        'assets/img/c1.jpg',
+        'assets/img/m1.jpeg',
+        'assets/img/m2.jpg',
+        'assets/img/w1.jpeg',
+        'assets/img/w3.jpeg',
+        'assets/img/w4.jpeg',
+      ].map((image){
+        return Builder(
+          builder: (BuildContext context){
+            return Container(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.asset(image,
+                  fit: BoxFit.cover,
+                  // width: MediaQuery.of(context).size.width,
+                ),
+              )
+            );
+          }
+        );
+      }).toList(),
+      // height: 300,
+      aspectRatio: 16/9,
+      enlargeCenterPage: true,
+      // viewportFraction: 1.0,
+      autoPlay: true,
+      reverse: false,
+      enableInfiniteScroll: true,
     );
   }
 
@@ -59,7 +74,7 @@ class _HomeState extends State<Home> {
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
           },
-          child: Text("Search..",
+          child: Text("Search for products",
             style: TextStyle(
               color: _utils.colors['appBarText']
             ),
@@ -79,7 +94,7 @@ class _HomeState extends State<Home> {
           //     }),
           new IconButton(
               icon: Icon(
-                Icons.shopping_cart,
+                OMIcons.shoppingCart,
                 color: _utils.colors['appBarIcons'],
               ),
               onPressed: null)
@@ -145,6 +160,11 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     check();
+    _userController.getCurrentUserDetails().then((user){
+      setState(() {
+        _user = user;
+      });
+    });
   }
 
   void check() async {
@@ -167,12 +187,12 @@ class _HomeState extends State<Home> {
           // ),
           // Divider(),
           new UserAccountsDrawerHeader(
-            accountName: Text("Pankaj Devesh", style: TextStyle(color: _utils.colors['drawerHeaderText']),),
-            accountEmail: Text('pankajdevesh3@gmail.com', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+            accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+            accountEmail: Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
             currentAccountPicture: GestureDetector(
               child: new CircleAvatar(
                 backgroundColor: _utils.colors['theme'],
-                child: Text("H",
+                child: Text( _user != null ? _user.data['username'][0] : "G",
                   style: TextStyle(
                     fontSize: 25,
                     color: _utils.colors['buttonText']
@@ -188,10 +208,12 @@ class _HomeState extends State<Home> {
           ),
           Divider(),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.pop(context);
+            },
             child: ListTile(
               title: Text("Home"),
-              leading: Icon(Icons.home, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.home, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -200,7 +222,7 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("My Account"),
-              leading: Icon(Icons.account_circle, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.accountCircle, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -209,7 +231,7 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("My Products"),
-              leading: Icon(Icons.shopping_cart, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.shoppingCart, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -218,22 +240,22 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("Add Product"),
-              leading: Icon(Icons.add_shopping_cart, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.addShoppingCart, color: _utils.colors['drawerIcons']),
             ),
           ),
-          InkWell(
-            onTap: () {},
-            child: ListTile(
-              title: Text("Favourites"),
-              leading: Icon(Icons.favorite_border, color: _utils.colors['drawerIcons']),
-            ),
-          ),
+          // InkWell(
+          //   onTap: () {},
+          //   child: ListTile(
+          //     title: Text("Favourites"),
+          //     leading: Icon(OMIcons.favoriteBorder, color: _utils.colors['drawerIcons']),
+          //   ),
+          // ),
           Divider(),
           InkWell(
             onTap: () {},
             child: ListTile(
               title: Text("Settings"),
-              leading: Icon(Icons.settings,
+              leading: Icon(OMIcons.settings,
                 color: _utils.colors['drawerIcons'],
               ),
             ),
@@ -243,7 +265,7 @@ class _HomeState extends State<Home> {
             child: ListTile(
               title: Text("Help"),
               leading: Icon(
-                Icons.help,
+                OMIcons.helpOutline,
                 color: _utils.colors['drawerIcons'],
               ),
             ),
@@ -256,7 +278,7 @@ class _HomeState extends State<Home> {
             child: ListTile(
               title: Text("Logout"),
               leading: Icon(
-                Icons.warning,
+                OMIcons.arrowBack,
                 color: _utils.colors['drawerIcons'],
               ),
             ),

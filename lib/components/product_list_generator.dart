@@ -3,6 +3,7 @@ import 'package:local_market/components/page.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 import 'package:local_market/views/update_product.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class ProductListGenerator extends StatefulWidget {
   List<Map<String, String> > _products = new List<Map<String, String> >();
@@ -57,7 +58,7 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
       onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProduct(productId, productName, productImageUrl)));
       },
-      icon: Icon(Icons.edit,
+      icon: Icon(OMIcons.edit,
       color: Utils().colors['icons'],),
     );
   }
