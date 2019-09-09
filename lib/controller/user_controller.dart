@@ -32,6 +32,11 @@ class UserController {
     return user;
   }
 
+  Future<DocumentSnapshot> getCurrentUserDetails() async {
+    FirebaseUser user = await getCurrentUser();
+    return (await getUser(user.uid.toString()));
+  }
+
   Future<List<Map<String, String> > > getAllProducts(String uid) async {
     List<Map<String, String> > results = new List<Map<String, String> >();
     QuerySnapshot products = await _firestore.collection(ref).document(uid).collection('products').getDocuments();

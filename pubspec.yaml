@@ -35,7 +35,6 @@ dependencies:
   uuid: ^2.0.2
   flutter_spinkit: ^3.1.0
   pin_input_text_field: ^2.0.0
-  flutter_launcher_icons: ^0.7.3
   flutter_svg: ^0.12.0
   outline_material_icons: ^0.1.0
 #  firebase_firestore: ^0.12.7+1
@@ -43,6 +42,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.7.3
 
 
 # For information on the generic Dart part of this file, see the
@@ -124,6 +124,9 @@ flutter:
 
   # Launcher icon
 flutter_icons:
-  image_page: "assets/icons/1.png"
+  image_path_android: "assets/icons/1.png"
+  image_path_ios: "assets/icons/1.png"
+  adaptive_icon_background: "assets/icons/background.png"
+  adaptive_icon_foreground: "assets/icons/foreground.png"
   android: true
   ios: true

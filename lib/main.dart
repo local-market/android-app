@@ -24,7 +24,10 @@ void main(){
         primaryColor: Utils().colors['theme'],
         canvasColor: Utils().colors['drawerBackground']
       ),
-      home: Login(),
+      home: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: Login()
+      ),
     )
   );
 }

@@ -204,6 +204,9 @@ class _UpdateProductState extends State<UpdateProduct> {
         });
         Navigator.pop(context);
       }).catchError((e){
+        setState(() {
+          _buttonLoading = false;
+        });
         print(e.toString());
       });
     }

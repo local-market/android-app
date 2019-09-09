@@ -2,14 +2,15 @@ import "package:firebase_storage/firebase_storage.dart";
 import "dart:io";
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
+import 'package:local_market/controller/user_controller.dart';
 
 class Utils {
   final FirebaseStorage _fireabseStorage = FirebaseStorage.instance;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final UserController _userController = new UserController();
   final Map<String, Color> colors = {
     "appBar" : Colors.white,
     "theme" : Color(0xffDF1827),
-    "appBarText" : Colors.grey,
+    "appBarText" : Colors.grey.shade700,
     "appBarIcons" : Colors.grey.shade700,
     "icons" : Colors.grey.shade700,
     "textFieldBackground" : Colors.white,
@@ -37,7 +38,7 @@ class Utils {
   }
 
   Future<bool> isLoggedIn() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+    FirebaseUser user = await _userController.getCurrentUser();
     if(user == null){
       return false;
     }else{

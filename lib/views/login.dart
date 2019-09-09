@@ -46,30 +46,15 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
-                        child: SvgPicture.asset('assets/svg/logo.svg',
-                          color: _utils.colors['theme'],
-                          width: 150,
+                        child: Transform.rotate(
+                          angle: - 3.14 / 10,
+                          child: SvgPicture.asset('assets/svg/logo.svg',
+                            color: _utils.colors['theme'],
+                            width: 150,
+                          ),
                         ),
-                        // child: Image.asset(
-                        //   'assets/illustrations/login.png',
-                        //   width: 150,
-                        // ),
                       ),
                     ),
-
-                    // Padding(
-                    //   padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
-                    //   child: Text(
-                    //     "Welcome back!",
-                    //     textAlign: TextAlign.center,
-                    //     style: TextStyle(
-                    //       color: Colors.grey.shade700,
-                    //       fontSize: 30,
-                    //       fontWeight: FontWeight.bold,
-                    //     ),
-                    //   )
-                    // ),
-
 
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),

@@ -50,10 +50,13 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
-                        child: SvgPicture.asset(
-                          'assets/svg/logo.svg',
-                          color: _utils.colors['theme'],
-                          width: 150,
+                        child: Transform.rotate(
+                          angle: - 3.14 / 10,
+                          child: SvgPicture.asset(
+                            'assets/svg/logo.svg',
+                            color: _utils.colors['theme'],
+                            width: 150,
+                          ),
                         ),
                       ),
                     ),
