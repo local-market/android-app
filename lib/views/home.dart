@@ -12,6 +12,7 @@ import "package:local_market/views/search.dart";
 import 'package:local_market/views/user_profile.dart';
 import 'add_product.dart';
 import "package:carousel_pro/carousel_pro.dart";
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -79,7 +80,7 @@ class _HomeState extends State<Home> {
           //     }),
           new IconButton(
               icon: Icon(
-                Icons.shopping_cart,
+                OMIcons.shoppingCart,
                 color: _utils.colors['appBarIcons'],
               ),
               onPressed: null)
@@ -191,7 +192,7 @@ class _HomeState extends State<Home> {
             onTap: () {},
             child: ListTile(
               title: Text("Home"),
-              leading: Icon(Icons.home, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.home, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -200,7 +201,7 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("My Account"),
-              leading: Icon(Icons.account_circle, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.accountCircle, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -209,7 +210,7 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("My Products"),
-              leading: Icon(Icons.shopping_cart, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.shoppingCart, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
@@ -218,14 +219,14 @@ class _HomeState extends State<Home> {
             },
             child: ListTile(
               title: Text("Add Product"),
-              leading: Icon(Icons.add_shopping_cart, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.addShoppingCart, color: _utils.colors['drawerIcons']),
             ),
           ),
           InkWell(
             onTap: () {},
             child: ListTile(
               title: Text("Favourites"),
-              leading: Icon(Icons.favorite_border, color: _utils.colors['drawerIcons']),
+              leading: Icon(OMIcons.favoriteBorder, color: _utils.colors['drawerIcons']),
             ),
           ),
           Divider(),
@@ -233,7 +234,7 @@ class _HomeState extends State<Home> {
             onTap: () {},
             child: ListTile(
               title: Text("Settings"),
-              leading: Icon(Icons.settings,
+              leading: Icon(OMIcons.settings,
                 color: _utils.colors['drawerIcons'],
               ),
             ),
@@ -243,7 +244,7 @@ class _HomeState extends State<Home> {
             child: ListTile(
               title: Text("Help"),
               leading: Icon(
-                Icons.help,
+                OMIcons.helpOutline,
                 color: _utils.colors['drawerIcons'],
               ),
             ),
@@ -256,7 +257,7 @@ class _HomeState extends State<Home> {
             child: ListTile(
               title: Text("Logout"),
               leading: Icon(
-                Icons.warning,
+                OMIcons.arrowBack,
                 color: _utils.colors['drawerIcons'],
               ),
             ),

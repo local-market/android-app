@@ -6,6 +6,7 @@ import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/signup.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:local_market/views/home.dart";
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -65,7 +66,7 @@ class _LoginState extends State<Login> {
                               autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Email",
-                                  icon: Icon(Icons.alternate_email),
+                                  icon: Icon(OMIcons.alternateEmail),
                                   // border: InputBorder.none
                                 ),
                               keyboardType: TextInputType.emailAddress,
@@ -103,8 +104,8 @@ class _LoginState extends State<Login> {
                               autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Password",
-                                  icon: Icon(Icons.lock_outline),
-                                    suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
+                                  icon: Icon(OMIcons.lock),
+                                    suffixIcon: IconButton(icon: Icon(OMIcons.removeRedEye), onPressed: (){
                                       setState(() {
                                         hidePassword = !hidePassword;
                                       });

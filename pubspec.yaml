@@ -35,7 +35,9 @@ dependencies:
   uuid: ^2.0.2
   flutter_spinkit: ^3.1.0
   pin_input_text_field: ^2.0.0
-  floating_search_bar: ^0.2.0
+  flutter_launcher_icons: ^0.7.3
+  flutter_svg: ^0.12.0
+  outline_material_icons: ^0.1.0
 #  firebase_firestore: ^0.12.7+1
 
 dev_dependencies:

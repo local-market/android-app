@@ -11,6 +11,7 @@ import 'package:local_market/components/page.dart';
 import "package:local_market/controller/product_controller.dart";
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 import 'login.dart';
 
@@ -186,7 +187,7 @@ class _AddProductState extends State<AddProduct> {
     if(_productImage == null){
       return Padding(
         padding: const EdgeInsets.fromLTRB(14, 80, 14, 80),
-        child: Icon(Icons.add_a_photo, color: _utils.colors['icons']),
+        child: Icon(OMIcons.addAPhoto, color: _utils.colors['icons']),
       );
     }else{
       return Padding(

@@ -7,6 +7,7 @@ import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/home.dart';
 import 'package:local_market/views/otp.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class PhoneVerification extends StatefulWidget {
   @override
@@ -92,7 +93,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             autofocus: false,
                             decoration: InputDecoration(
                                 hintText: "Phone Number",
-                                icon: Icon(Icons.phone),
+                                icon: Icon(OMIcons.phone),
                                 // border: InputBorder.none
                               ),
                             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
@@ -159,7 +160,13 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         setState(() {
           _loading = false;
         });
-        print("Phone Verification Page1: " + res['data']);
+        if(res['data'].code == "ERROR_CREDENTIAL_ALREADY_IN_USE"){
+          setState(() {
+            error = "This phone is already registered";
+            Fluttertoast.showToast(msg: error);
+          });
+        }
+        print("Phone Verification Page1: " + res['data'].toString());
       }else{
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
       }

@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class UserProfile extends StatefulWidget {
   @override
@@ -57,7 +58,7 @@ class _UserProfileState extends State<UserProfile> {
                 decoration: InputDecoration(
                     hintText: "User Name",
                     border: InputBorder.none,
-                    prefixIcon: Icon(Icons.person)),
+                    prefixIcon: Icon(OMIcons.person)),
                 controller: _userNameController,
               ),
             ),
@@ -69,7 +70,7 @@ class _UserProfileState extends State<UserProfile> {
                 decoration: InputDecoration(
                     hintText: "Phone Number",
                     border: InputBorder.none,
-                    prefixIcon: Icon(Icons.phone)),
+                    prefixIcon: Icon(OMIcons.phone)),
                 controller: _userPhoneNumberController,
               ),
             ),
@@ -81,7 +82,7 @@ class _UserProfileState extends State<UserProfile> {
                 decoration: InputDecoration(
                     hintText: "Address",
                     border: InputBorder.none,
-                    prefixIcon: Icon(Icons.location_city)),
+                    prefixIcon: Icon(OMIcons.myLocation)),
                 controller: _userAddressController,
               ),
             ),
