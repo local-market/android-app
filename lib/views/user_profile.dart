@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -156,7 +157,7 @@ class _UserProfileState extends State<UserProfile> {
                             backgroundColor: _utils.colors['theme'],
                             label: InkWell(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => PhoneVerification()));
+                                Navigator.push(context, CupertinoPageRoute(builder: (context) => PhoneVerification()));
                               },
                               child: Text(
                                 "Change",
@@ -228,8 +229,24 @@ class _UserProfileState extends State<UserProfile> {
 
   void check() async {
     if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
     }
+  }
+
+  Future<void> update() async {
+    await _userController.update(_userId, {
+      "username" : _fullNameTextController.text,
+      "email" : _emailTextController.text,
+      "address" : _addressTextController.text
+    }).then((value){
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => UserProfile()));
+      Fluttertoast.showToast(msg: "Profile updated");
+    }).catchError((e){
+      setState(() {
+        _loading = false;
+      });
+      print("User Profile1: " + e.toString());
+    });
   }
 
   Future<void> validateAndUpdate() async {
@@ -239,22 +256,24 @@ class _UserProfileState extends State<UserProfile> {
       setState(() {
         _loading = true;
       });
-      _userController.update(_userId, {
-        "username" : _fullNameTextController.text,
-        "email" : _emailTextController.text,
-        "address" : _addressTextController.text
-      }).then((value){
-        setState(() {
-          _loading = false;
+      FirebaseUser _currentUser = await _userController.getCurrentUser();
+      if(_currentUser.email.toString() == _emailTextController.text){
+        await update();
+      }else{
+        await _currentUser.updateEmail(_emailTextController.text).then((value){
+          update();
+        }).catchError((e){
+          setState(() {
+            _loading = false;
+          });
+          if(e.code == 'ERROR_EMAIL_ALREADY_IN_USE'){
+            Fluttertoast.showToast(msg: "This email is already registered");
+          }else if(e.code == 'ERROR_REQUIRES_RECENT_LOGIN'){
+            Fluttertoast.showToast(msg: "Relogin and try again");
+          }
+          print("User Profile2: " + e.toString());
         });
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UserProfile()));
-        Fluttertoast.showToast(msg: "Profile updated");
-      }).catchError((e){
-        setState((){
-          _loading = false;
-        });
-        print(e.toString());
-      });
+      }
     }
   }
 }

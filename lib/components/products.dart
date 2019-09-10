@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/page.dart';
 
@@ -87,7 +88,7 @@ class Single_prod extends StatelessWidget {
           child: Material(
             child: InkWell(
               onTap: () => Navigator.of(context).push(
-            new MaterialPageRoute(builder: (context) => new ProductDetails(
+            new CupertinoPageRoute(builder: (context) => new ProductDetails(
               prod_name: prod_name,
               prod_pricture: prod_pricture,
               prod_old_price: prod_old_price,

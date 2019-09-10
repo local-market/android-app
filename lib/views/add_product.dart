@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -137,7 +138,7 @@ class _AddProductState extends State<AddProduct> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
-                  // borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(20.0),
                   color: _utils.colors['theme'],
                   // elevation: _utils.elevation,
                   child: _loading ? CircularLoadingButton() : MaterialButton(
@@ -172,7 +173,7 @@ class _AddProductState extends State<AddProduct> {
 
   void check() async {
     if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
     }
   }
 
@@ -220,7 +221,7 @@ class _AddProductState extends State<AddProduct> {
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddProduct()));
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => AddProduct()));
         }).catchError((e){
           print(e.toString());
         });

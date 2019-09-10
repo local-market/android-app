@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import "package:flutter/gestures.dart";
 import 'package:flutter_svg/svg.dart';
@@ -180,7 +181,7 @@ class _LoginState extends State<Login> {
                               TextSpan(
                                 text: "sign up!",
                                 recognizer: TapGestureRecognizer()..onTap = (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Signup()));
+                                  Navigator.push(context, CupertinoPageRoute(builder: (context) => Signup()));
                                 },
                                 style: TextStyle(color: _utils.colors['theme']),
                               )
@@ -236,7 +237,7 @@ class _LoginState extends State<Login> {
               setState(() {
                 _loading = false;
               });
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
             }
       }).catchError((e){
         setState(() {
@@ -265,7 +266,7 @@ class _LoginState extends State<Login> {
 
   void check() async {
     if((await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
     }
   }
 }

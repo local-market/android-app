@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/horizontal_slide.dart';
@@ -33,7 +34,6 @@ class _HomeState extends State<Home> {
       items: [
         'assets/img/c1.jpg',
         'assets/img/m1.jpeg',
-        'assets/img/m2.jpg',
         'assets/img/w1.jpeg',
         'assets/img/w3.jpeg',
         'assets/img/w4.jpeg',
@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
         elevation: 8,
         title: InkWell(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
           },
           child: Text("Search for products",
             style: TextStyle(
@@ -125,35 +125,6 @@ class _HomeState extends State<Home> {
       ],
       drawer: getDrawer(),
     );
-
-    //   body: Text("Hello")
-
-    //   // body: new ListView(
-    //   //   children: <Widget>[
-    //   //     getCarousel(),
-
-    //   //     // padding
-    //   //     new Padding(
-    //   //       padding: const EdgeInsets.all(8.0),
-    //   //       child: Text("Products"),
-    //   //     ),
-
-    //   //     // horizintal list view
-    //   //     HorizontalList(),
-
-    //   //     // padding
-    //   //     new Padding(
-    //   //       padding: const EdgeInsets.all(16.0),
-    //   //       child: Text("New"),
-    //   //     ),
-
-    //   //     new Container(
-    //   //       height: 300.0,
-    //   //       child: Products(),
-    //   //     )
-    //   //   ],
-    //   // ),
-    // );
   }
 
   @override
@@ -169,7 +140,7 @@ class _HomeState extends State<Home> {
 
   void check() async {
     if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
+      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
     }
   }
 
@@ -218,7 +189,7 @@ class _HomeState extends State<Home> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => UserProfile()));
             },
             child: ListTile(
               title: Text("My Account"),
@@ -227,7 +198,7 @@ class _HomeState extends State<Home> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyProducts()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => MyProducts()));
             },
             child: ListTile(
               title: Text("My Products"),
@@ -236,7 +207,7 @@ class _HomeState extends State<Home> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduct()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => AddProduct()));
             },
             child: ListTile(
               title: Text("Add Product"),
@@ -273,7 +244,7 @@ class _HomeState extends State<Home> {
           InkWell(
             onTap: () {
               userController.logout();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
             },
             child: ListTile(
               title: Text("Logout"),

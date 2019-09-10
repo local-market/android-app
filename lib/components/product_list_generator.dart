@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/utils/utils.dart';
@@ -36,7 +37,7 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
           padding: const EdgeInsets.all(8),
           child: ListTile(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(_products[index])));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductView(_products[index])));
             },
             leading: Image.network(_products[index]['image'], width: 50,),
             title: Text(_products[index]['name'].length > 30 ? _products[index]['name'].substring(0, 30) + '...' : _products[index]['name']),
@@ -56,7 +57,7 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
     // print(productId +" : "+ productName +" : "+ productImageUrl);
     return IconButton(
       onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProduct(productId, productName, productImageUrl)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => UpdateProduct(productId, productName, productImageUrl)));
       },
       icon: Icon(OMIcons.edit,
       color: Utils().colors['icons'],),

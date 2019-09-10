@@ -7,6 +7,7 @@ import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/add_vendor_to_product.dart';
 import 'package:local_market/views/search.dart';
 
 // image row and its properties
@@ -23,7 +24,9 @@ class image extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
       child: Center(
-        child: Image.network(_product['image'], width:200)
+        child: Image.network(_product['image'],
+          fit: BoxFit.cover,
+        )
       ),
     );
     //return Container(
@@ -97,41 +100,22 @@ List<List<String>> getShop() {
 //   return listview;
 // }
 
-Widget listTileItem(item, price) {
-  return Row(
-    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Expanded(
-        child: Center(
-          child: Text(
-            item,
-            style: TextStyle(fontSize: 20, 
-            // color: Colors.lightGreenAccent
-            ),
-          ),
-        ),
+Widget listTileItem(item, price, address) {
+  return ListTile(
+    title: Text(
+      item,
+      style: TextStyle(fontSize: 20,)
+    ),
+    subtitle: Text(
+      address
+    ),
+    trailing: Text(
+      '₹ ' + price,
+      style: TextStyle(fontSize: 20, 
+        color: Colors.red.shade500,
+        fontWeight: FontWeight.bold
       ),
-      // Expanded(
-      //   child: Center(
-      //     child: Text(
-      //       distance,
-      //       style: TextStyle(fontSize: 20, 
-      //       // color: Colors.lightGreenAccent
-      //       ),
-      //     ),
-      //   ),
-      // ),
-      Expanded(
-        child: Center(
-          child: Text(
-            price,
-            style: TextStyle(fontSize: 20, 
-            // color: Colors.lightGreenAccent
-            ),
-          ),
-        ),
-      ),
-    ],
+    ),
   );
 }
 
@@ -217,6 +201,7 @@ class _ProductViewState extends State<ProductView> {
     super.initState();
     _productController.getVendors(_product['id']).then((value){
       setState(() {
+        _product['price'] = value[0]['price'];
         this._vendors = value;
         _loading = false;
         // print("vendors details : " + value.toString());
@@ -247,52 +232,114 @@ class _ProductViewState extends State<ProductView> {
               color: _utils.colors['appBarIcons']
             ),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
             },
           )
         ],
       ),
       children: <Widget>[
-        _loading ? PageList(
+        PageList(
           children: <Widget>[
-            ListTile(
-              title:image(_product),
-
+            Container(
+              width: double.infinity,
+              height: 300,
+              child: image(_product), 
             ),
-            Center(
-              child: SpinKitCircle(color: _utils.colors['loading']),
-            )
-          ],
-        ) : PageList.separated(
-        // shrinkWrap: true,
-        itemCount: _vendors.length + 2,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return ListTile(
-              title:image(_product),
-            );
-          }else if(index == 1){
-            return ListTile(
+            // Divider(),
+            ListTile(
+              title: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    color: Colors.black
+                  ),
+                  children: [
+                    TextSpan(
+                      text: _product['price'] != null ? '₹ ' + _product['price'] : '',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40
+                      )
+                    ),
+                    // TextSpan(
+                    //   text: "   Incl. of all taxes",
+                    // )
+                  ]
+                ),
+              ),
+            ),
+            ListTile(
               title: Text(_product['name'],
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20
+                  fontSize: 18
                 ),
-              )
-            );
-          }
-          else {
+              ),
+            ),
+            Divider(),
+            ListTile(
+              title: Text(
+                "Available Sellers",
+                style: TextStyle(
+                  color: _utils.colors['theme']
+                ),
+              ),
+            ),
+          ],
+        ),
+        _loading ? PageItem(
+          child:Center(
+            child: SpinKitCircle(color: _utils.colors['loading']),
+          )
+        ) : PageList.separated(
+        // shrinkWrap: true,
+        itemCount: _vendors.length,
+        itemBuilder: (context, index) {
+          // if (index == 0) {
+          //   return ListTile(
+          //     title:image(_product),
+          //   );
+          // }else if(index == 1){
+          //   return ListTile(
+          //     title: Text(_product['name'],
+          //       style: TextStyle(
+          //         fontSize: 18
+          //       ),
+          //     )
+          //   );
+          // } else if(index == 2){
+          //   return Card(
+          //     elevation: 0,
+          //     child: Container(
+          //       height: 50,
+          //       child: Center(
+          //         child: ListTile(
+          //           title: Text("Want to add yourself to the list?"),
+          //           trailing: InkWell(
+          //             onTap: (){
+          //               Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'])));
+          //             },
+          //             child: Chip(
+          //               backgroundColor: _utils.colors['theme'],
+          //               label: Text("Add",
+          //                 style: TextStyle(
+          //                   color:_utils.colors['buttonText'],
+          //                   fontWeight: FontWeight.bold
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   );
+          // }
+          // else {
             print('product view loading: ' + _loading.toString());
             if(_loading){
               return Center(child: SpinKitCircle(color: _utils.colors['loading']));
             }else{
-              return ListTile(
-                title: decorate(
-                  listTileItem(_vendors[index - 2]['name'],_vendors[index - 2]['price']),
-                ),
-              );
+              return listTileItem(_vendors[index]['name'],_vendors[index]['price'], _vendors[index]['address']);
             }
-          }
+          // }
         },
       separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
         ),

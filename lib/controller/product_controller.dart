@@ -90,6 +90,7 @@ class ProductController {
         "price" : doc.data['price'],
         "inStock" : doc.data['inStock'],
         "name" : vendor.data['username'],
+        "address" : vendor.data['address'],
         "id" : doc.data['id']
       });
     }

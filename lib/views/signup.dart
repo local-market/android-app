@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -271,7 +272,7 @@ class _SignupState extends State<Signup> {
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PhoneVerification()));
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => PhoneVerification()));
         }).catchError((e){
           setState((){
             _loading = false;
