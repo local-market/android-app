@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,6 +38,14 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
@@ -157,7 +166,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   Future<void> verifyPhone() async {
     final PhoneCodeAutoRetrievalTimeout autoRetrievalTimeout = (String verId) async {
       this.verificationId = verId;
-      dynamic res = await Navigator.push(context, MaterialPageRoute(builder: (context) => OTP(this.verificationId, "+${_phoneTextController.text}")));
+      dynamic res = await Navigator.push(context, CupertinoPageRoute(builder: (context) => OTP(this.verificationId, "+${_phoneTextController.text}")));
 
       if(res['error']){
         setState(() {
@@ -171,7 +180,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         }
         print("Phone Verification Page1: " + res['data'].toString());
       }else{
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+        Navigator.pop(context);
+        Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
       }
     };
 
@@ -186,7 +196,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
           _userController.update(currentUser.uid.toString(),{
             "phone" : _phoneTextController.text
           }).then((value){
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+            Navigator.pop(context);
+            Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
           }).catchError((e){
             throw e;
           });

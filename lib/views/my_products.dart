@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
@@ -7,8 +7,6 @@ import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product_list_generator.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
-
-import 'login.dart';
 
 class MyProducts extends StatefulWidget {
   @override
@@ -24,7 +22,7 @@ class _MyProductsState extends State<MyProducts> {
   @override
   void initState(){
     super.initState();
-    check();
+    // check();
     fillProducts();
   }
 
@@ -65,9 +63,9 @@ class _MyProductsState extends State<MyProducts> {
     );
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   if(!(await _utils.isLoggedIn())){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/horizontal_slide.dart';
@@ -33,7 +34,6 @@ class _HomeState extends State<Home> {
       items: [
         'assets/img/c1.jpg',
         'assets/img/m1.jpeg',
-        'assets/img/m2.jpg',
         'assets/img/w1.jpeg',
         'assets/img/w3.jpeg',
         'assets/img/w4.jpeg',
@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
         elevation: 8,
         title: InkWell(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
           },
           child: Text("Search for products",
             style: TextStyle(
@@ -125,41 +125,11 @@ class _HomeState extends State<Home> {
       ],
       drawer: getDrawer(),
     );
-
-    //   body: Text("Hello")
-
-    //   // body: new ListView(
-    //   //   children: <Widget>[
-    //   //     getCarousel(),
-
-    //   //     // padding
-    //   //     new Padding(
-    //   //       padding: const EdgeInsets.all(8.0),
-    //   //       child: Text("Products"),
-    //   //     ),
-
-    //   //     // horizintal list view
-    //   //     HorizontalList(),
-
-    //   //     // padding
-    //   //     new Padding(
-    //   //       padding: const EdgeInsets.all(16.0),
-    //   //       child: Text("New"),
-    //   //     ),
-
-    //   //     new Container(
-    //   //       height: 300.0,
-    //   //       child: Products(),
-    //   //     )
-    //   //   ],
-    //   // ),
-    // );
   }
 
   @override
   void initState() {
     super.initState();
-    check();
     _userController.getCurrentUserDetails().then((user){
       setState(() {
         _user = user;
@@ -167,123 +137,145 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
-
   Widget getDrawer(){
-    return Drawer(
-      child: new ListView(
-        children: <Widget>[
-          // ListTile(
-          //   title: Text(_utils.appName,
-          //     style: TextStyle(
-          //       color: _utils.colors['theme'],
-          //       fontSize: 20,
-          //     ),
-          //   ),
-          // ),
-          // Divider(),
-          new UserAccountsDrawerHeader(
-            accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
-            accountEmail: Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
-            currentAccountPicture: GestureDetector(
-              child: new CircleAvatar(
-                backgroundColor: _utils.colors['theme'],
-                child: Text( _user != null ? _user.data['username'][0] : "G",
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: _utils.colors['buttonText']
-                  ),
-                ),
-                // backgroundImage: NetworkImage(
-                //     'https://avatars1.githubusercontent.com/u/28962789'),
+
+    List<Widget> children = new List<Widget>();
+
+    children.add(
+      UserAccountsDrawerHeader(
+        accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+        accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
+          onTap: (){
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login()));
+          },
+          child: Text("Login/Signup",
+          style: TextStyle(color:_utils.colors['theme']),),
+        ),
+        currentAccountPicture: GestureDetector(
+          child: new CircleAvatar(
+            backgroundColor: _utils.colors['theme'],
+            child: Text( _user != null ? _user.data['username'][0] : "G",
+              style: TextStyle(
+                fontSize: 25,
+                color: _utils.colors['buttonText']
               ),
             ),
-            decoration: BoxDecoration(
-              color: _utils.colors['drawerHeader'],
-            ),
+            // backgroundImage: NetworkImage(
+            //     'https://avatars1.githubusercontent.com/u/28962789'),
           ),
-          Divider(),
+        ),
+        decoration: BoxDecoration(
+          color: _utils.colors['drawerHeader'],
+        ),
+      )
+    );
+
+    children.add(Divider());
+    children.add(
+      InkWell(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: ListTile(
+          title: Text("Home"),
+          leading: Icon(OMIcons.home, color: _utils.colors['drawerIcons']),
+        ),
+      )
+    );
+
+    if(_user != null){
+      children.add(
+        InkWell(
+          onTap: () {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => UserProfile()));
+          },
+          child: ListTile(
+            title: Text("My Account"),
+            leading: Icon(OMIcons.accountCircle, color: _utils.colors['drawerIcons']),
+          ),
+        )
+      );
+
+      if(_user.data['vendor'] == 'true'){
+
+        children.add(
           InkWell(
             onTap: () {
-              Navigator.pop(context);
-            },
-            child: ListTile(
-              title: Text("Home"),
-              leading: Icon(OMIcons.home, color: _utils.colors['drawerIcons']),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => UserProfile()));
-            },
-            child: ListTile(
-              title: Text("My Account"),
-              leading: Icon(OMIcons.accountCircle, color: _utils.colors['drawerIcons']),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyProducts()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => MyProducts()));
             },
             child: ListTile(
               title: Text("My Products"),
               leading: Icon(OMIcons.shoppingCart, color: _utils.colors['drawerIcons']),
             ),
-          ),
+          )
+        );
+
+        children.add(
           InkWell(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduct()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => AddProduct()));
             },
             child: ListTile(
               title: Text("Add Product"),
               leading: Icon(OMIcons.addShoppingCart, color: _utils.colors['drawerIcons']),
             ),
+          )
+        );
+
+      }
+    }
+
+    children.add(
+      Divider()
+    );
+
+    children.add(
+      InkWell(
+        onTap: () {},
+        child: ListTile(
+          title: Text("Settings"),
+          leading: Icon(OMIcons.settings,
+            color: _utils.colors['drawerIcons'],
           ),
-          // InkWell(
-          //   onTap: () {},
-          //   child: ListTile(
-          //     title: Text("Favourites"),
-          //     leading: Icon(OMIcons.favoriteBorder, color: _utils.colors['drawerIcons']),
-          //   ),
-          // ),
-          Divider(),
-          InkWell(
-            onTap: () {},
-            child: ListTile(
-              title: Text("Settings"),
-              leading: Icon(OMIcons.settings,
-                color: _utils.colors['drawerIcons'],
-              ),
+        ),
+      )
+    );
+
+    children.add(
+      InkWell(
+        onTap: () {},
+        child: ListTile(
+          title: Text("Help"),
+          leading: Icon(OMIcons.helpOutline,
+            color: _utils.colors['drawerIcons'],
+          ),
+        ),
+      )
+    );
+
+    if(_user != null){
+      children.add(
+        InkWell(
+          onTap: () {
+            userController.logout();
+            setState(() {
+              _user = null;
+            });
+          },
+          child: ListTile(
+            title: Text("Logout"),
+            leading: Icon(
+              OMIcons.arrowBack,
+              color: _utils.colors['drawerIcons'],
             ),
           ),
-          InkWell(
-            onTap: () {},
-            child: ListTile(
-              title: Text("Help"),
-              leading: Icon(
-                OMIcons.helpOutline,
-                color: _utils.colors['drawerIcons'],
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              userController.logout();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
-            },
-            child: ListTile(
-              title: Text("Logout"),
-              leading: Icon(
-                OMIcons.arrowBack,
-                color: _utils.colors['drawerIcons'],
-              ),
-            ),
-          ),
-        ],
+        )
+      );
+    }
+
+    return Drawer(
+      child: new ListView(
+        children: children
       ),
     );
   }

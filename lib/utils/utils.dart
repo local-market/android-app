@@ -25,6 +25,7 @@ class Utils {
     "drawerHeader" : Colors.white,
     "drawerHeaderText" : Color(0xffDF1827)
   };
+
   final String appName = "My Store";
   final double elevation = 2.0;
 

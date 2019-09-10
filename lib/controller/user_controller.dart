@@ -28,6 +28,7 @@ class UserController {
   }
 
   Future<DocumentSnapshot> getUser(String uid) async{
+    print("User Controller1: " + uid.toString());
     DocumentSnapshot user = await _firestore.collection(ref).document(uid).get();
     return user;
   }

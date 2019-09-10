@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
@@ -13,57 +12,30 @@ import 'package:local_market/utils/utils.dart';
 
 import 'login.dart';
 
-class UpdateProduct extends StatefulWidget {
-  String _id, _name, _imageUrl;
+class AddVendorToProduct extends StatefulWidget {
 
-  UpdateProduct(String id, String name, String imageUrl){
-    this._id = id;
-    this._name = name;
-    this._imageUrl = imageUrl;
-  }
+  String _productId;
+  String _productImageUrl;
+  String _productName;
+
+  AddVendorToProduct(this._productId, this._productImageUrl, this._productName);
 
   @override
-  _UpdateProductState createState() => _UpdateProductState(this._id, this._name, this._imageUrl);
+  _AddVendorToProductState createState() => _AddVendorToProductState(this._productId, this._productImageUrl, this._productName);
 }
 
-class _UpdateProductState extends State<UpdateProduct> {
-  String _productId;
+class _AddVendorToProductState extends State<AddVendorToProduct> {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  TextEditingController _productPriceController = new TextEditingController();
-  final ProductController _productController = new ProductController();
-  final UserController _userController = new UserController();
   final Utils _utils = new Utils();
-  String _productImageUrl, _productName;
+  final UserController _userController = new UserController();
+  final ProductController _productController = new ProductController();
+  TextEditingController _productPriceController = new TextEditingController();
+  String _productId, _productImageUrl, _productName;
   bool inStock = true;
-  bool _pageLoading = true;
+  bool _pageLoading = false;
   bool _buttonLoading = false;
-
-  _UpdateProductState(String id, String name, String imageUrl){
-    this._productId = id;
-    this._productName = name;
-    this._productImageUrl = imageUrl;
-  }
-
-  @override
-  void initState(){
-    super.initState();
-    // check();
-    _userController.getCurrentUser().then((user){
-      _productController.getPrice(_productId, user.uid.toString()).then((product){
-        setState(() {
-          _productPriceController.text = product.data['price'];
-          if(product.data['inStock'] == "true"){
-            print(product.data['inStock']);
-            inStock = true;
-          }else{
-            print(product.data['inStock']);
-            inStock = false;
-          }
-          _pageLoading = false;
-        });
-      });
-    });
-  }
+  
+  _AddVendorToProductState(this._productId, this._productImageUrl, this._productName);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +48,7 @@ class _UpdateProductState extends State<UpdateProduct> {
           color: _utils.colors['appBarIcons']
         ),
         title: Text(
-          "Update Product",
+          "Add Yourself",
           style: TextStyle(
             color: _utils.colors['appBarText']
           ),
@@ -157,11 +129,11 @@ class _UpdateProductState extends State<UpdateProduct> {
                   // elevation: _utils.elevation,
                   child: _buttonLoading ? CircularLoadingButton() : MaterialButton(
                     onPressed: () {
-                      validateAndUpdate();
+                      validateAndAdd();
                     },
                     minWidth: MediaQuery.of(context).size.width,
                     child: Text(
-                      "Update Product",
+                      "Add",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: _utils.colors['buttonText'],
@@ -178,38 +150,39 @@ class _UpdateProductState extends State<UpdateProduct> {
       ],
     );
   }
-  
-  // void check() async {
-  //   if(!(await _utils.isLoggedIn())){
-  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
-  //   }
-  // }
 
-  Future<void> validateAndUpdate() async {
-    // check();
+  Future<void> validateAndAdd() async {
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       setState(() {
         _buttonLoading = true;
       });
-      FirebaseUser user = await _userController.getCurrentUser();
-      _productController.updatePrice(_productId, user.uid.toString(), {
-        "id" : user.uid.toString(),
+      FirebaseUser _currentUser = await _userController.getCurrentUser();
+      await _productController.updatePrice(_productId, _currentUser.uid.toString(), {
+        "id" : _currentUser.uid.toString(),
         "price" : _productPriceController.text,
-        "inStock" : inStock.toString(),
+        "inStock" : inStock.toString()
       }).then((value){
-        _formState.reset();
-        Fluttertoast.showToast(msg: "Product updated");
-        setState(() {
-          _buttonLoading = false;
-        });
         Navigator.pop(context);
       }).catchError((e){
-        setState(() {
-          _buttonLoading = false;
+        setState((){
+          _buttonLoading =false;
         });
-        print(e.toString());
+        print("Add Vendor To Product: " + e.toString());
       });
     }
   }
+  
+  @override
+  void initState() {
+    super.initState();
+    // check();
+  }
+
+  // void check() async {
+  //   DocumentSnapshot _user = await UserController().getCurrentUserDetails();
+  //   if((_user == null) || (_user != null && _user['vendor'] == 'false')){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 }

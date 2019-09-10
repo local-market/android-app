@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -137,7 +138,7 @@ class _AddProductState extends State<AddProduct> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
-                  // borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(20.0),
                   color: _utils.colors['theme'],
                   // elevation: _utils.elevation,
                   child: _loading ? CircularLoadingButton() : MaterialButton(
@@ -167,14 +168,15 @@ class _AddProductState extends State<AddProduct> {
   @override
   void initState() {
     super.initState();
-    check();
+    // check();
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   DocumentSnapshot _user = await UserController().getCurrentUserDetails();
+  //   if((_user == null) || (_user != null && _user['vendor'] == 'false')){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 
   void _selectImage(Future<File> pickImage) async {
     File temp = await pickImage;
@@ -198,7 +200,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void validateAndUpload() async {
-    check();
+    // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       if(_productImage != null){
@@ -220,7 +222,7 @@ class _AddProductState extends State<AddProduct> {
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddProduct()));
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => AddProduct()));
         }).catchError((e){
           print(e.toString());
         });

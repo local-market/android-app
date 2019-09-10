@@ -49,6 +49,14 @@ class _OTPState extends State<OTP> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[

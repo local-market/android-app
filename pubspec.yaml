@@ -66,12 +66,9 @@ flutter:
     - assets/img/logo.png
     - assets/img/c1.jpg
     - assets/img/m1.jpeg
-    - assets/img/m2.jpg
     - assets/img/w1.jpeg
     - assets/img/w3.jpeg
     - assets/img/w4.jpeg
-
-    - assets/img/profile.jpg
 
     - assets/cats/accessories.png
     - assets/cats/dress.png

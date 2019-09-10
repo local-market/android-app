@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -7,11 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
-import 'package:local_market/views/otp.dart';
 import 'package:local_market/views/phone_verification.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-
-import 'home.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -34,6 +32,14 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
@@ -271,7 +277,7 @@ class _SignupState extends State<Signup> {
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PhoneVerification()));
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => PhoneVerification()));
         }).catchError((e){
           setState((){
             _loading = false;
