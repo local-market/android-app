@@ -168,14 +168,15 @@ class _AddProductState extends State<AddProduct> {
   @override
   void initState() {
     super.initState();
-    check();
+    // check();
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   DocumentSnapshot _user = await UserController().getCurrentUserDetails();
+  //   if((_user == null) || (_user != null && _user['vendor'] == 'false')){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 
   void _selectImage(Future<File> pickImage) async {
     File temp = await pickImage;
@@ -199,7 +200,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void validateAndUpload() async {
-    check();
+    // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       if(_productImage != null){

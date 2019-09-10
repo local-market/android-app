@@ -9,7 +9,6 @@ import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
-import 'package:outline_material_icons/outline_material_icons.dart';
 
 import 'login.dart';
 
@@ -177,12 +176,13 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
   @override
   void initState() {
     super.initState();
-    check();
+    // check();
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   DocumentSnapshot _user = await UserController().getCurrentUserDetails();
+  //   if((_user == null) || (_user != null && _user['vendor'] == 'false')){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 }

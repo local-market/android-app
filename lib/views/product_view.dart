@@ -6,6 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/add_vendor_to_product.dart';
 import 'package:local_market/views/search.dart';
@@ -191,6 +192,7 @@ class _ProductViewState extends State<ProductView> {
   final ProductController _productController = new ProductController();
   bool _loading = true;
   final Utils _utils = new Utils();
+  DocumentSnapshot _user;
 
   _ProductViewState(Map<String, String> product){
     this._product = product;
@@ -199,6 +201,13 @@ class _ProductViewState extends State<ProductView> {
   @override
   void initState(){
     super.initState();
+
+    UserController().getCurrentUserDetails().then((user){
+      setState((){
+        this._user = user;
+      });
+    });
+
     _productController.getVendors(_product['id']).then((value){
       setState(() {
         _product['price'] = value[0]['price'];
@@ -274,7 +283,32 @@ class _ProductViewState extends State<ProductView> {
                 ),
               ),
             ),
-            Divider(),
+            (_user != null && _user.data['vendor'] == 'true') ? Card(
+              elevation: 1,
+              borderOnForeground: true,
+              child: Container(
+                height: 50,
+                child: Center(
+                  child: ListTile(
+                    title: Text("Want to add yourself to the list?"),
+                    trailing: InkWell(
+                      onTap: (){
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'])));
+                      },
+                      child: Chip(
+                        backgroundColor: _utils.colors['theme'],
+                        label: Text("Add",
+                          style: TextStyle(
+                            color:_utils.colors['buttonText'],
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ) : Divider(),
             ListTile(
               title: Text(
                 "Available Sellers",
