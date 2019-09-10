@@ -32,7 +32,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void initState() {
     super.initState();
-    check();
+    // check();
     _userController.getCurrentUserDetails().then((userDetails){
       setState(() {
         _pageLoading = false;
@@ -227,11 +227,11 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   if(!(await _utils.isLoggedIn())){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 
   Future<void> update() async {
     await _userController.update(_userId, {
@@ -250,7 +250,7 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Future<void> validateAndUpdate() async {
-    check();
+    // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       setState(() {

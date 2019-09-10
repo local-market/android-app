@@ -146,7 +146,7 @@ class _HomeState extends State<Home> {
         accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
         accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
           onTap: (){
-            Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login()));
           },
           child: Text("Login/Signup",
           style: TextStyle(color:_utils.colors['theme']),),
@@ -184,6 +184,18 @@ class _HomeState extends State<Home> {
     );
 
     if(_user != null){
+      children.add(
+        InkWell(
+          onTap: () {
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => UserProfile()));
+          },
+          child: ListTile(
+            title: Text("My Account"),
+            leading: Icon(OMIcons.accountCircle, color: _utils.colors['drawerIcons']),
+          ),
+        )
+      );
+
       if(_user.data['vendor'] == 'true'){
 
         children.add(
@@ -211,17 +223,6 @@ class _HomeState extends State<Home> {
         );
 
       }
-      children.add(
-        InkWell(
-          onTap: () {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => UserProfile()));
-          },
-          child: ListTile(
-            title: Text("My Account"),
-            leading: Icon(OMIcons.accountCircle, color: _utils.colors['drawerIcons']),
-          ),
-        )
-      );
     }
 
     children.add(

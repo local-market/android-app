@@ -47,7 +47,7 @@ class _UpdateProductState extends State<UpdateProduct> {
   @override
   void initState(){
     super.initState();
-    check();
+    // check();
     _userController.getCurrentUser().then((user){
       _productController.getPrice(_productId, user.uid.toString()).then((product){
         setState(() {
@@ -179,14 +179,14 @@ class _UpdateProductState extends State<UpdateProduct> {
     );
   }
   
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   if(!(await _utils.isLoggedIn())){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 
   Future<void> validateAndUpdate() async {
-    check();
+    // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       setState(() {

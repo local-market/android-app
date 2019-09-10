@@ -8,11 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
-import 'package:local_market/views/otp.dart';
 import 'package:local_market/views/phone_verification.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-
-import 'home.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -35,6 +32,14 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[

@@ -38,6 +38,14 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
@@ -172,6 +180,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         }
         print("Phone Verification Page1: " + res['data'].toString());
       }else{
+        Navigator.pop(context);
         Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
       }
     };
@@ -187,6 +196,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
           _userController.update(currentUser.uid.toString(),{
             "phone" : _phoneTextController.text
           }).then((value){
+            Navigator.pop(context);
             Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
           }).catchError((e){
             throw e;

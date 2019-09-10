@@ -31,6 +31,14 @@ class _LoginState extends State<Login> {
 
 
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
@@ -237,6 +245,7 @@ class _LoginState extends State<Login> {
               setState(() {
                 _loading = false;
               });
+              Navigator.pop(context);
               Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
             }
       }).catchError((e){
