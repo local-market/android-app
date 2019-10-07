@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
+import 'package:local_market/controller/category_controller.dart';
 import "package:local_market/controller/product_controller.dart";
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -28,7 +29,12 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController _productPriceController = new TextEditingController();
   var inStock = true;
   File _productImage = null;
+  List<Map<String, String>> _categories = new List<Map<String, String>> ();
+  List<Map<String, String>> _subCategories = new List<Map<String, String>> ();
+  Map<String, String> _selectedCategory = null;
+  Map<String, String> _selectedSubCategory = null;
   final ProductController _productController = new ProductController();
+  final CategoryController _categoryController = new CategoryController();
   final Utils _utils = new Utils();
   final UserController userController = new UserController();
   bool _loading = false;
@@ -125,6 +131,59 @@ class _AddProductState extends State<AddProduct> {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<Map<String, String>>(
+                      isExpanded: true,
+                      hint: Text("Category"),
+                      items: this._categories.map((Map<String, String> category){
+                        return new DropdownMenuItem<Map<String, String>>(
+                          value: category,
+                          child: Text(category['name'])
+                        );
+                      }).toList(),
+                      onChanged: (value){
+                        _categoryController.getSubCategory(value['id']).then((subCategories){
+                          setState(() {
+                            this._selectedCategory = value;
+                            this._subCategories = subCategories;
+                          });
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<Map<String, String>>(
+                      isExpanded: true,
+                      hint: Text("Sub Category"),
+                      items: this._subCategories.map((Map<String, String> subCategory){
+                        return new DropdownMenuItem<Map<String, String>>(
+                          value: subCategory,
+                          child: Text(subCategory['name'])
+                        );
+                      }).toList(),
+                      onChanged: (value){
+                        setState(() {
+                          this._selectedSubCategory = value;
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
                   Checkbox(value: inStock, onChanged: (value){
@@ -168,6 +227,12 @@ class _AddProductState extends State<AddProduct> {
   @override
   void initState() {
     super.initState();
+    this._categoryController.getAll()
+    .then((categories){
+      setState(() {
+        this._categories = categories;
+      });
+    });
     // check();
   }
 
@@ -203,14 +268,21 @@ class _AddProductState extends State<AddProduct> {
     // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
-      if(_productImage != null){
+      if(_productImage == null){
+        Fluttertoast.showToast(msg:"Image must be selected");
+      }else if(this._selectedCategory == null){
+        Fluttertoast.showToast(msg:"Category must be selected");
+      }else if(this._selectedSubCategory == null){
+        Fluttertoast.showToast(msg:"Sub Category must be selected");
+      }
+      else{
         setState(() {
           _loading = true;
         });
         FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(),{
+        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(), this._selectedSubCategory['id'],{
           "price": _productPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
@@ -226,8 +298,6 @@ class _AddProductState extends State<AddProduct> {
         }).catchError((e){
           print(e.toString());
         });
-      }else{
-        Fluttertoast.showToast(msg:"Image must be selected");
       }
     }
   }

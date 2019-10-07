@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
             // padding
             new Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Products"),
+              child: Text("Categories"),
             ),
 
             // horizintal list view
