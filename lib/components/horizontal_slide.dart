@@ -1,69 +1,74 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-class HorizontalList extends StatelessWidget {
+import 'package:local_market/controller/category_controller.dart';
+import 'package:local_market/views/sub_categories.dart';
+
+class HorizontalList extends StatefulWidget {
+  @override
+  _HorizontalListState createState() => _HorizontalListState();
+}
+
+class _HorizontalListState extends State<HorizontalList> {
+
+  CategoryController _categoryController = new CategoryController();
+  List <Map<String, String>> _categories = null;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoryController.getAll()
+    .then((categories){
+      setState(() {
+        this._categories = categories;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 100.0,
-      child: ListView(
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          // Category(
-          //   img_location: 'images/cats/accessories.png',
-          //   img_caption: 'Assessories',
-          // ),
-          Category(
-            img_location: 'assets/cats/dress.png',
-            img_caption: 'Dress',
-          ),
-          Category(
-            img_location: 'assets/cats/formal.png',
-            img_caption: 'Formal',
-          ),
-          Category(
-            img_location: 'assets/cats/informal.png',
-            img_caption: 'Informal',
-          ),
-          Category(
-            img_location: 'assets/cats/jeans.png',
-            img_caption: 'Jeans',
-          ),
-          Category(
-            img_location: 'assets/cats/shoe.png',
-            img_caption: 'Shoe',
-          ),
-          Category(
-            img_location: 'assets/cats/tshirt.png',
-            img_caption: 'Tshirt',
-          ),
-        ],
-      ),
+        itemCount: this._categories != null ? this._categories.length : 0,
+        itemBuilder: (context, i){
+          return Category(
+            image : 'assets/cats/dress.png',
+            name : this._categories[i]['name'],
+            id : this._categories[i]['id']
+          );
+        },
+      )
     );
   }
 }
 
 class Category extends StatelessWidget {
-  final String img_location;
-  final String img_caption;
+  final String image;
+  final String name;
+  final String id;
 
-  Category({this.img_location, this.img_caption});
+  Category({this.image, this.name, this.id});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: InkWell(
-        onTap: (){},
+        onTap: (){
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => SubCategories(this.id)));
+        },
         child: Container(
           width: 100.0,
           child: ListTile(
               title: Image.asset(
-                img_location,
+                image,
                 width: 100.0,
                 height: 80.0,
               ),
               subtitle: Container(
                 alignment: Alignment.topCenter,
-                child: Text(img_caption),
+                child: Text(name),
               )),
         ),
       ),
