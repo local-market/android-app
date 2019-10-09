@@ -12,7 +12,7 @@ class ProductController {
   final String vendor_ref = "vendors";
   final UserController _userController = new UserController();
 
-  Future<void> add(File productImage, String productName, String userId, Map<String, String> productDetails) async {
+  Future<void> add(File productImage, String productName, String userId, String categoryId, Map<String, String> productDetails) async {
     String productId = Uuid().v1();
     String imageUrl = await Utils().uploadImage(productImage, productId);
     // print("Image Url " + imageUrl);
@@ -21,7 +21,8 @@ class ProductController {
       {
         "id" : productId,
         "name" : productName.toLowerCase(),
-        "image" : imageUrl
+        "image" : imageUrl,
+        "category" : categoryId
       }).then((value){
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
@@ -90,6 +91,7 @@ class ProductController {
         "price" : doc.data['price'],
         "inStock" : doc.data['inStock'],
         "name" : vendor.data['username'],
+        "address" : vendor.data['address'],
         "id" : doc.data['id']
       });
     }
@@ -109,5 +111,14 @@ class ProductController {
     _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).setData(details).catchError((e){
       throw e;
     });
+  }
+
+  Future<List<DocumentSnapshot>> getByCategoryId(String categoryId) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('category').startAt([categoryId]).endAt([categoryId + '\uf8ff']).getDocuments();
+    // print(snapshot.documents.toString());
+    // snapshot.documents.forEach((f){
+    //   print(f.data.toString());
+    // });
+    return snapshot.documents;
   }
 }

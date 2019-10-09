@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 import 'package:local_market/views/update_product.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class ProductListGenerator extends StatefulWidget {
   List<Map<String, String> > _products = new List<Map<String, String> >();
@@ -35,7 +37,7 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
           padding: const EdgeInsets.all(8),
           child: ListTile(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ProductView(_products[index])));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductView(_products[index])));
             },
             leading: Image.network(_products[index]['image'], width: 50,),
             title: Text(_products[index]['name'].length > 30 ? _products[index]['name'].substring(0, 30) + '...' : _products[index]['name']),
@@ -55,9 +57,9 @@ class _ProductListGeneratorState extends State<ProductListGenerator> {
     // print(productId +" : "+ productName +" : "+ productImageUrl);
     return IconButton(
       onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateProduct(productId, productName, productImageUrl)));
+        Navigator.push(context, CupertinoPageRoute(builder: (context) => UpdateProduct(productId, productName, productImageUrl)));
       },
-      icon: Icon(Icons.edit,
+      icon: Icon(OMIcons.edit,
       color: Utils().colors['icons'],),
     );
   }

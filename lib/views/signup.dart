@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
-import 'package:local_market/views/otp.dart';
 import 'package:local_market/views/phone_verification.dart';
-
-import 'home.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -32,6 +32,14 @@ class _SignupState extends State<Signup> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
@@ -48,9 +56,13 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                       child: Container(
                         alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          'assets/illustrations/signup.png',
-                          width: 150,
+                        child: Transform.rotate(
+                          angle: - 3.14 / 10,
+                          child: SvgPicture.asset(
+                            'assets/svg/logo.svg',
+                            color: _utils.colors['theme'],
+                            width: 150,
+                          ),
                         ),
                       ),
                     ),
@@ -69,7 +81,7 @@ class _SignupState extends State<Signup> {
                               autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Full Name",
-                                  icon: Icon(Icons.person_outline),
+                                  icon: Icon(OMIcons.person),
                                   // border: InputBorder.none
                                 ),
                               keyboardType: TextInputType.emailAddress,
@@ -100,7 +112,7 @@ class _SignupState extends State<Signup> {
                               autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Email",
-                                  icon: Icon(Icons.alternate_email),
+                                  icon: Icon(OMIcons.alternateEmail),
                                   // border: InputBorder.none
                                 ),
                               keyboardType: TextInputType.emailAddress,
@@ -139,8 +151,8 @@ class _SignupState extends State<Signup> {
                               autofocus: false,
                               decoration: InputDecoration(
                                   hintText: "Password",
-                                  icon: Icon(Icons.lock_outline),
-                                  suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye), onPressed: (){
+                                  icon: Icon(OMIcons.lock),
+                                  suffixIcon: IconButton(icon: Icon(OMIcons.removeRedEye), onPressed: (){
                                     setState(() {
                                       hidePassword = !hidePassword;
                                     });
@@ -174,7 +186,7 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.fromLTRB(40, 8, 33, 8),
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: _utils.colors['theme'].withOpacity(0.8),
+                        color: _utils.colors['theme'],
                         // elevation: _utils.elevation,
                         child: _loading ? CircularLoadingButton() :  MaterialButton(
                           onPressed: () {
@@ -265,7 +277,7 @@ class _SignupState extends State<Signup> {
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PhoneVerification()));
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => PhoneVerification()));
         }).catchError((e){
           setState((){
             _loading = false;

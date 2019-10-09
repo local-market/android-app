@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -46,7 +47,7 @@ class _UpdateProductState extends State<UpdateProduct> {
   @override
   void initState(){
     super.initState();
-    check();
+    // check();
     _userController.getCurrentUser().then((user){
       _productController.getPrice(_productId, user.uid.toString()).then((product){
         setState(() {
@@ -151,9 +152,9 @@ class _UpdateProductState extends State<UpdateProduct> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
-                  // borderRadius: BorderRadius.circular(20.0),
-                  color: _utils.colors['theme'].withOpacity(0.8),
-                  elevation: _utils.elevation,
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: _utils.colors['theme'],
+                  // elevation: _utils.elevation,
                   child: _buttonLoading ? CircularLoadingButton() : MaterialButton(
                     onPressed: () {
                       validateAndUpdate();
@@ -176,126 +177,16 @@ class _UpdateProductState extends State<UpdateProduct> {
         ),
       ],
     );
-
-    return Scaffold(
-      backgroundColor: _utils.colors['pageBackground'],
-      appBar: AppBar(
-        backgroundColor: _utils.colors['appBar'],
-        iconTheme: IconThemeData(
-          color: _utils.colors['appBarIcons']
-        ),
-        title: Text(
-          "Update Product",
-          style: TextStyle(
-            color: _utils.colors['appBarText']
-          ),
-        ),
-        elevation: _utils.elevation,
-      ),
-      body: Center(
-        child: _pageLoading ? SpinKitCircle(color: _utils.colors['loading']) : Form(
-          key: _formKey,
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
-                child: Center(
-                  child: Image.network(_productImageUrl, width:200)
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
-                child: Material(
-                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                  // elevation: _utils.elevation,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
-                    child: Text(_productName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20
-                      ),
-                    )
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
-                child: Material(
-                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                  elevation: _utils.elevation,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
-                    child: TextFormField(
-                      autofocus: false,
-                      controller: _productPriceController,
-                      inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: "Price",
-                        // border: InputBorder.none
-                      ),
-                      validator: (value){
-                        if(value.isEmpty){
-                          return "This field cannot be empty";
-                        }else{
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-                child: Row(children: <Widget>[
-                  Checkbox(value: inStock, onChanged: (value){
-                    setState(() {
-                      inStock = value;
-                    });
-                  }, checkColor: Colors.white, activeColor: _utils.colors['theme'],),
-                  Text("In Stock")
-                ],)
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
-                child: Material(
-                  // borderRadius: BorderRadius.circular(20.0),
-                  color: _utils.colors['theme'].withOpacity(0.8),
-                  elevation: _utils.elevation,
-                  child: _buttonLoading ? CircularLoadingButton() : MaterialButton(
-                    onPressed: () {
-                      validateAndUpdate();
-                    },
-                    minWidth: MediaQuery.of(context).size.width,
-                    child: Text(
-                      "Update Product",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: _utils.colors['buttonText'],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
   }
   
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   if(!(await _utils.isLoggedIn())){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 
   Future<void> validateAndUpdate() async {
-    check();
+    // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       setState(() {
@@ -314,6 +205,9 @@ class _UpdateProductState extends State<UpdateProduct> {
         });
         Navigator.pop(context);
       }).catchError((e){
+        setState(() {
+          _buttonLoading = false;
+        });
         print(e.toString());
       });
     }

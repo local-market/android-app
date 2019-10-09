@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -36,6 +37,7 @@ class _OTPState extends State<OTP> {
       fontSize: 24
     ),
     enteredColor: Utils().colors['theme'],
+    color: Colors.grey.shade700
   );
 
 
@@ -47,6 +49,14 @@ class _OTPState extends State<OTP> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: _utils.colors['appBarIcons']
+        ),
+        backgroundColor: _utils.colors['appBar'],
+        brightness: Brightness.light,
+        elevation: 0,
+      ),
       backgroundColor: _utils.colors['pageBackground'],
       body: Stack(
         children: <Widget>[
@@ -58,8 +68,9 @@ class _OTPState extends State<OTP> {
                   padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
                   child: Container(
                     alignment: Alignment.topCenter,
-                    child: Image.asset(
-                      'assets/illustrations/otp.png',
+                    child: SvgPicture.asset(
+                      'assets/svg/otp.svg',
+                      color: _utils.colors['theme'],
                       width: 150,
                     ),
                   ),
@@ -70,6 +81,7 @@ class _OTPState extends State<OTP> {
                   child: Center(
                     child: Text('Verification Code',
                       style: TextStyle(
+                        color: Colors.grey.shade700,
                         fontSize: 35,
                         fontWeight: FontWeight.w900
                         // color: Colors.  

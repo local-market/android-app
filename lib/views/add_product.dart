@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,9 +9,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
+import 'package:local_market/controller/category_controller.dart';
 import "package:local_market/controller/product_controller.dart";
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 
 import 'login.dart';
 
@@ -26,7 +29,12 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController _productPriceController = new TextEditingController();
   var inStock = true;
   File _productImage = null;
+  List<Map<String, String>> _categories = new List<Map<String, String>> ();
+  List<Map<String, String>> _subCategories = new List<Map<String, String>> ();
+  Map<String, String> _selectedCategory = null;
+  Map<String, String> _selectedSubCategory = null;
   final ProductController _productController = new ProductController();
+  final CategoryController _categoryController = new CategoryController();
   final Utils _utils = new Utils();
   final UserController userController = new UserController();
   bool _loading = false;
@@ -123,6 +131,59 @@ class _AddProductState extends State<AddProduct> {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<Map<String, String>>(
+                      isExpanded: true,
+                      hint: Text("Category"),
+                      items: this._categories.map((Map<String, String> category){
+                        return new DropdownMenuItem<Map<String, String>>(
+                          value: category,
+                          child: Text(category['name'])
+                        );
+                      }).toList(),
+                      onChanged: (value){
+                        _categoryController.getSubCategory(value['id']).then((subCategories){
+                          setState(() {
+                            this._selectedCategory = value;
+                            this._subCategories = subCategories;
+                          });
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<Map<String, String>>(
+                      isExpanded: true,
+                      hint: Text("Sub Category"),
+                      items: this._subCategories.map((Map<String, String> subCategory){
+                        return new DropdownMenuItem<Map<String, String>>(
+                          value: subCategory,
+                          child: Text(subCategory['name'])
+                        );
+                      }).toList(),
+                      onChanged: (value){
+                        setState(() {
+                          this._selectedSubCategory = value;
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
                   Checkbox(value: inStock, onChanged: (value){
@@ -136,8 +197,8 @@ class _AddProductState extends State<AddProduct> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
-                  // borderRadius: BorderRadius.circular(20.0),
-                  color: _utils.colors['theme'].withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: _utils.colors['theme'],
                   // elevation: _utils.elevation,
                   child: _loading ? CircularLoadingButton() : MaterialButton(
                     onPressed: () {
@@ -166,14 +227,21 @@ class _AddProductState extends State<AddProduct> {
   @override
   void initState() {
     super.initState();
-    check();
+    this._categoryController.getAll()
+    .then((categories){
+      setState(() {
+        this._categories = categories;
+      });
+    });
+    // check();
   }
 
-  void check() async {
-    if(!(await _utils.isLoggedIn())){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-    }
-  }
+  // void check() async {
+  //   DocumentSnapshot _user = await UserController().getCurrentUserDetails();
+  //   if((_user == null) || (_user != null && _user['vendor'] == 'false')){
+  //     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login()));
+  //   }
+  // }
 
   void _selectImage(Future<File> pickImage) async {
     File temp = await pickImage;
@@ -186,7 +254,7 @@ class _AddProductState extends State<AddProduct> {
     if(_productImage == null){
       return Padding(
         padding: const EdgeInsets.fromLTRB(14, 80, 14, 80),
-        child: Icon(Icons.add_a_photo, color: _utils.colors['icons']),
+        child: Icon(OMIcons.addAPhoto, color: _utils.colors['icons']),
       );
     }else{
       return Padding(
@@ -197,17 +265,24 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void validateAndUpload() async {
-    check();
+    // check();
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
-      if(_productImage != null){
+      if(_productImage == null){
+        Fluttertoast.showToast(msg:"Image must be selected");
+      }else if(this._selectedCategory == null){
+        Fluttertoast.showToast(msg:"Category must be selected");
+      }else if(this._selectedSubCategory == null){
+        Fluttertoast.showToast(msg:"Sub Category must be selected");
+      }
+      else{
         setState(() {
           _loading = true;
         });
         FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(),{
+        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(), this._selectedSubCategory['id'],{
           "price": _productPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
@@ -219,12 +294,10 @@ class _AddProductState extends State<AddProduct> {
           setState(() {
             _loading = false;
           });
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddProduct()));
+          Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => AddProduct()));
         }).catchError((e){
           print(e.toString());
         });
-      }else{
-        Fluttertoast.showToast(msg:"Image must be selected");
       }
     }
   }
