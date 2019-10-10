@@ -60,6 +60,7 @@ class _SubCategoriesState extends State<SubCategories> {
                   products.add({
                     "tag": tags[j]['name'],
                     "tagId" : tags[j]['id'],
+                    "subCategoryId": subCategories[i]['id'],
                     "id" : product[0].data['id'],
                     "name" : product[0].data['name'],
                     "price" : "100",
@@ -123,7 +124,7 @@ class _SubCategoriesState extends State<SubCategories> {
                       backgroundColor: _utils.colors['theme'],
                       label: InkWell(
                         onTap: (){
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(product_list[0]['tagId'])));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(product_list[0]['tagId'], product_list[0]['subCategoryId'] ,this._categoryId)));
                         },
                         child: Text(
                           "View all",
