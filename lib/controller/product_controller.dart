@@ -22,7 +22,7 @@ class ProductController {
         "id" : productId,
         "name" : productName.toLowerCase(),
         "image" : imageUrl,
-        "category" : categoryId
+        "tag" : categoryId
       }).then((value){
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
@@ -113,8 +113,16 @@ class ProductController {
     });
   }
 
-  Future<List<DocumentSnapshot>> getByCategoryId(String categoryId) async {
-    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('category').startAt([categoryId]).endAt([categoryId + '\uf8ff']).getDocuments();
+  Future<List<DocumentSnapshot>> getNByTag(String tag, int n) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('tag').startAt([tag]).endAt([tag + '\uf8ff']).limit(n).getDocuments();
+    // print(snapshot.documents.toString());
+    // snapshot.documents.forEach((f){
+    //   print(f.data.toString());
+    // });
+    return snapshot.documents;
+  }
+  Future<List<DocumentSnapshot>> getByTag(String tag) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('tag').startAt([tag]).endAt([tag + '\uf8ff']).getDocuments();
     // print(snapshot.documents.toString());
     // snapshot.documents.forEach((f){
     //   print(f.data.toString());
