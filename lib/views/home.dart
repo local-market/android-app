@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/page.dart';
+import 'package:local_market/components/product.dart';
 import 'package:local_market/components/products.dart';
 import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
@@ -64,6 +65,48 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    var product_list = [
+    {
+      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+      "old_price": "100",
+      "price": "50",
+      "currency":"rupee",
+    },
+    {
+      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+      "old_price": "100",
+      "price": "50",
+      "currency":"rupee",
+    },
+    {
+      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+      "old_price": "100",
+      "price": "50",
+      "currency":"rupee",
+    },
+    {
+      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+      "old_price": "100",
+      "price": "50",
+      "currency":"rupee",
+    },
+    {
+      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+      "old_price": "100",
+      "price": "50",
+      "currency":"rupee",
+    }
+  ];
 
     return Page(
       appBar: FloatingAppBar(
@@ -121,6 +164,68 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: 470,
+            
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 600,
+                  color: Colors.grey.shade100,
+                ),
+                Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text("Hello",
+                        style: TextStyle(
+                          fontSize: 23
+                        ),
+                      ),
+                      trailing: Chip(
+                        backgroundColor: _utils.colors['theme'],
+                        label: InkWell(
+                          onTap: (){
+                            
+                          },
+                          child: Text(
+                            "View all",
+                            style: TextStyle(
+                              color: _utils.colors['buttonText'],
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                      )
+                    ),
+                    Container(
+                      height: 400,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: product_list.length,
+                        itemBuilder: (context, i){
+                          return Product(product_list[i]);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            )
+          ),
+        ),
+        // SliverToBoxAdapter(
+        //   // padding: const EdgeInsets.all(8.0),
+        //   child: ListView.builder(
+        //        itemCount: product_list.length,
+        //        scrollDirection: Axis.horizontal,
+        //         // gridDelegate:
+        //       // SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.6),
+        //       itemBuilder: (context, i){
+        //         return Product(product_list[i]);
+        //       }
+        //     ),
+        // ),
         Products()
       ],
       drawer: getDrawer(),

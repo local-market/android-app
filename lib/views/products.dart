@@ -9,22 +9,22 @@ import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 
 class Products extends StatefulWidget {
-  String _subCategoryId;
+  String _tagId;
 
-  Products(String subCategoryId){
-    this._subCategoryId = subCategoryId;
+  Products(String tagId){
+    this._tagId = tagId;
   }
 
   @override
-  _ProductsState createState() => _ProductsState(this._subCategoryId);
+  _ProductsState createState() => _ProductsState(this._tagId);
 }
 
 class _ProductsState extends State<Products> {
 
   final Utils _utils = new Utils();
   final ProductController _productController = new ProductController();
-  String _subCategoryId;
-  _ProductsState(this._subCategoryId);
+  String _tagId;
+  _ProductsState(this._tagId);
   bool _loading = true;
 
   List<DocumentSnapshot> _products = null;
@@ -32,7 +32,7 @@ class _ProductsState extends State<Products> {
   @override
   void initState() {
     super.initState();
-    _productController.getByCategoryId(this._subCategoryId).then((products){
+    _productController.getByTag(this._tagId).then((products){
       setState(() {
         this._products = products;
         this._loading = false;
