@@ -4,12 +4,14 @@ class Page extends StatelessWidget {
   Widget appBar = null;
   List<Widget> children;
   Drawer drawer;
+  Widget bottomNavigationBar;
 
 
   Page({
     this.appBar,
     @required this.children,
     this.drawer,
+    this.bottomNavigationBar
   });
 
   List<Widget> generateBody(){
@@ -30,6 +32,7 @@ class Page extends StatelessWidget {
         slivers: generateBody()
       ),
       drawer: drawer,
+      bottomNavigationBar: this.bottomNavigationBar,
     );
   }
 }

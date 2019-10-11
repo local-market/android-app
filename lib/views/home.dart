@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/cart_icon.dart';
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
@@ -16,6 +17,7 @@ import 'package:local_market/views/user_profile.dart';
 import 'add_product.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 class Home extends StatefulWidget {
   @override
@@ -29,6 +31,7 @@ class _HomeState extends State<Home> {
   final ProductController _productController = new ProductController();
   final UserController _userController = new UserController();
   DocumentSnapshot _user = null;
+  int cartSize = 0;
 
   Widget getCarousel(){
     return CarouselSlider(
@@ -127,20 +130,8 @@ class _HomeState extends State<Home> {
           color: _utils.colors['appBarIcons']
         ),
         actions: <Widget>[
-          // new IconButton(
-          //     icon: Icon(
-          //       Icons.search,
-          //       color: _utils.colors['appBarIcons'],
-          //     ),
-          //     onPressed: (){
-          //       Navigator.push(context, MaterialPageRoute(builder: (context) => Search()));
-          //     }),
-          new IconButton(
-              icon: Icon(
-                OMIcons.shoppingCart,
-                color: _utils.colors['appBarIcons'],
-              ),
-              onPressed: null)
+          
+          CartIcon(this.cartSize),
         ],
       ),
       children: <Widget>[
@@ -235,6 +226,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+
+    setState(() {
+      this.cartSize = globals.cartSize;
+    });
+
     _userController.getCurrentUserDetails().then((user){
       setState(() {
         _user = user;

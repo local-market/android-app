@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/cart_icon.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/add_vendor_to_product.dart';
 import 'package:local_market/views/search.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 // image row and its properties
 class image extends StatelessWidget {
@@ -101,24 +103,7 @@ List<List<String>> getShop() {
 //   return listview;
 // }
 
-Widget listTileItem(item, price, address) {
-  return ListTile(
-    title: Text(
-      item,
-      style: TextStyle(fontSize: 20,)
-    ),
-    subtitle: Text(
-      address
-    ),
-    trailing: Text(
-      '₹ ' + price,
-      style: TextStyle(fontSize: 20, 
-        color: Colors.red.shade500,
-        fontWeight: FontWeight.bold
-      ),
-    ),
-  );
-}
+
 
 class tableHead extends StatelessWidget {
   @override
@@ -191,6 +176,7 @@ class _ProductViewState extends State<ProductView> {
   List<Map<String, String> > _vendors = new List<Map<String, String> >();
   final ProductController _productController = new ProductController();
   bool _loading = true;
+  int cartSize = 0;
   final Utils _utils = new Utils();
   DocumentSnapshot _user;
 
@@ -201,6 +187,10 @@ class _ProductViewState extends State<ProductView> {
   @override
   void initState(){
     super.initState();
+    
+    setState(() {
+      this.cartSize = globals.cartSize;
+    });
 
     UserController().getCurrentUserDetails().then((user){
       setState((){
@@ -243,7 +233,8 @@ class _ProductViewState extends State<ProductView> {
             onPressed: (){
               Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
             },
-          )
+          ),
+          CartIcon(this.cartSize)
         ],
       ),
       children: <Widget>[
@@ -275,6 +266,19 @@ class _ProductViewState extends State<ProductView> {
                   ]
                 ),
               ),
+              // trailing: RaisedButton(
+              //   onPressed: (){
+
+              //   },
+              //   color: _utils.colors['theme'],
+              //   child: Text(
+              //     "ADD",
+              //     style: TextStyle(
+              //       color: _utils.colors['buttonText'],
+              //       fontSize: 15
+              //     ),
+              //   ),
+              // ),
             ),
             ListTile(
               title: Text(_product['name'],
@@ -283,6 +287,34 @@ class _ProductViewState extends State<ProductView> {
                 ),
               ),
             ),
+            // Padding(
+            //   padding: const EdgeInsets.all(14.0),
+            //   child: ButtonTheme(
+            //     minWidth: double.infinity,
+            //     height: 45,
+            //     child: RaisedButton(
+            //       onPressed: (){
+            //         globals.cart.add(this._product);
+            //         print("Cart : ${globals.cart.toString()}");
+            //         globals.cartSize += 1;
+            //         setState(() {
+            //           this.cartSize += 1;
+            //         });
+            //       },
+                  
+            //       color: _utils.colors['theme'],
+            //       child: Text(
+            //         "ADD",
+            //         textAlign: TextAlign.center,
+            //         style: TextStyle(
+            //           color: _utils.colors['buttonText'],
+            //           fontWeight: FontWeight.bold,
+            //           fontSize: 15,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,
@@ -371,7 +403,7 @@ class _ProductViewState extends State<ProductView> {
             if(_loading){
               return Center(child: SpinKitCircle(color: _utils.colors['loading']));
             }else{
-              return listTileItem(_vendors[index]['name'],_vendors[index]['price'], _vendors[index]['address']);
+              return listTileItem(_vendors[index]['name'],_vendors[index]['price'], _vendors[index]['address'], _vendors[index]['id']);
             }
           // }
         },
@@ -380,4 +412,67 @@ class _ProductViewState extends State<ProductView> {
       ],
     );
   }
+
+  Widget listTileItem(item, price, address, vendorId) {
+  return ListTile(
+    title: Text(
+      item.length > 30 ? item.substring(0, 30) + '...' : item,
+      style: TextStyle(fontSize: 20,)
+    ),
+    subtitle: Text(
+      address
+    ),
+    trailing: Container(
+      width: 141,
+      child: Row(
+        children: <Widget>[
+          Text(
+            '₹ ' + price,
+            style: TextStyle(fontSize: 20, 
+              color: Colors.red.shade500,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+              child: ButtonTheme(
+                minWidth: 10,
+                height: 40,
+                child: RaisedButton(
+                  onPressed: (){
+                    globals.cart.add(
+                      {
+                        "id" : this._product['id'],
+                        "name" : this._product['name'],
+                        "image" : this._product['image'],
+                        "price" : price,
+                        "vendorName" : item,
+                        "vendorId" : vendorId,
+                      });
+                    print("Cart : ${globals.cart.toString()}");
+                    globals.cartSize += 1;
+                    setState(() {
+                      this.cartSize += 1;
+                    });
+                  },
+                  
+                  color: _utils.colors['theme'],
+                  child: Text("Add",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _utils.colors['buttonText'],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+
 }
