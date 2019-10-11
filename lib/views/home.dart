@@ -166,12 +166,12 @@ class _HomeState extends State<Home> {
         ),
         SliverToBoxAdapter(
           child: Container(
-            height: 470,
+            height: 420,
             
             child: Stack(
               children: <Widget>[
                 Container(
-                  height: 600,
+                  height: 500,
                   color: Colors.grey.shade100,
                 ),
                 Column(
@@ -199,7 +199,7 @@ class _HomeState extends State<Home> {
                       )
                     ),
                     Container(
-                      height: 400,
+                      height: 350,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: product_list.length,

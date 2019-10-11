@@ -49,32 +49,36 @@ class _SubCategoriesState extends State<SubCategories> {
         // print(subCategories.toString());
         for(var i = 0; i < subCategories.length; i++){
           print(subCategories[i]);
-          List<Map<String, String>> products = new List<Map<String, String>> ();
-          List<Map<String, String>> tags = await _categoryController.getTag(this._categoryId, subCategories[i]['id']);
-            // print(tags.toString());
-            for(int j = 0; j < tags.length; j++){
-              List<DocumentSnapshot> product = await _productController.getNByTag(tags[j]['id'], 1);
-                print(tags[j]['id']);
-                print(product);
-                if(product.length > 0){
-                  products.add({
-                    "tag": tags[j]['name'],
-                    "tagId" : tags[j]['id'],
-                    "subCategoryId": subCategories[i]['id'],
-                    "id" : product[0].data['id'],
-                    "name" : product[0].data['name'],
-                    "price" : "100",
-                    "image": product[0].data['image']
-                  });
-                }
-            }
+          List<Map<String, String>> products = await _categoryController.getDummyProductBySubCategory(subCategories[i]['id'], this._categoryId);
           if(products.length > 0){
-            // setState(() {
-              results.add(products);
-              print(this._subCategoriesWithProduct);
-              // _loading = false;
-            // });
+            products[0]['subCategory'] = subCategories[i]['name'];
+            results.add(products);
           }
+          // List<Map<String, String>> tags = await _categoryController.getTag(this._categoryId, subCategories[i]['id']);
+            // print(tags.toString());
+            // for(int j = 0; j < tags.length; j++){
+            //   List<DocumentSnapshot> product = await _productController.getNByTag(tags[j]['id'], 1);
+            //     print(tags[j]['id']);
+            //     print(product);
+            //     if(product.length > 0){
+            //       products.add({
+            //         "tag": tags[j]['name'],
+            //         "tagId" : tags[j]['id'],
+            //         "subCategoryId": subCategories[i]['id'],
+            //         "id" : product[0].data['id'],
+            //         "name" : product[0].data['name'],
+            //         "price" : "100",
+            //         "image": product[0].data['image']
+            //       });
+            //     }
+            // }
+          // if(products.length > 0){
+          //   // setState(() {
+          //     results.add(products);
+          //     print(this._subCategoriesWithProduct);
+          //     // _loading = false;
+          //   // });
+          // }
         }
     return results;
   }
@@ -88,7 +92,9 @@ class _SubCategoriesState extends State<SubCategories> {
         iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
         brightness: Brightness.light,
       ),
-      children: this._subCategoriesWithProduct.map((list){
+      children: this._loading ? <Widget> [
+        PageItem(child:SpinKitCircle(color: _utils.colors['loading']))
+      ] : this._subCategoriesWithProduct.map((list){
         return horizontalProductList(list);
       }).toList()
       // children: <Widget>[
@@ -101,21 +107,24 @@ class _SubCategoriesState extends State<SubCategories> {
 
   Widget horizontalProductList(List<Map<String, String>> product_list){
     return SliverPadding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8.0),
       sliver: SliverToBoxAdapter(
         child: Container(
-          height: 470,
+          height: 420,
           
           child: Stack(
             children: <Widget>[
-              Container(
-                height: 600,
-                color: Colors.grey.shade100,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                child: Container(
+                  height: 500,
+                  color: Colors.grey.shade100,
+                ),
               ),
               Column(
                 children: <Widget>[
                   ListTile(
-                    title: Text(product_list[0]['tag'],
+                    title: Text(product_list[0]['subCategory'],
                       style: TextStyle(
                         fontSize: 23
                       ),
@@ -124,7 +133,7 @@ class _SubCategoriesState extends State<SubCategories> {
                       backgroundColor: _utils.colors['theme'],
                       label: InkWell(
                         onTap: (){
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(product_list[0]['tagId'], product_list[0]['subCategoryId'] ,this._categoryId)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(null, product_list[0]['subCategoryId'] ,this._categoryId)));
                         },
                         child: Text(
                           "View all",
@@ -137,7 +146,7 @@ class _SubCategoriesState extends State<SubCategories> {
                     )
                   ),
                   Container(
-                    height: 400,
+                    height: 350,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: product_list.length,

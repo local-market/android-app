@@ -12,7 +12,7 @@ class ProductController {
   final String vendor_ref = "vendors";
   final UserController _userController = new UserController();
 
-  Future<void> add(File productImage, String productName, String userId, String categoryId, Map<String, String> productDetails) async {
+  Future<void> add(File productImage, String productName, String userId, String categoryId, String subCategoryId ,Map<String, String> productDetails) async {
     String productId = Uuid().v1();
     String imageUrl = await Utils().uploadImage(productImage, productId);
     // print("Image Url " + imageUrl);
@@ -22,7 +22,8 @@ class ProductController {
         "id" : productId,
         "name" : productName.toLowerCase(),
         "image" : imageUrl,
-        "tag" : categoryId
+        "tag" : categoryId,
+        "subCategory" : subCategoryId
       }).then((value){
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
@@ -127,6 +128,12 @@ class ProductController {
     // snapshot.documents.forEach((f){
     //   print(f.data.toString());
     // });
+    return snapshot.documents;
+  }
+
+  Future<List<DocumentSnapshot>> getBySubCategory(String subCategoryId) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('subCategory').startAt([subCategoryId]).endAt([subCategoryId + '\uf8ff']).getDocuments();
+
     return snapshot.documents;
   }
 }
