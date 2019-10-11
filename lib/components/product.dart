@@ -20,22 +20,27 @@ class Product extends StatelessWidget {
     return Card(
   child: Container(
     width: 170.0,
-    // height: 250.0,
+    // height: 110.0,
     child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: 210,
+              height: 150,
               child: InkWell(
                 onTap: (){
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductView(
                     this._product
                   )));
                 },
-                child: Image.network(
-                  this._product['image'],
-                  fit: BoxFit.cover,
-                  width: 200,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Image.network(
+                      this._product['image'],
+                      fit: BoxFit.cover,
+                      // width: double.infinity,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -59,23 +64,21 @@ class Product extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Material(
-                borderRadius: BorderRadius.circular(0.0),
-                color: _utils.colors['theme'],
-                // elevation: _utils.elevation,
-                child: MaterialButton(
-                  onPressed: () {
-                    
+              child: ButtonTheme(
+                minWidth: double.infinity,
+                child: RaisedButton(
+                  onPressed: (){
+
                   },
                   
-                  minWidth: MediaQuery.of(context).size.width,
+                  color: _utils.colors['theme'],
                   child: Text(
                     "ADD",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: _utils.colors['buttonText'],
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 15,
                     ),
                   ),
                 ),

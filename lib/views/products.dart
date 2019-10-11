@@ -46,12 +46,19 @@ class _ProductsState extends State<Products> {
         this._tags = tags;
       });
     });
-    _productController.getByTag(this._tagId).then((products){
-      setState(() {
+    if(this._tagId == null){
+      _productController.getBySubCategory(this._subCategoryId).then((products){
         this._products = products;
         this._loading = false;
       });
-    });
+    }else{
+      _productController.getByTag(this._tagId).then((products){
+        setState(() {
+          this._products = products;
+          this._loading = false;
+        });
+      });
+    }
   }
 
   @override
