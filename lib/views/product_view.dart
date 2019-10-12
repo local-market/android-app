@@ -16,8 +16,8 @@ import 'package:local_market/utils/globals.dart' as globals;
 // image row and its properties
 class image extends StatelessWidget {
 
-  Map<String, String> _product;
-  image(Map<String, String> product){
+  var _product;
+  image( product){
     this._product = product;
   }
 
@@ -161,9 +161,9 @@ class tableHead extends StatelessWidget {
 }
 
 class ProductView extends StatefulWidget {
-  Map<String, String> _product;
+  var _product;
 
-  ProductView(Map<String, String> _product){
+  ProductView( _product){
     this._product = _product;
   }
   @override
@@ -172,24 +172,28 @@ class ProductView extends StatefulWidget {
 // scaffold for the whole app level column
 class _ProductViewState extends State<ProductView> {
 
-  Map<String, String> _product;
+  var _product;
   List<Map<String, String> > _vendors = new List<Map<String, String> >();
+  DocumentSnapshot _vendor = null;
   final ProductController _productController = new ProductController();
   bool _loading = true;
   int cartSize = 0;
   final Utils _utils = new Utils();
   DocumentSnapshot _user;
 
-  _ProductViewState(Map<String, String> product){
+  _ProductViewState(product){
     this._product = product;
   }
 
   @override
   void initState(){
     super.initState();
-    
-    setState(() {
-      this.cartSize = globals.cartSize;
+
+    UserController().getUser(this._product['vendorId']).then((user){
+      setState(() {
+        this._vendor = user;  
+        print(this._vendor.data);
+      });
     });
 
     UserController().getCurrentUserDetails().then((user){
@@ -200,7 +204,6 @@ class _ProductViewState extends State<ProductView> {
 
     _productController.getVendors(_product['id']).then((value){
       setState(() {
-        _product['price'] = value[0]['price'];
         this._vendors = value;
         _loading = false;
         // print("vendors details : " + value.toString());
@@ -234,7 +237,7 @@ class _ProductViewState extends State<ProductView> {
               Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
             },
           ),
-          CartIcon(this.cartSize)
+          CartIcon()
         ],
       ),
       children: <Widget>[
@@ -242,7 +245,7 @@ class _ProductViewState extends State<ProductView> {
           children: <Widget>[
             Container(
               width: double.infinity,
-              height: 300,
+              height: 200,
               child: image(_product), 
             ),
             // Divider(),
@@ -257,7 +260,7 @@ class _ProductViewState extends State<ProductView> {
                       text: _product['price'] != null ? '₹ ' + _product['price'] : '',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 40
+                        fontSize: 27
                       )
                     ),
                     // TextSpan(
@@ -283,38 +286,38 @@ class _ProductViewState extends State<ProductView> {
             ListTile(
               title: Text(_product['name'],
                 style: TextStyle(
-                  fontSize: 18
+                  fontSize: 17
                 ),
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.all(14.0),
-            //   child: ButtonTheme(
-            //     minWidth: double.infinity,
-            //     height: 45,
-            //     child: RaisedButton(
-            //       onPressed: (){
-            //         globals.cart.add(this._product);
-            //         print("Cart : ${globals.cart.toString()}");
-            //         globals.cartSize += 1;
-            //         setState(() {
-            //           this.cartSize += 1;
-            //         });
-            //       },
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: ButtonTheme(
+                minWidth: double.infinity,
+                height: 35,
+                child: RaisedButton(
+                  onPressed: (){
+                    globals.cart.add(this._product);
+                    print("Cart : ${globals.cart.toString()}");
+                    globals.cartSize += 1;
+                    setState(() {
+                      this.cartSize += 1;
+                    });
+                  },
                   
-            //       color: _utils.colors['theme'],
-            //       child: Text(
-            //         "ADD",
-            //         textAlign: TextAlign.center,
-            //         style: TextStyle(
-            //           color: _utils.colors['buttonText'],
-            //           fontWeight: FontWeight.bold,
-            //           fontSize: 15,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+                  color: _utils.colors['theme'],
+                  child: Text(
+                    "ADD",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _utils.colors['buttonText'],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,
@@ -322,7 +325,11 @@ class _ProductViewState extends State<ProductView> {
                 height: 50,
                 child: Center(
                   child: ListTile(
-                    title: Text("Want to add yourself to the list?"),
+                    title: Text("Want to add yourself to the list?",
+                      style: TextStyle(
+                        fontSize: 12
+                      ),
+                    ),
                     trailing: InkWell(
                       onTap: (){
                         Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'])));
@@ -332,7 +339,8 @@ class _ProductViewState extends State<ProductView> {
                         label: Text("Add",
                           style: TextStyle(
                             color:_utils.colors['buttonText'],
-                            fontWeight: FontWeight.bold
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12
                           ),
                         ),
                       ),
@@ -343,22 +351,52 @@ class _ProductViewState extends State<ProductView> {
             ) : Divider(),
             ListTile(
               title: Text(
-                "Available Sellers",
+                "Seller",
                 style: TextStyle(
-                  color: _utils.colors['theme']
+                  color: _utils.colors['theme'],
+                  fontSize: 16
                 ),
               ),
             ),
+            ListTile(
+              title: Text(
+                this._vendor == null ? "" : this._vendor.data['username'],
+                style: TextStyle(
+                  fontSize: 14
+                ),
+              ),
+              subtitle: Text(
+                this._vendor == null ? "" : this._vendor.data['address'],
+                style: TextStyle(
+                  fontSize: 14
+                ),
+              ),
+            ),
+            ExpansionTile(
+              title: Text(
+                "More Sellers",
+                style: TextStyle(
+                  color: _utils.colors['theme'],
+                  fontSize: 16
+                ),
+              ),
+              children: _loading ? [
+                SpinKitCircle(color: _utils.colors['loading'])
+              ] : 
+              this._vendors.map((v){
+                return listTileItem(v['name'], v['price'], v['address'], v['id']);
+              }).toList()
+            ),
           ],
         ),
-        _loading ? PageItem(
-          child:Center(
-            child: SpinKitCircle(color: _utils.colors['loading']),
-          )
-        ) : PageList.separated(
-        // shrinkWrap: true,
-        itemCount: _vendors.length,
-        itemBuilder: (context, index) {
+        // _loading ? PageItem(
+        //   child:Center(
+        //     child: SpinKitCircle(color: _utils.colors['loading']),
+        //   )
+        // ) : PageList.separated(
+        // // shrinkWrap: true,
+        // itemCount: _vendors.length,
+        // itemBuilder: (context, index) {
           // if (index == 0) {
           //   return ListTile(
           //     title:image(_product),
@@ -399,16 +437,16 @@ class _ProductViewState extends State<ProductView> {
           //   );
           // }
           // else {
-            print('product view loading: ' + _loading.toString());
-            if(_loading){
-              return Center(child: SpinKitCircle(color: _utils.colors['loading']));
-            }else{
-              return listTileItem(_vendors[index]['name'],_vendors[index]['price'], _vendors[index]['address'], _vendors[index]['id']);
-            }
-          // }
-        },
-      separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
-        ),
+    //         print('product view loading: ' + _loading.toString());
+    //         if(_loading){
+    //           return Center(child: SpinKitCircle(color: _utils.colors['loading']));
+    //         }else{
+    //           return listTileItem(_vendors[index]['name'],_vendors[index]['price'], _vendors[index]['address'], _vendors[index]['id']);
+    //         }
+    //       // }
+    //     },
+    //   separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.grey,),
+    //     ),
       ],
     );
   }
@@ -417,60 +455,53 @@ class _ProductViewState extends State<ProductView> {
   return ListTile(
     title: Text(
       item.length > 30 ? item.substring(0, 30) + '...' : item,
-      style: TextStyle(fontSize: 20,)
+      style: TextStyle(fontSize: 16,)
     ),
     subtitle: Text(
       address
     ),
-    trailing: Container(
-      width: 141,
-      child: Row(
-        children: <Widget>[
-          Text(
-            '₹ ' + price,
-            style: TextStyle(fontSize: 20, 
-              color: Colors.red.shade500,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-          Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-              child: ButtonTheme(
-                minWidth: 10,
-                height: 40,
-                child: RaisedButton(
-                  onPressed: (){
-                    globals.cart.add(
-                      {
-                        "id" : this._product['id'],
-                        "name" : this._product['name'],
-                        "image" : this._product['image'],
-                        "price" : price,
-                        "vendorName" : item,
-                        "vendorId" : vendorId,
-                      });
-                    print("Cart : ${globals.cart.toString()}");
-                    globals.cartSize += 1;
-                    setState(() {
-                      this.cartSize += 1;
-                    });
-                  },
-                  
-                  color: _utils.colors['theme'],
-                  child: Text("Add",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: _utils.colors['buttonText'],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
+    trailing:Text(
+      '₹ ' + price,
+      style: TextStyle(fontSize: 16, 
+        color: Colors.red.shade500,
+        fontWeight: FontWeight.bold
       ),
     ),
+          // Padding(
+          //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+          //     child: ButtonTheme(
+          //       minWidth: 10,
+          //       height: 40,
+          //       child: RaisedButton(
+          //         onPressed: (){
+          //           globals.cart.add(
+          //             {
+          //               "id" : this._product['id'],
+          //               "name" : this._product['name'],
+          //               "image" : this._product['image'],
+          //               "price" : price,
+          //               "vendorName" : item,
+          //               "vendorId" : vendorId,
+          //             });
+          //           print("Cart : ${globals.cart.toString()}");
+          //           globals.cartSize += 1;
+          //           setState(() {
+          //             this.cartSize += 1;
+          //           });
+          //         },
+                  
+          //         color: _utils.colors['theme'],
+          //         child: Text("Add",
+          //           textAlign: TextAlign.center,
+          //           style: TextStyle(
+          //             color: _utils.colors['buttonText'],
+          //             fontWeight: FontWeight.bold,
+          //             fontSize: 15,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
   );
 }
 

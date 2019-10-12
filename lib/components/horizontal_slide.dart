@@ -28,12 +28,12 @@ class _HorizontalListState extends State<HorizontalList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 290.0,
+      height: 285.0,
       child: GridView.count(
         primary: false,
         crossAxisCount: 4,
         // padding: const EdgeInsets.fromLTRB(0, 20, 0,20),
-        childAspectRatio: 0.8,
+        childAspectRatio: 0.85,
         children: this._categories.map((category){
           return Category(
             image : 'assets/cats/dress.png',
@@ -71,11 +71,13 @@ class Category extends StatelessWidget {
         child: ListTile(
             title: Image.asset(
               image,
-              height: 50,
+              height: 40,
             ),
             subtitle: Padding(
               padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
-              child: Text(name, textAlign: TextAlign.center,),
+              child: Text(name, textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 11),
+              ),
             ),
             ),
       );

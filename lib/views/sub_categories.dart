@@ -28,7 +28,7 @@ class _SubCategoriesState extends State<SubCategories> {
   final Utils _utils = new Utils();
   String _categoryId;
   bool _loading = true;
-  List<List<Map<String, String>>> _subCategoriesWithProduct = new List<List<Map<String, String>>> ();
+  List<List<DocumentSnapshot>> _subCategoriesWithProduct = new List<List<DocumentSnapshot>> ();
   _SubCategoriesState(this._categoryId);
 
   @override
@@ -43,16 +43,17 @@ class _SubCategoriesState extends State<SubCategories> {
     });
   }
 
-  Future<List<List<Map<String, String>>>> getProduct() async{
-    List<List<Map<String, String>>> results = new List<List<Map<String, String>>>();
+  Future<List<List<DocumentSnapshot>>> getProduct() async{
+    List<List<DocumentSnapshot>> results = new List<List<DocumentSnapshot>>();
     List<Map<String, String>> subCategories = await _categoryController.getSubCategory(this._categoryId);
         // print(subCategories.toString());
         for(var i = 0; i < subCategories.length; i++){
           print(subCategories[i]);
-          List<Map<String, String>> products = await _categoryController.getDummyProductBySubCategory(subCategories[i]['id'], this._categoryId);
+          List<DocumentSnapshot> products = await _productController.getBySubCategory(subCategories[i]['id']);
           if(products.length > 0){
-            products[0]['subCategory'] = subCategories[i]['name'];
+            products[0].data['subCategory'] = subCategories[i]['name'];
             results.add(products);
+            print(products[0].data);
           }
           // List<Map<String, String>> tags = await _categoryController.getTag(this._categoryId, subCategories[i]['id']);
             // print(tags.toString());
@@ -105,12 +106,12 @@ class _SubCategoriesState extends State<SubCategories> {
   }
 
 
-  Widget horizontalProductList(List<Map<String, String>> product_list){
+  Widget horizontalProductList(List<DocumentSnapshot> product_list){
     return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8.0),
+      padding: const EdgeInsets.fromLTRB(0, 0.0, 0, 0.0),
       sliver: SliverToBoxAdapter(
         child: Container(
-          height: 420,
+          height: 340,
           
           child: Stack(
             children: <Widget>[
@@ -124,34 +125,35 @@ class _SubCategoriesState extends State<SubCategories> {
               Column(
                 children: <Widget>[
                   ListTile(
-                    title: Text(product_list[0]['subCategory'],
+                    title: Text(product_list[0].data['subCategory'],
                       style: TextStyle(
-                        fontSize: 23
+                        fontSize: 18
                       ),
                     ),
                     trailing: Chip(
                       backgroundColor: _utils.colors['theme'],
                       label: InkWell(
                         onTap: (){
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(null, product_list[0]['subCategoryId'] ,this._categoryId)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(null, product_list[0].data['subCategoryId'] ,this._categoryId)));
                         },
                         child: Text(
                           "View all",
                           style: TextStyle(
                             color: _utils.colors['buttonText'],
-                            fontWeight: FontWeight.bold
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12
                           ),
                         ),
                       ),
                     )
                   ),
                   Container(
-                    height: 350,
+                    height: 275,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: product_list.length,
                       itemBuilder: (context, i){
-                        return Product(product_list[i]);
+                        return Product(product_list[i].data);
                       },
                     ),
                   ),

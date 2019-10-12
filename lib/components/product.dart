@@ -9,9 +9,9 @@ class Product extends StatelessWidget {
 
   final Utils _utils = new Utils();
 
-  Map<String, String> _product = null;
+  var _product = null;
 
-  Product(Map<String, String> product){
+  Product(product){
     this._product = product;
   }
 
@@ -19,13 +19,13 @@ class Product extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
   child: Container(
-    width: 170.0,
+    width: (MediaQuery.of(context).size.width / 2) - 40,
     // height: 110.0,
     child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: 150,
+              height: 130,
               child: InkWell(
                 onTap: (){
                   Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductView(
@@ -45,25 +45,32 @@ class Product extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                this._product['name'].length > 45 ? this._product['name'].substring(0, 45) + "..." : this._product['name'],
-                style: TextStyle(
-                  fontSize: 18
+              padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+              child: InkWell(
+                onTap: (){
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductView(
+                    this._product
+                  )));
+                },
+                child: Text(
+                  this._product['name'].length > 45 ? this._product['name'].substring(0, 45) + "..." : this._product['name'],
+                  style: TextStyle(
+                    fontSize: 15
+                  ),
+                    
                 ),
-                  
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(8.0, 8, 8.0, 0),
               child: Text('₹ ${this._product['price']}',
                 style: TextStyle(
-                  fontSize: 22
+                  fontSize: 15
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
               child: ButtonTheme(
                 minWidth: double.infinity,
                 child: RaisedButton(
@@ -78,7 +85,7 @@ class Product extends StatelessWidget {
                     style: TextStyle(
                       color: _utils.colors['buttonText'],
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                      fontSize: 13,
                     ),
                   ),
                 ),
