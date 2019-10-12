@@ -13,7 +13,7 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
 
-  List<Map<String, String>> cart = new List<Map<String, String>> ();
+  Map<String, dynamic> cart = new Map<String, dynamic> ();
 
   final Utils _utils = new Utils();
 
@@ -74,24 +74,46 @@ class _CartState extends State<Cart> {
           ),
         ),
       ),
-      children: <Widget>[
+      children: 
+      
+      <Widget>[
         PageList.builder(
           itemCount: this.cart.length,
-          itemBuilder: (context,index){
+          itemBuilder: (context,i){
             // total += double.parse(this.cart[index]['discountedprice']);
             // total = 0;
+            var keys = this.cart.keys.toList();
             return new product_instance_cart(
-                prod_name:this.cart[index]["name"],
-                prod_price:this.cart[index]["price"],
-                prod_image:this.cart[index]["image"],
-                prod_discountedprice:this.cart[index]["price"],
-                prod_seller:this.cart[index]["vendorName"],
-                );
+              prod_name:this.cart[keys[i]]['data']["name"],
+              prod_price:this.cart[keys[i]]['data']["price"],
+              prod_image:this.cart[keys[i]]['data']["image"],
+              prod_discountedprice:this.cart[keys[i]]['data']["price"],
+              prod_seller:this.cart[keys[i]]['data']["vendorName"],
+            );
           }
         )
       ],
     );
   }
+
+  // List<Widget> generateList() {
+  //   List<Widget> results = new List<Widget>();
+  //   var keys = this.cart.keys.toList();
+  //   for(int i = 0; i < this.cart.length; i++){
+  //     print(this.cart[keys[i]]['data']);
+  //     results.add(
+  //       product_instance_cart(
+  //         prod_name:this.cart[keys[i]]['data']["name"],
+  //         prod_price:this.cart[keys[i]]['data']["price"],
+  //         prod_image:this.cart[keys[i]]['data']["image"],
+  //         prod_discountedprice:this.cart[keys[i]]['data']["price"],
+  //         prod_seller:this.cart[keys[i]]['data']["vendorName"],
+  //       )
+  //     );
+  //   }
+  //   print("Cart" + results.toString());
+  //   return results;
+  // }
 }
 
 class product_instance_cart extends StatelessWidget {
@@ -108,7 +130,7 @@ class product_instance_cart extends StatelessWidget {
         ),
         title: new Text(
           prod_name.length > 30 ? prod_name.substring(0, 30) + "..." : prod_name,
-          style: TextStyle(fontSize: 20.0),),
+          style: TextStyle(fontSize: 15.0),),
         subtitle:new Column(
           children:<Widget>[
             new Row(
@@ -116,13 +138,13 @@ class product_instance_cart extends StatelessWidget {
                  Padding(
                    padding: const EdgeInsets.all(4.0),
                    child:new Text("Price:",
-                     style: TextStyle(fontSize: 16.0),
+                     style: TextStyle(fontSize: 13.0),
                    ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
                   child:new Text('Rs $prod_price',
-                    style: TextStyle(color:Colors.green,fontSize: 16.0),
+                    style: TextStyle(color:Colors.green,fontSize: 13.0),
                   ),
                 ),
 
@@ -133,13 +155,13 @@ class product_instance_cart extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
                   child:new Text("Discounted Price:",
-                    style: TextStyle(fontSize: 16.0),
+                    style: TextStyle(fontSize: 13.0),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
                   child:new Text('Rs $prod_discountedprice',
-                    style: TextStyle(color:Colors.red,fontSize: 16.0),
+                    style: TextStyle(color:Colors.red,fontSize: 13.0),
                   ),
                 ),
               ],
@@ -147,7 +169,7 @@ class product_instance_cart extends StatelessWidget {
             new Container(
               alignment: Alignment.topLeft,
               child:new Text(
-                ' $prod_seller',style:TextStyle(fontSize: 20.0,
+                ' $prod_seller',style:TextStyle(fontSize: 12.0,
                 fontWeight: FontWeight.bold,
               ),
               ),

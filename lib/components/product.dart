@@ -1,17 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:local_market/components/add_button.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product_details.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 
-class Product extends StatelessWidget {
+class Product extends StatefulWidget {
+
+  var _product;
+
+  Product(product){
+    this._product = product;
+  }
+
+  @override
+  _ProductState createState() => _ProductState(this._product);
+}
+
+class _ProductState extends State<Product> {
 
   final Utils _utils = new Utils();
 
   var _product = null;
+  int count = 0;
 
-  Product(product){
+  _ProductState(product){
     this._product = product;
   }
 
@@ -69,33 +83,10 @@ class Product extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
-              child: ButtonTheme(
-                minWidth: double.infinity,
-                child: RaisedButton(
-                  onPressed: (){
-
-                  },
-                  
-                  color: _utils.colors['theme'],
-                  child: Text(
-                    "ADD",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: _utils.colors['buttonText'],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            
+            AddButton(this._product)
           ],
         )
       ),
-              
     );
   }
 }

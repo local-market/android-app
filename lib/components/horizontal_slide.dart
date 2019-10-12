@@ -36,7 +36,7 @@ class _HorizontalListState extends State<HorizontalList> {
         childAspectRatio: 0.85,
         children: this._categories.map((category){
           return Category(
-            image : 'assets/cats/dress.png',
+            image : 'assets/cats/${category['id']}.webp',
             name : category['name'],
             id : category['id']
           );
@@ -69,9 +69,12 @@ class Category extends StatelessWidget {
           Navigator.push(context, CupertinoPageRoute(builder: (context) => SubCategories(this.id)));
         },
         child: ListTile(
-            title: Image.asset(
-              image,
-              height: 40,
+            title: ClipRRect(
+              borderRadius: new BorderRadius.circular(100),
+              child: Image.asset(
+                image,
+                height: 40,
+              ),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
