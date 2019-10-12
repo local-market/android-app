@@ -131,7 +131,7 @@ class _HomeState extends State<Home> {
         ),
         actions: <Widget>[
           
-          CartIcon(this.cartSize),
+          CartIcon(),
         ],
       ),
       children: <Widget>[
@@ -157,7 +157,7 @@ class _HomeState extends State<Home> {
         ),
         SliverToBoxAdapter(
           child: Container(
-            height: 420,
+            height: 340,
             
             child: Stack(
               children: <Widget>[
@@ -170,7 +170,7 @@ class _HomeState extends State<Home> {
                     ListTile(
                       title: Text("Hello",
                         style: TextStyle(
-                          fontSize: 23
+                          fontSize: 19
                         ),
                       ),
                       trailing: Chip(
@@ -183,14 +183,15 @@ class _HomeState extends State<Home> {
                             "View all",
                             style: TextStyle(
                               color: _utils.colors['buttonText'],
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12
                             ),
                           ),
                         ),
                       )
                     ),
                     Container(
-                      height: 350,
+                      height: 275,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: product_list.length,

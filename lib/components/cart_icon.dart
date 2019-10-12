@@ -1,15 +1,35 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/cart.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
-class CartIcon extends StatelessWidget {
+class CartIcon extends StatefulWidget {
+  @override
+  _CartIconState createState() => _CartIconState();
+}
+
+
+class _CartIconState extends State<CartIcon> {
   int cartSize = 0;
-
-  CartIcon(this.cartSize);
-
   final Utils _utils = new Utils();
+
+  @override
+  void initState() {
+    super.initState();
+    setState((){
+      this.cartSize = globals.cartSize;
+    });
+    // new Timer.periodic(const Duration(seconds: 1), (Timer t){
+    //   setState(() {
+    //     this.cartSize = globals.cartSize;
+    //   });
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -22,7 +42,7 @@ class CartIcon extends StatelessWidget {
             new IconButton(icon: new Icon(OMIcons.shoppingCart,
               color: _utils.colors['appBarIcons'],),
                 onPressed: (){
-                  
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => Cart()));
                 },
             ),
             cartSize == 0 ? new Container() :
