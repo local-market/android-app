@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:local_market/components/add_button.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/cart_icon.dart';
 import 'package:local_market/components/page.dart';
@@ -290,34 +291,7 @@ class _ProductViewState extends State<ProductView> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: ButtonTheme(
-                minWidth: double.infinity,
-                height: 35,
-                child: RaisedButton(
-                  onPressed: (){
-                    globals.cart.add(this._product);
-                    print("Cart : ${globals.cart.toString()}");
-                    globals.cartSize += 1;
-                    setState(() {
-                      this.cartSize += 1;
-                    });
-                  },
-                  
-                  color: _utils.colors['theme'],
-                  child: Text(
-                    "ADD",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: _utils.colors['buttonText'],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            AddButton(_product),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,
