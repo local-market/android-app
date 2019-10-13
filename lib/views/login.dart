@@ -257,6 +257,11 @@ class _LoginState extends State<Login> {
             error = "Invalid email or password";
             Fluttertoast.showToast(msg: error);
           });
+        }else if(e.code == "ERROR_WRONG_PASSWORD"){
+          setState(() {
+            error = "Invalid email or password";
+            Fluttertoast.showToast(msg: error);
+          });
         }
         print("Error: login page: " + e.toString());
       });

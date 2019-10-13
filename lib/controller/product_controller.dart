@@ -12,7 +12,7 @@ class ProductController {
   final String vendor_ref = "vendors";
   final UserController _userController = new UserController();
 
-  Future<void> add(File productImage, String productName, String userId, String categoryId, Map<String, String> productDetails) async {
+  Future<void> add(File productImage, String productName, String userId, String tagId, String subCategoryId, String categoryId, Map<String, String> productDetails) async {
     String productId = Uuid().v1();
     String imageUrl = await Utils().uploadImage(productImage, productId);
     // print("Image Url " + imageUrl);
@@ -22,7 +22,11 @@ class ProductController {
         "id" : productId,
         "name" : productName.toLowerCase(),
         "image" : imageUrl,
-        "category" : categoryId
+        "tag" : tagId,
+        "subCategory" : subCategoryId,
+        "category" : categoryId,
+        "price" : productDetails['price'],
+        "vendorId" : userId
       }).then((value){
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
@@ -50,7 +54,9 @@ class ProductController {
       results.add({
         "id" : doc.data['id'],
         "name" : doc.data['name'],
-        "image" : doc.data['image']
+        "image" : doc.data['image'],
+        "price" : doc.data['price'],
+        "vendorId" : doc.data['vendorId']
       });
     });
     return results;
@@ -69,7 +75,9 @@ class ProductController {
           results.add({
             "id" : doc.data['id'],
             "name" : doc.data['name'],
-            "image" : doc.data['image']
+            "image" : doc.data['image'],
+            "price" : doc.data['price'],
+            "vendorId": doc.data['vendorId']
           });
           dp[doc.data['id']] = true;
         }
@@ -108,17 +116,40 @@ class ProductController {
   }
 
   Future<void> updatePrice(String pid, String uid, Map<String, String> details) async {
-    _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).setData(details).catchError((e){
+    DocumentSnapshot product = await _firestore.collection(ref).document(pid).get();
+    if(int.parse(details['price']) < int.parse(product.data['price'])){
+      await _firestore.collection(ref).document(pid).updateData({
+        "price" : details['price'],
+        "vendorId" : uid
+      }).catchError((e){
+        throw e;
+      });
+    }
+    await _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).setData(details).catchError((e){
       throw e;
     });
   }
 
-  Future<List<DocumentSnapshot>> getByCategoryId(String categoryId) async {
-    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('category').startAt([categoryId]).endAt([categoryId + '\uf8ff']).getDocuments();
+  Future<List<DocumentSnapshot>> getNByTag(String tag, int n) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('tag').startAt([tag]).endAt([tag + '\uf8ff']).limit(n).getDocuments();
     // print(snapshot.documents.toString());
     // snapshot.documents.forEach((f){
     //   print(f.data.toString());
     // });
+    return snapshot.documents;
+  }
+  Future<List<DocumentSnapshot>> getByTag(String tag) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('tag').startAt([tag]).endAt([tag + '\uf8ff']).getDocuments();
+    // print(snapshot.documents.toString());
+    // snapshot.documents.forEach((f){
+    //   print(f.data.toString());
+    // });
+    return snapshot.documents;
+  }
+
+  Future<List<DocumentSnapshot>> getBySubCategory(String subCategoryId) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('subCategory').startAt([subCategoryId]).endAt([subCategoryId + '\uf8ff']).getDocuments();
+
     return snapshot.documents;
   }
 }

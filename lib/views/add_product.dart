@@ -31,8 +31,10 @@ class _AddProductState extends State<AddProduct> {
   File _productImage = null;
   List<Map<String, String>> _categories = new List<Map<String, String>> ();
   List<Map<String, String>> _subCategories = new List<Map<String, String>> ();
+  List<Map<String, String>> _tags = new List<Map<String, String>> ();
   Map<String, String> _selectedCategory = null;
   Map<String, String> _selectedSubCategory = null;
+  Map<String, String> _selectedTag = null;
   final ProductController _productController = new ProductController();
   final CategoryController _categoryController = new CategoryController();
   final Utils _utils = new Utils();
@@ -139,7 +141,9 @@ class _AddProductState extends State<AddProduct> {
                     padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
                     child: DropdownButton<Map<String, String>>(
                       isExpanded: true,
-                      hint: Text("Category"),
+                      hint: Text(
+                        this._selectedCategory == null ? "Category" : this._selectedCategory['name']
+                      ),
                       items: this._categories.map((Map<String, String> category){
                         return new DropdownMenuItem<Map<String, String>>(
                           value: category,
@@ -167,7 +171,9 @@ class _AddProductState extends State<AddProduct> {
                     padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
                     child: DropdownButton<Map<String, String>>(
                       isExpanded: true,
-                      hint: Text("Sub Category"),
+                      hint: Text(
+                        this._selectedSubCategory == null ? "Sub Category" : this._selectedSubCategory['name']
+                      ),
                       items: this._subCategories.map((Map<String, String> subCategory){
                         return new DropdownMenuItem<Map<String, String>>(
                           value: subCategory,
@@ -175,8 +181,38 @@ class _AddProductState extends State<AddProduct> {
                         );
                       }).toList(),
                       onChanged: (value){
+                        _categoryController.getTag(this._selectedCategory['id'], value['id']).then((tags){
+                          setState(() {
+                            this._tags = tags;
+                            this._selectedSubCategory = value;
+                          });
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<Map<String, String>>(
+                      isExpanded: true,
+                      hint: Text(
+                        this._selectedTag == null ? "Tag" : this._selectedTag['name']
+                      ),
+                      items: this._tags.map((Map<String, String> tag){
+                        return new DropdownMenuItem<Map<String, String>>(
+                          value: tag,
+                          child: Text(tag['name'])
+                        );
+                      }).toList(),
+                      onChanged: (value){
                         setState(() {
-                          this._selectedSubCategory = value;
+                          this._selectedTag = value;
                         });
                       },
                     )
@@ -274,6 +310,8 @@ class _AddProductState extends State<AddProduct> {
         Fluttertoast.showToast(msg:"Category must be selected");
       }else if(this._selectedSubCategory == null){
         Fluttertoast.showToast(msg:"Sub Category must be selected");
+      }else if(this._selectedTag == null){
+        Fluttertoast.showToast(msg:"Tag must be selected");
       }
       else{
         setState(() {
@@ -282,7 +320,7 @@ class _AddProductState extends State<AddProduct> {
         FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(), this._selectedSubCategory['id'],{
+        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'], {
           "price": _productPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
