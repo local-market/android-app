@@ -10,7 +10,7 @@ import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:outline_material_icons/outline_material_icons.dart';
-import 'package:local_market/views/order.dart';
+import 'package:local_market/views/order_status.dart';
 
 class Payment extends StatefulWidget {
   String name,phone, address, landmark;

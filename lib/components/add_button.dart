@@ -24,6 +24,12 @@ class _AddButtonState extends State<AddButton> {
 
   _AddButtonState(this._product, this._updateTotal);
 
+  void clearCount(){
+    setState(() {
+      this.count = 0;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +52,8 @@ class _AddButtonState extends State<AddButton> {
             onPressed: (){
               globals.cart[this._product['id']] = {
                   "data" : this._product,
-                  "count" : "1"
+                  "count" : "1",
+                  "clearCount": this.clearCount
               };
               globals.cartSize += 1;
               print(globals.cart.toString());
@@ -127,7 +134,9 @@ class _AddButtonState extends State<AddButton> {
                 this.count -= 1;
                 globals.cart[this._product['id']]['count'] = this.count.toString();
                 if(this.count == 0){
+                  globals.cart[this._product['id']]['clearCount']();
                   globals.cart.remove(this._product['id']);
+                  this.count = 0;
                 }
                 if(globals.cartSize > 0){
                   globals.cartSize -= 1;

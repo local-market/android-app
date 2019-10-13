@@ -5,35 +5,27 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/utils/utils.dart';
-import 'package:local_market/views/cart.dart';
 import "package:local_market/views/signup.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:local_market/views/home.dart";
 import 'package:outline_material_icons/outline_material_icons.dart';
 
-class Login extends StatefulWidget {
-  String route;
-
-  Login(String route){
-    this.route = route;
-  }
+class ChangePassword extends StatefulWidget {
   @override
-  _LoginState createState() => _LoginState(this.route);
+  _ChangePasswordState createState() => _ChangePasswordState();
 }
 
 
-class _LoginState extends State<Login> {
-  String route;
+class _ChangePasswordState extends State<ChangePassword> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _emailTextController = new TextEditingController();
+  TextEditingController _OldPasswordTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final Utils _utils = new Utils();
   String error = "";
-  bool hidePassword = true;
+  bool hidePassword1 = true;
+  bool hidePassword2 = true;
   bool _loading = false;
-
-  _LoginState(this.route);
 
   @override
   Widget build(BuildContext context) {
@@ -60,15 +52,41 @@ class _LoginState extends State<Login> {
 //                  mainAxisAlignment: MainAxisAlignment.center,
                   shrinkWrap: true,
                   children: <Widget>[
+                    
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 30),
-                      child: Container(
-                        alignment: Alignment.topCenter,
-                        child: Transform.rotate(
-                          angle: - 3.14 / 10,
-                          child: SvgPicture.asset('assets/svg/logo.svg',
-                            color: _utils.colors['theme'],
-                            width: 150,
+                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                      child: Material(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                        // elevation: _utils.elevation,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListTile(
+                            title: TextFormField(
+                              controller: _OldPasswordTextController,
+                              obscureText: hidePassword1,
+                              autofocus: false,
+                              decoration: InputDecoration(
+                                  hintText: "Current Password",
+                                  icon: Icon(OMIcons.lock),
+                                    suffixIcon: IconButton(icon: Icon(OMIcons.removeRedEye), onPressed: (){
+                                      setState(() {
+                                        hidePassword1 = !hidePassword1;
+                                      });
+                                    }),
+                                  // border: InputBorder.none
+                                  ),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return "This field cannot be empty";
+                                } else if (value.length < 6)
+                                  return "Should be more than 6 length";
+                                else
+                                  return null;
+                              },
+                            ),
+                            // trailing: 
                           ),
                         ),
                       ),
@@ -84,52 +102,15 @@ class _LoginState extends State<Login> {
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
                             title: TextFormField(
-                              controller: _emailTextController,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  hintText: "Email",
-                                  icon: Icon(OMIcons.alternateEmail),
-                                  // border: InputBorder.none
-                                ),
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (!value.isEmpty) {
-                                  Pattern pattern =
-                                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-                                  RegExp regex = new RegExp(pattern);
-                                  if (!regex.hasMatch(value)) {
-                                    return "Input valid email address";
-                                  } else {
-                                    return null;
-                                  }
-                                }else{
-                                  return "This field cannot be empty";
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                        // elevation: _utils.elevation,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListTile(
-                            title: TextFormField(
                               controller: _passwordTextController,
-                              obscureText: hidePassword,
+                              obscureText: hidePassword2,
                               autofocus: false,
                               decoration: InputDecoration(
-                                  hintText: "Password",
+                                  hintText: "New Password",
                                   icon: Icon(OMIcons.lock),
                                     suffixIcon: IconButton(icon: Icon(OMIcons.removeRedEye), onPressed: (){
                                       setState(() {
-                                        hidePassword = !hidePassword;
+                                        hidePassword2 = !hidePassword2;
                                       });
                                     }),
                                   // border: InputBorder.none
@@ -172,7 +153,7 @@ class _LoginState extends State<Login> {
                           
                           minWidth: MediaQuery.of(context).size.width,
                           child: Text(
-                            "Login",
+                            "ChangePassword",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: _utils.colors['buttonText'],
@@ -193,10 +174,10 @@ class _LoginState extends State<Login> {
                             ),
                             children: [
                               TextSpan(
-                                text:"Don't have an account? click here to "
+                                text:"Forgot password "
                               ),
                               TextSpan(
-                                text: "sign up!",
+                                text: "-->",
                                 recognizer: TapGestureRecognizer()..onTap = (){
                                   Navigator.push(context, CupertinoPageRoute(builder: (context) => Signup()));
                                 },
@@ -241,7 +222,7 @@ class _LoginState extends State<Login> {
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
       await firebaseAuth.signInWithEmailAndPassword(
-          email: _emailTextController.text,
+          email: _OldPasswordTextController.text,
           password: _passwordTextController.text).then((user){
             if(user == null){
               // print("Hello World");
@@ -254,13 +235,8 @@ class _LoginState extends State<Login> {
               setState(() {
                 _loading = false;
               });
-              if(this.route == "cart"){
-                Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Cart()));
-              }else {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                    context, CupertinoPageRoute(builder: (context) => Home()));
-              }
+              Navigator.pop(context);
+              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
             }
       }).catchError((e){
         setState(() {
@@ -277,7 +253,7 @@ class _LoginState extends State<Login> {
             Fluttertoast.showToast(msg: error);
           });
         }
-        print("Error: login page: " + e.toString());
+        print("Error: ChangePassword page: " + e.toString());
       });
     }else{
       setState(() {
@@ -289,7 +265,9 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    check();
+
+    /// must be enabled
+    // check();
   }
 
   void check() async {

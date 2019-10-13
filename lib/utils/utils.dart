@@ -9,7 +9,8 @@ class Utils {
   final UserController _userController = new UserController();
   final Map<String, Color> colors = {
     "appBar" : Colors.white,
-    "theme" : Color(0xffDF1827),
+    //0XffDF1827
+    "theme" : Color(0xff83b735),
     "appBarText" : Colors.grey.shade700,
     "appBarIcons" : Colors.grey.shade700,
     "icons" : Colors.grey.shade700,
@@ -17,13 +18,13 @@ class Utils {
     "buttonText" : Colors.white,
     "drawerIcons" : Colors.grey.shade700,
     "error" : Colors.red,
-    "loading" : Color(0xffDF1827),
+    "loading" : Color(0xff83b735),
     "loadingInverse" : Colors.white,
     "searchBarIcons" : Colors.grey.shade700,
     "pageBackground" : Colors.white,
     "drawerBackground" : Colors.white,
     "drawerHeader" : Colors.white,
-    "drawerHeaderText" : Color(0xffDF1827)
+    "drawerHeaderText" : Color(0xff83b735)
   };
 
   final String appName = "My Store";

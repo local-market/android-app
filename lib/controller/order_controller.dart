@@ -35,4 +35,15 @@ class OrderController {
     });
     return orderId;
   }
+
+  Future<List<DocumentSnapshot>> getByUserId(String userId) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('userId').startAt([userId]).endAt([userId + '\uf8ff']).getDocuments();
+    return snapshot.documents;
+  }
+
+  Future<List<DocumentSnapshot>> getOrderProducts(String orderId) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).document(orderId).collection('products').getDocuments();
+
+    return snapshot.documents;
+  }
 }

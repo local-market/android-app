@@ -205,13 +205,14 @@ class _CartState extends State<Cart> {
             ),
             new Container(
                 alignment: Alignment.topLeft,
-                child: AddButton(globals.cart[prod_id]['data'], null)
+                child: AddButton(this.cart[prod_id]['data'], null)
             ),
           ],
         ),
         trailing: InkWell(
           onTap: () {
-            globals.total -= double.parse(globals.cart[prod_id]['data']['price'])* double.parse(globals.cart[prod_id]['count']);
+            globals.total -= double.parse(globals.cart[prod_id]['data']['price']) * double.parse(globals.cart[prod_id]['count']);
+            globals.cart[prod_id]['clearCount']();
             globals.cart.remove(prod_id);
             globals.cartSize -= 1;
 
