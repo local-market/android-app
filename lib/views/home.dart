@@ -206,7 +206,7 @@ class _HomeState extends State<Home> {
         accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
         accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
           onTap: (){
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login(null)));
           },
           child: Text("Login/Signup",
           style: TextStyle(color:_utils.colors['theme']),),
@@ -388,8 +388,7 @@ class _HomeState extends State<Home> {
 
   Widget horizontalProductList(List<DocumentSnapshot> product_list){
     return Container(
-      height: 340,
-      
+      height: 318,
       child: Stack(
         children: <Widget>[
           Padding(
@@ -425,7 +424,7 @@ class _HomeState extends State<Home> {
                 )
               ),
               Container(
-                height: 275,
+                height: 258,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: product_list.length,

@@ -26,6 +26,7 @@ class ProductController {
         "subCategory" : subCategoryId,
         "category" : categoryId,
         "price" : productDetails['price'],
+        "offerPrice" : productDetails['offerPrice'],
         "vendorId" : userId,
         "description" : productDescription
       }).then((value){
@@ -121,6 +122,7 @@ class ProductController {
     if(int.parse(details['price']) < int.parse(product.data['price'])){
       await _firestore.collection(ref).document(pid).updateData({
         "price" : details['price'],
+        "offerPrice": details['price'],
         "vendorId" : uid
       }).catchError((e){
         throw e;

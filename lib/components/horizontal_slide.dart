@@ -28,12 +28,12 @@ class _HorizontalListState extends State<HorizontalList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 285.0,
+      height: 265.0,
       child: GridView.count(
         primary: false,
         crossAxisCount: 4,
         // padding: const EdgeInsets.fromLTRB(0, 20, 0,20),
-        childAspectRatio: 0.85,
+        childAspectRatio: 0.9,
         children: this._categories.map((category){
           return Category(
             image : 'assets/cats/${category['id']}.webp',

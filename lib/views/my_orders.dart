@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,10 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product_list_generator.dart';
+import 'package:local_market/controller/order_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/order.dart';
 
 class MyOrders extends StatefulWidget {
   @override
@@ -16,14 +19,26 @@ class MyOrders extends StatefulWidget {
 
 class _MyOrdersState extends State<MyOrders> {
   List<Map<String, String>> _products = new List<Map<String, String>>();
-  // final UserController _userController = new UserController();
+  final UserController _userController = new UserController();
+  final OrderController _orderController = new OrderController();
+  List<DocumentSnapshot> _orders = new List<DocumentSnapshot>();
   final Utils _utils = new Utils();
-  bool _loading = false;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    // check();
+    _userController.getCurrentUser().then((user){
+      if(user != null){
+        _orderController.getByUserId(user.uid.toString()).then((orders){
+          print(orders[0].data.toString());
+          setState(() {
+            this._orders = orders;
+            this._loading = false;
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -44,17 +59,20 @@ class _MyOrdersState extends State<MyOrders> {
 
       ),
       children: <Widget>[
-        PageItem(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-            child: Text("Id: 31te2re12re1y52e1r", style: TextStyle(fontSize: 25),),
-          ),
-        ),
-        PageItem(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-            child: Text("Id: 45dh45dh45dth14", style: TextStyle(fontSize: 25),),
-          ),
+        this._loading ? PageItem(child: SpinKitCircle(color: _utils.colors['theme'],),):PageList.builder(
+          itemCount: this._orders.length,
+          itemBuilder: (context, i){
+            return InkWell(
+              onTap: (){
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => Order(this._orders[i].data)));
+              },
+              child: ListTile(
+                title: Text(
+                  this._orders[i].data['id']
+                ),
+              ),
+            );
+          }
         )
       ],
     );

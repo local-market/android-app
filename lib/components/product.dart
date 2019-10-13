@@ -67,7 +67,7 @@ class _ProductState extends State<Product> {
                   )));
                 },
                 child: Text(
-                  this._product['name'].length > 45 ? this._product['name'].substring(0, 45) + "..." : this._product['name'],
+                  this._product['name'].length > 20 ? this._product['name'].substring(0, 20) + "..." : this._product['name'],
                   style: TextStyle(
                     fontSize: 15
                   ),
@@ -83,7 +83,7 @@ class _ProductState extends State<Product> {
                 ),
               ),
             ),
-            AddButton(this._product)
+            AddButton(this._product, null)
           ],
         )
       ),

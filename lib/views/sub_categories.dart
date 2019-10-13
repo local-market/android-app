@@ -129,7 +129,7 @@ class _SubCategoriesState extends State<SubCategories> {
       padding: const EdgeInsets.fromLTRB(0, 0.0, 0, 0.0),
       sliver: SliverToBoxAdapter(
         child: Container(
-          height: 340,
+          height: 318,
           
           child: Stack(
             children: <Widget>[
@@ -166,7 +166,7 @@ class _SubCategoriesState extends State<SubCategories> {
                     )
                   ),
                   Container(
-                    height: 275,
+                    height: 258,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: product_list.length,

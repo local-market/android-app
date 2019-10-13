@@ -5,18 +5,25 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/cart.dart';
 import "package:local_market/views/signup.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:local_market/views/home.dart";
 import 'package:outline_material_icons/outline_material_icons.dart';
 
 class Login extends StatefulWidget {
+  String route;
+
+  Login(String route){
+    this.route = route;
+  }
   @override
-  _LoginState createState() => _LoginState();
+  _LoginState createState() => _LoginState(this.route);
 }
 
 
 class _LoginState extends State<Login> {
+  String route;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _emailTextController = new TextEditingController();
   TextEditingController _passwordTextController = new TextEditingController();
@@ -25,6 +32,8 @@ class _LoginState extends State<Login> {
   String error = "";
   bool hidePassword = true;
   bool _loading = false;
+
+  _LoginState(this.route);
 
   @override
   Widget build(BuildContext context) {
@@ -245,8 +254,13 @@ class _LoginState extends State<Login> {
               setState(() {
                 _loading = false;
               });
-              Navigator.pop(context);
-              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
+              if(this.route == "cart"){
+                Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Cart()));
+              }else {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context, CupertinoPageRoute(builder: (context) => Home()));
+              }
             }
       }).catchError((e){
         setState(() {
