@@ -3,11 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/cart_icon.dart';
 import 'package:local_market/components/page.dart';
+import 'package:local_market/components/product.dart';
 import 'package:local_market/controller/category_controller.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
+import 'package:local_market/views/search.dart';
 
 class Products extends StatefulWidget {
   String _tagId;
@@ -69,6 +72,18 @@ class _ProductsState extends State<Products> {
         elevation: _utils.elevation,
         iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
         brightness: Brightness.light,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: _utils.colors['appBarIcons']
+            ),
+            onPressed: (){
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
+            },
+          ),
+          CartIcon()
+        ],
       ),
       children: <Widget>[
         SliverPadding(
@@ -82,37 +97,9 @@ class _ProductsState extends State<Products> {
         ),
         this._loading ? PageItem(child:SpinKitCircle(color: _utils.colors['loading'])) : PageGrid.builder(
           itemCount: this._products == null ? 0 : this._products.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7),
           itemBuilder: (context, i){
-            return Padding(
-              padding: const EdgeInsets.all(8),
-              child: InkWell(
-                onTap: (){
-                  Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductView({
-                    "id" : this._products[i].data['id'],
-                    "name" : this._products[i].data['name'],
-                    "image" : this._products[i].data['image']
-                  })));
-                },
-                child: Card(
-                  child: GridTile(
-                    child: Image.network(this._products[i].data['image'],
-                    fit: BoxFit.cover,
-                    ),
-                    footer: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Center(
-                        child: Text(this._products[i].data['name'],
-                          style: TextStyle(
-                            fontSize: 18
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ),
-              )
-            );
+            return Product(this._products[i].data);
           }
         )
       ],
@@ -126,13 +113,13 @@ class _ProductsState extends State<Products> {
       itemBuilder: (context, i){
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Chip(
-            backgroundColor: _utils.colors['theme'],
-            label: InkWell(
-              onTap: (){
-                Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Products(tags[i]['id'], this._subCategoryId, this._categoryId)));
-              },
-              child: Text(
+          child: InkWell(
+            onTap: (){
+              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Products(tags[i]['id'], this._subCategoryId, this._categoryId)));
+            },
+            child: Chip(
+              backgroundColor: _utils.colors['theme'],
+              label: Text(
                 tags[i]['name'],
                 style: TextStyle(
                   color: _utils.colors['buttonText'],

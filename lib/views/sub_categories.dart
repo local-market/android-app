@@ -3,12 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/cart_icon.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
 import 'package:local_market/controller/category_controller.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/products.dart';
+import 'package:local_market/views/search.dart';
 
 class SubCategories extends StatefulWidget {
   String _categoryId;
@@ -36,23 +38,27 @@ class _SubCategoriesState extends State<SubCategories> {
     super.initState();
     getProduct().then((products){
       print("Products " + products.toString());
-      setState(() {
-        this._subCategoriesWithProduct = products;
-        this._loading = false;
-      });
+      // setState(() {
+      //   this._subCategoriesWithProduct = products;
+      //   this._loading = false;
+      // });
     });
   }
 
-  Future<List<List<DocumentSnapshot>>> getProduct() async{
+  Future<List<List<DocumentSnapshot>>> getProduct() async {
     List<List<DocumentSnapshot>> results = new List<List<DocumentSnapshot>>();
     List<Map<String, String>> subCategories = await _categoryController.getSubCategory(this._categoryId);
         // print(subCategories.toString());
         for(var i = 0; i < subCategories.length; i++){
           print(subCategories[i]);
-          List<DocumentSnapshot> products = await _productController.getBySubCategory(subCategories[i]['id']);
+          List<DocumentSnapshot> products = await _productController.getNBySubCategory(subCategories[i]['id'], 4);
           if(products.length > 0){
-            products[0].data['subCategory'] = subCategories[i]['name'];
+            products[0].data['subCategoryName'] = subCategories[i]['name'];
             results.add(products);
+            setState(() {
+              this._subCategoriesWithProduct.add(products);
+              this._loading = false;
+            });
             print(products[0].data);
           }
           // List<Map<String, String>> tags = await _categoryController.getTag(this._categoryId, subCategories[i]['id']);
@@ -92,6 +98,18 @@ class _SubCategoriesState extends State<SubCategories> {
         elevation: _utils.elevation,
         iconTheme: IconThemeData(color: _utils.colors['appBarIcons']),
         brightness: Brightness.light,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: _utils.colors['appBarIcons']
+            ),
+            onPressed: (){
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => Search()));
+            },
+          ),
+          CartIcon()
+        ],
       ),
       children: this._loading ? <Widget> [
         PageItem(child:SpinKitCircle(color: _utils.colors['loading']))
@@ -125,7 +143,7 @@ class _SubCategoriesState extends State<SubCategories> {
               Column(
                 children: <Widget>[
                   ListTile(
-                    title: Text(product_list[0].data['subCategory'],
+                    title: Text(product_list[0].data['subCategoryName'],
                       style: TextStyle(
                         fontSize: 18
                       ),
@@ -134,7 +152,7 @@ class _SubCategoriesState extends State<SubCategories> {
                       backgroundColor: _utils.colors['theme'],
                       label: InkWell(
                         onTap: (){
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(null, product_list[0].data['subCategoryId'] ,this._categoryId)));
+                          Navigator.push(context, CupertinoPageRoute(builder: (context) => Products(null, product_list[0].data['subCategory'] ,this._categoryId)));
                         },
                         child: Text(
                           "View all",

@@ -12,7 +12,7 @@ class ProductController {
   final String vendor_ref = "vendors";
   final UserController _userController = new UserController();
 
-  Future<void> add(File productImage, String productName, String userId, String tagId, String subCategoryId, String categoryId, Map<String, String> productDetails) async {
+  Future<void> add(File productImage, String productName, String productDescription,String userId, String tagId, String subCategoryId, String categoryId, Map<String, String> productDetails) async {
     String productId = Uuid().v1();
     String imageUrl = await Utils().uploadImage(productImage, productId);
     // print("Image Url " + imageUrl);
@@ -26,7 +26,8 @@ class ProductController {
         "subCategory" : subCategoryId,
         "category" : categoryId,
         "price" : productDetails['price'],
-        "vendorId" : userId
+        "vendorId" : userId,
+        "description" : productDescription
       }).then((value){
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
@@ -149,6 +150,18 @@ class ProductController {
 
   Future<List<DocumentSnapshot>> getBySubCategory(String subCategoryId) async {
     QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('subCategory').startAt([subCategoryId]).endAt([subCategoryId + '\uf8ff']).getDocuments();
+
+    return snapshot.documents;
+  }
+
+  Future<List<DocumentSnapshot>> getNBySubCategory(String subCategoryId, int n) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('subCategory').startAt([subCategoryId]).endAt([subCategoryId + '\uf8ff']).limit(n).getDocuments();
+
+    return snapshot.documents;
+  }
+
+  Future<List<DocumentSnapshot>> getNByCategory(String categoryId, int n) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('category').startAt([categoryId]).endAt([categoryId + '\uf8ff']).limit(n).getDocuments();
 
     return snapshot.documents;
   }
