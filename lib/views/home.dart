@@ -74,51 +74,53 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var product_list = [
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    }
+      {
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        }
+      }
   ];
 
     return Page(
@@ -204,7 +206,7 @@ class _HomeState extends State<Home> {
         accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
         accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
           onTap: (){
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login(null)));
           },
           child: Text("Login/Signup",
           style: TextStyle(color:_utils.colors['theme']),),
