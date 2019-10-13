@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:local_market/components/add_button.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/page.dart';
+import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/customer_details.dart';
+import 'package:local_market/views/login.dart';
 import 'package:local_market/views/search.dart';
 import 'package:local_market/utils/globals.dart' as globals;
+import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -16,10 +22,38 @@ class _CartState extends State<Cart> {
   Map<String, dynamic> cart = new Map<String, dynamic> ();
 
   final Utils _utils = new Utils();
+  final UserController _userController = new UserController();
+  DocumentSnapshot _user;
+  double total = 0;
+
+  void updateTotal(){
+    setState(() {
+      this.total = globals.total;
+      this.cart = globals.cart;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+
+    _userController.getCurrentUserDetails().then((user){
+      setState(() {
+        this._user = user;
+      });
+    });
+
+    setState(() {
+      this.total = globals.total;
+    });
+//    this.cart.map((key, object){
+//      setState(() {
+//        print(object.toString());
+//        this.total
+//      });
+//    });
+
+
 
     setState(() {
       this.cart = globals.cart;
@@ -61,11 +95,17 @@ class _CartState extends State<Cart> {
               Expanded(
                 child: ListTile(
                   title: Text("Total",style: TextStyle(fontSize: 20.0),),
-                  subtitle: Text("0",style: TextStyle(color:_utils.colors['theme'],fontWeight:FontWeight.bold,fontSize: 16.0),),
+                  subtitle: Text(this.total.toString(),style: TextStyle(color:_utils.colors['theme'],fontWeight:FontWeight.bold,fontSize: 16.0),),
                 ),
               ),
               Expanded(
-                child:new MaterialButton(onPressed: (){},
+                child:new MaterialButton(onPressed: (){
+                  if(this._user == null){
+                    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login("cart")));
+                  }else{
+                    Navigator.push(context,CupertinoPageRoute(builder: (context)=> CustomerDetails()));
+                  }
+                },
                   child:new Text("Check Out",style: TextStyle(color: Colors.white,fontSize: 20.0),),
                   color: _utils.colors['theme'],
                 ),
@@ -83,12 +123,13 @@ class _CartState extends State<Cart> {
             // total += double.parse(this.cart[index]['discountedprice']);
             // total = 0;
             var keys = this.cart.keys.toList();
-            return new product_instance_cart(
-              prod_name:this.cart[keys[i]]['data']["name"],
-              prod_price:this.cart[keys[i]]['data']["price"],
-              prod_image:this.cart[keys[i]]['data']["image"],
-              prod_discountedprice:this.cart[keys[i]]['data']["price"],
-              prod_seller:this.cart[keys[i]]['data']["vendorName"],
+//            this.total += double.parse(this.cart[keys[i]]['data']['price']) * double.parse(this.cart[keys[i]]['count']);
+            return product_instance_cart(this.cart[keys[i]]['data']["id"],
+                this.cart[keys[i]]['data']["image"],
+                this.cart[keys[i]]['data']["name"],
+                this.cart[keys[i]]['data']["price"],
+                this.cart[keys[i]]['data']["price"],
+
             );
           }
         )
@@ -114,73 +155,77 @@ class _CartState extends State<Cart> {
   //   print("Cart" + results.toString());
   //   return results;
   // }
-}
 
-class product_instance_cart extends StatelessWidget {
-  final String prod_name,prod_price,prod_image,prod_discountedprice,prod_seller;
-  product_instance_cart({this.prod_name,this.prod_price,this.prod_image,this.prod_discountedprice,this.prod_seller});
-  @override
-  Widget build(BuildContext context) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice) {
     return Card(
       child: ListTile(
         leading: new Image.network(prod_image,
-        width: 100.0,
-        // height: 150.0,
-        // fit: BoxFit.cover,
+          width: 100.0,
+          // height: 150.0,
+          // fit: BoxFit.cover,
         ),
         title: new Text(
-          prod_name.length > 30 ? prod_name.substring(0, 30) + "..." : prod_name,
+          prod_name.length > 30
+              ? prod_name.substring(0, 30) + "..."
+              : prod_name,
           style: TextStyle(fontSize: 15.0),),
-        subtitle:new Column(
-          children:<Widget>[
+        subtitle: new Column(
+          children: <Widget>[
             new Row(
               children: <Widget>[
-                 Padding(
-                   padding: const EdgeInsets.all(4.0),
-                   child:new Text("Price:",
-                     style: TextStyle(fontSize: 13.0),
-                   ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text("Price:",
+                    style: TextStyle(fontSize: 13.0),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                  child:new Text('Rs $prod_price',
-                    style: TextStyle(color:Colors.green,fontSize: 13.0),
+                  child: new Text('Rs $prod_price',
+                    style: TextStyle(color: Colors.green, fontSize: 13.0),
                   ),
                 ),
-
-                ],
-                ),
+              ],
+            ),
             new Row(
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
-                  child:new Text("Discounted Price:",
+                  child: new Text("Discounted Price:",
                     style: TextStyle(fontSize: 13.0),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
-                  child:new Text('Rs $prod_discountedprice',
-                    style: TextStyle(color:Colors.red,fontSize: 13.0),
+                  child: new Text('Rs $prod_discountedprice',
+                    style: TextStyle(color: Colors.red, fontSize: 13.0),
                   ),
                 ),
               ],
             ),
             new Container(
-              alignment: Alignment.topLeft,
-              child:new Text(
-                ' $prod_seller',style:TextStyle(fontSize: 12.0,
-                fontWeight: FontWeight.bold,
-              ),
-              ),
+                alignment: Alignment.topLeft,
+                child: AddButton(globals.cart[prod_id]['data'], null)
             ),
-              ],
-            ),
-        trailing: Icon(
-            Icons.close,
+          ],
+        ),
+        trailing: InkWell(
+          onTap: () {
+            globals.total -= double.parse(globals.cart[prod_id]['data']['price'])* double.parse(globals.cart[prod_id]['count']);
+            globals.cart.remove(prod_id);
+            globals.cartSize -= 1;
+
+            setState(() {
+              this.cart = globals.cart;
+              this.total = globals.total;
+            });
+          },
+          child: Icon(
+            OMIcons.delete,
             color: Utils().colors['icons'],
           ),
         ),
+      ),
     );
   }
 }

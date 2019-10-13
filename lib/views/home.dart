@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/cart_icon.dart';
 import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
-import 'package:local_market/components/products.dart';
+import 'package:local_market/views/products.dart';
+import 'package:local_market/controller/category_controller.dart';
 import 'package:local_market/controller/product_controller.dart';
 import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/login.dart";
 import 'package:local_market/views/my_products.dart';
 import "package:local_market/views/search.dart";
+import 'package:local_market/views/sub_categories.dart';
 import 'package:local_market/views/user_profile.dart';
 import 'add_product.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -30,7 +33,9 @@ class _HomeState extends State<Home> {
   final Utils _utils = new Utils();
   final ProductController _productController = new ProductController();
   final UserController _userController = new UserController();
+  final CategoryController _categoryController = new CategoryController();
   DocumentSnapshot _user = null;
+  List<List<DocumentSnapshot>> _categoryWithProducts = new List<List<DocumentSnapshot>> ();
   int cartSize = 0;
 
   Widget getCarousel(){
@@ -69,51 +74,53 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var product_list = [
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    },
-    {
-      "id" : "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
-      "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
-      "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
-      "old_price": "100",
-      "price": "50",
-      "currency":"rupee",
-      "vendorId" : "cN5syaFzDlO7x8yO8pK6WV67zrm2"
-    }
+      {
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        },
+        {
+          "id": "16295390-cfb8-11e9-e98d-e3d6c3ec2661",
+          "name": "nokia 6.1 plus (black, 6gb ram, 64gb storage)",
+          "image": "https://firebasestorage.googleapis.com/v0/b/local-market-454fa.appspot.com/o/16295390-cfb8-11e9-e98d-e3d6c3ec2661?alt=media&token=545cece9-e412-494a-a2a5-c9f61397e602",
+          "old_price": "100",
+          "price": "50",
+          "currency": "rupee",
+          "vendorId": "cN5syaFzDlO7x8yO8pK6WV67zrm2"
+        }
+      }
   ];
 
     return Page(
@@ -154,62 +161,12 @@ class _HomeState extends State<Home> {
             HorizontalList(),
 
             // padding
-            new Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text("New"),
-            ),
           ],
         ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 340,
-            
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: 500,
-                  color: Colors.grey.shade100,
-                ),
-                Column(
-                  children: <Widget>[
-                    ListTile(
-                      title: Text("Hello",
-                        style: TextStyle(
-                          fontSize: 19
-                        ),
-                      ),
-                      trailing: Chip(
-                        backgroundColor: _utils.colors['theme'],
-                        label: InkWell(
-                          onTap: (){
-                            
-                          },
-                          child: Text(
-                            "View all",
-                            style: TextStyle(
-                              color: _utils.colors['buttonText'],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12
-                            ),
-                          ),
-                        ),
-                      )
-                    ),
-                    Container(
-                      height: 275,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: product_list.length,
-                        itemBuilder: (context, i){
-                          return Product(product_list[i]);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            )
-          ),
+        PageList(
+          children: this._categoryWithProducts.map((list){
+          return horizontalProductList(list);
+        }).toList()
         ),
         // SliverToBoxAdapter(
         //   // padding: const EdgeInsets.all(8.0),
@@ -223,7 +180,7 @@ class _HomeState extends State<Home> {
         //       }
         //     ),
         // ),
-        Products()
+        // Products()
       ],
       drawer: getDrawer(),
     );
@@ -232,11 +189,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
-    setState(() {
-      this.cartSize = globals.cartSize;
-    });
-
+    this.getProduct();
     _userController.getCurrentUserDetails().then((user){
       setState(() {
         _user = user;
@@ -253,7 +206,7 @@ class _HomeState extends State<Home> {
         accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
         accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
           onTap: (){
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login()));
+            Navigator.push(context, CupertinoPageRoute(builder: (context) => Login(null)));
           },
           child: Text("Login/Signup",
           style: TextStyle(color:_utils.colors['theme']),),
@@ -384,6 +337,75 @@ class _HomeState extends State<Home> {
       child: new ListView(
         children: children
       ),
+    );
+  }
+
+  Future<void> getProduct() async {
+    List<Map<String, String>> categories = await _categoryController.getAll();
+    for(var i = 0; i < categories.length; i++){
+      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 4);
+      if(products.length > 0){
+        products[0].data['categoryName'] = categories[i]['name'];
+        setState(() {
+          this._categoryWithProducts.add(products);
+        });
+        // print(products[0].data.toString());
+      }
+    }
+  }
+
+  Widget horizontalProductList(List<DocumentSnapshot> product_list){
+    return Container(
+      height: 340,
+      
+      child: Stack(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+            child: Container(
+              height: 500,
+              color: Colors.grey.shade100,
+            ),
+          ),
+          Column(
+            children: <Widget>[
+              ListTile(
+                title: Text(product_list[0].data['categoryName'],
+                  style: TextStyle(
+                    fontSize: 18
+                  ),
+                ),
+                trailing: Chip(
+                  backgroundColor: _utils.colors['theme'],
+                  label: InkWell(
+                    onTap: (){
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => SubCategories(product_list[0].data['category'])));
+                    },
+                    child: Text(
+                      "View all",
+                      style: TextStyle(
+                        color: _utils.colors['buttonText'],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12
+                      ),
+                    ),
+                  ),
+                )
+              ),
+              Container(
+                height: 275,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: product_list.length,
+                  itemBuilder: (context, i){
+                    return Product(product_list[i].data);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      )
     );
   }
 }

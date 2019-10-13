@@ -27,6 +27,7 @@ class _AddProductState extends State<AddProduct> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _productNameController = new TextEditingController();
   TextEditingController _productPriceController = new TextEditingController();
+  TextEditingController _productDescriptionController = new TextEditingController();
   var inStock = true;
   File _productImage = null;
   List<Map<String, String>> _categories = new List<Map<String, String>> ();
@@ -119,6 +120,31 @@ class _AddProductState extends State<AddProduct> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: "Price",
+                        // border: InputBorder.none
+                      ),
+                      validator: (value){
+                        if(value.isEmpty){
+                          return "This field cannot be empty";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: TextFormField(
+                      autofocus: false,
+                      controller: _productDescriptionController,
+                      decoration: InputDecoration(
+                        hintText: "Product Description",
                         // border: InputBorder.none
                       ),
                       validator: (value){
@@ -320,7 +346,7 @@ class _AddProductState extends State<AddProduct> {
         FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'], {
+        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'], {
           "price": _productPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
