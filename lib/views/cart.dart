@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/add_button.dart';
@@ -29,7 +31,6 @@ class _CartState extends State<Cart> {
   void updateTotal(){
     setState(() {
       this.total = globals.total;
-      this.cart = globals.cart;
     });
   }
 
@@ -57,6 +58,12 @@ class _CartState extends State<Cart> {
 
     setState(() {
       this.cart = globals.cart;
+    });
+
+    new Timer.periodic(const Duration(seconds: 1), (Timer t){
+      setState(() {
+        this.total = globals.total;
+      });
     });
   }
 
@@ -212,9 +219,9 @@ class _CartState extends State<Cart> {
         trailing: InkWell(
           onTap: () {
             globals.total -= double.parse(globals.cart[prod_id]['data']['price']) * double.parse(globals.cart[prod_id]['count']);
+            globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
             globals.cart[prod_id]['clearCount']();
             globals.cart.remove(prod_id);
-            globals.cartSize -= 1;
 
             setState(() {
               this.cart = globals.cart;
