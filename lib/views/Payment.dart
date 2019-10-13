@@ -72,6 +72,9 @@ class _PaymentState extends State<Payment> {
                   FirebaseUser _user = await UserController().getCurrentUser();
                   if(_user != null){
                     await _orderController.add(globals.cart, _user.uid.toString(), this.name, this.address, this.phone, this.landmark).then((orderId){
+                      globals.cart = new Map<String, dynamic>();
+                      globals.cartSize = 0;
+                      globals.total = 0;
                       Navigator.pushReplacement(context, CupertinoPageRoute(builder:(context) => OrderStatus(orderId)));
                     }).catchError((e){
                       print('Payment Page Error: ${e.toString()}');
