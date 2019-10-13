@@ -28,6 +28,7 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController _productNameController = new TextEditingController();
   TextEditingController _productPriceController = new TextEditingController();
   TextEditingController _productDescriptionController = new TextEditingController();
+  TextEditingController _productOfferPriceController = new TextEditingController();
   var inStock = true;
   File _productImage = null;
   List<Map<String, String>> _categories = new List<Map<String, String>> ();
@@ -120,6 +121,33 @@ class _AddProductState extends State<AddProduct> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: "Price",
+                        // border: InputBorder.none
+                      ),
+                      validator: (value){
+                        if(value.isEmpty){
+                          return "This field cannot be empty";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: TextFormField(
+                      autofocus: false,
+                      controller: _productOfferPriceController,
+                      inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: "OfferPrice",
                         // border: InputBorder.none
                       ),
                       validator: (value){
@@ -348,6 +376,7 @@ class _AddProductState extends State<AddProduct> {
 
         _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'], {
           "price": _productPriceController.text,
+          "offerPrice" : _productOfferPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
           "id": currentUser.uid.toString(),

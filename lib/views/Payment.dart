@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
+import 'package:local_market/controller/order_controller.dart';
+import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -25,6 +29,8 @@ class _PaymentState extends State<Payment> {
 
   String name, phone, address, landmark;
   final Utils _utils = new Utils();
+  final OrderController _orderController = new OrderController();
+  final UserController _userController = new UserController();
   Map<String, dynamic> cart = new Map<String, dynamic> ();
   double total = 0;
   _PaymentState(this.name, this.phone,this.address, this.landmark);
@@ -53,7 +59,7 @@ class _PaymentState extends State<Payment> {
         ),
       ),
       bottomNavigationBar: Container(
-        height: 60,
+        height: 55,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
           child: Material(
@@ -61,9 +67,16 @@ class _PaymentState extends State<Payment> {
             color: _utils.colors['theme'],
             // elevation: _utils.elevation,
             child: _loading ? CircularLoadingButton() :  MaterialButton(
-              onPressed: () {
+              onPressed: () async {
 //                validateAndUpdate();
-                  Navigator.pushReplacement(context, CupertinoPageRoute(builder:(context) => OrderStatus()));
+                  FirebaseUser _user = await UserController().getCurrentUser();
+                  if(_user != null){
+                    await _orderController.add(globals.cart, _user.uid.toString(), this.name, this.address, this.phone, this.landmark).then((orderId){
+                      Navigator.pushReplacement(context, CupertinoPageRoute(builder:(context) => OrderStatus(orderId)));
+                    }).catchError((e){
+                      print('Payment Page Error: ${e.toString()}');
+                    });
+                  }
               },
               minWidth: MediaQuery.of(context).size.width,
               child: Text(
@@ -72,7 +85,7 @@ class _PaymentState extends State<Payment> {
                 style: TextStyle(
                   color: _utils.colors['buttonText'],
                   fontWeight: FontWeight.bold,
-                  fontSize: 22,
+                  fontSize: 20,
                 ),
               ),
             ),
@@ -88,20 +101,26 @@ class _PaymentState extends State<Payment> {
 //            Text("Hello")
 //          ],
 //        )
-        PageItem(
-          child: ListTile(
-            title: Text(
-              this.name
+        PageList(
+          children : <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15.0, 15.0, 8, 8),
+              child: Text("Shipping details: "),
             ),
-            subtitle: Column(
-              crossAxisAlignment:CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(this.phone),
-                Text(this.address),
-                Text(this.landmark)
-              ],
+            ListTile(
+              title: Text(
+                this.name
+              ),
+              subtitle: Column(
+                crossAxisAlignment:CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(this.phone),
+                  Text(this.address),
+                  Text(this.landmark)
+                ],
+              ),
             ),
-          ),
+          ]
         ),
 
         PageList.builder(
@@ -131,36 +150,36 @@ class _PaymentState extends State<Payment> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Items',style: TextStyle(fontSize: 18),),
-                    Text(globals.total.toString(),style: TextStyle(fontSize: 18),)
+                    Text('Items',style: TextStyle(fontSize: 16),),
+                    Text(globals.total.toString(),style: TextStyle(fontSize: 16),)
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Delivery',style: TextStyle(fontSize: 18),),
-                    Text('20',style: TextStyle(fontSize: 18),)
+                    Text('Delivery',style: TextStyle(fontSize: 16),),
+                    Text('20',style: TextStyle(fontSize: 16),)
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Total',style: TextStyle(fontSize: 18),),
-                    Text((globals.total+20).toString(),style: TextStyle(fontSize: 18),)
+                    Text('Total',style: TextStyle(fontSize: 16),),
+                    Text((globals.total+20).toString(),style: TextStyle(fontSize: 16),)
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Promo(Free Delivery)',style: TextStyle(fontSize: 18),),
-                    Text('-20',style: TextStyle(fontSize: 18),)
+                    Text('Promo(Free Delivery)',style: TextStyle(fontSize: 16),),
+                    Text('-20',style: TextStyle(fontSize: 16),)
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Order Total',style: TextStyle(fontSize: 18),),
-                    Text(globals.total.toString(),style: TextStyle(fontSize: 18),)
+                    Text('Order Total',style: TextStyle(fontSize: 16),),
+                    Text(globals.total.toString(),style: TextStyle(fontSize: 16),)
                   ],
                 ),
               ],
@@ -169,9 +188,12 @@ class _PaymentState extends State<Payment> {
         ),
         PageList(
           children: <Widget>[
-            Text("Payment Options",
-              style: TextStyle(
-                fontSize: 15
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15.0, 8, 15.0, 8),
+              child: Text("Payment Options",
+                style: TextStyle(
+                  fontSize: 18
+                ),
               ),
             ),
             ListTile(
@@ -236,14 +258,18 @@ class _PaymentState extends State<Payment> {
                     style: TextStyle(color: Colors.red, fontSize: 13.0),
                   ),
                 ),
+              ],
+            ),
+            Row(
+              children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
                   child: new Text('Quantity $prod_count',
-                    style: TextStyle(color: Colors.red, fontSize: 13.0),
+                    style: TextStyle( fontSize: 13.0),
                   ),
                 ),
               ],
-            ),
+            )
           ],
         ),
       ),

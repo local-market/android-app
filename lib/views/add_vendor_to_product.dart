@@ -30,6 +30,7 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
   final UserController _userController = new UserController();
   final ProductController _productController = new ProductController();
   TextEditingController _productPriceController = new TextEditingController();
+  TextEditingController _productOfferPriceController = new TextEditingController();
   String _productId, _productImageUrl, _productName;
   bool inStock = true;
   bool _pageLoading = false;
@@ -111,6 +112,33 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: TextFormField(
+                      autofocus: false,
+                      controller: _productOfferPriceController,
+                      inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: "Offer Price",
+                        // border: InputBorder.none
+                      ),
+                      validator: (value){
+                        if(value.isEmpty){
+                          return "This field cannot be empty";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
                   Checkbox(value: inStock, onChanged: (value){
@@ -161,6 +189,7 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
       await _productController.updatePrice(_productId, _currentUser.uid.toString(), {
         "id" : _currentUser.uid.toString(),
         "price" : _productPriceController.text,
+        "offerPrice": _productOfferPriceController.text,
         "inStock" : inStock.toString()
       }).then((value){
         Navigator.pop(context);

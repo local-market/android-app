@@ -87,6 +87,8 @@ flutter:
     - assets/illustrations/mobile_verification.png
     - assets/illustrations/otp.png
 
+    - assets/order/order.png
+
     - assets/svg/cart.svg
     - assets/svg/logo.svg
     - assets/svg/shopping-cart (1).svg

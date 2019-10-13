@@ -160,8 +160,8 @@ class _CartState extends State<Cart> {
     return Card(
       child: ListTile(
         leading: new Image.network(prod_image,
-          width: 100.0,
-          // height: 150.0,
+          width: 60.0,
+          // height: 0.0,
           // fit: BoxFit.cover,
         ),
         title: new Text(

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
@@ -96,6 +97,15 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                             hintText: "Phone Number",
                             icon: Icon(OMIcons.phone),
                         ),
+                        inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                        validator: (value){
+                          if (value.isEmpty) {
+                            return "This field cannot be empty";
+                          } else if (value.length != 10)
+                            return "Please enter a valid phone number";
+                          else
+                            return null;
+                        },
                       ),
                     ),
                   ),
@@ -119,6 +129,13 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                           // border: InputBorder.none
                         ),
                         keyboardType: TextInputType.multiline,
+                        validator: (value){
+                          if(value.isEmpty){
+                            return "This field cannot be empty";
+                          }else{
+                            return null;
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -142,6 +159,13 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                           // border: InputBorder.none
                         ),
                         keyboardType: TextInputType.multiline,
+                        validator: (value){
+                          if(value.isEmpty){
+                            return "This field cannot be empty";
+                          }else{
+                            return null;
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -164,7 +188,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                       style: TextStyle(
                         color: _utils.colors['buttonText'],
                         fontWeight: FontWeight.bold,
-                        fontSize: 22,
+                        fontSize: 20,
                       ),
                     ),
                   ),
