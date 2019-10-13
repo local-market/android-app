@@ -19,9 +19,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera: ^0.5.5+1
-  path_provider:
-  path:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -72,7 +69,7 @@ flutter:
     - assets/img/w1.jpeg
     - assets/img/w3.jpeg
     - assets/img/w4.jpeg
-    
+
     - assets/cats/computer&mobiles-HJvNLhq9hOTzwOjAsYM4.webp
     - assets/cats/electronics-8oOsgXlOy4MyVUMsgk3q.webp
     - assets/cats/grocery.webp

@@ -23,11 +23,11 @@ class _CartIconState extends State<CartIcon> {
     setState((){
       this.cartSize = globals.cartSize;
     });
-//    new Timer.periodic(const Duration(seconds: 1), (Timer t){
-//      setState(() {
-//        this.cartSize = globals.cartSize;
-//      });
-//    });
+    new Timer.periodic(const Duration(seconds: 1), (Timer t){
+      setState(() {
+        this.cartSize = globals.cartSize;
+      });
+    });
   }
 
   @override

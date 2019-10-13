@@ -291,7 +291,7 @@ class _ProductViewState extends State<ProductView> {
                 ),
               ),
             ),
-            AddButton(_product, null),
+            AddButton(_product),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,

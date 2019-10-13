@@ -5,24 +5,21 @@ import 'package:local_market/utils/utils.dart';
 class AddButton extends StatefulWidget {
   
   var _product;
-  Function() _updateTotal;
-  AddButton(product, @required updateTotal){
+  AddButton(product){
     this._product = product;
-    this._updateTotal = updateTotal;
   }
 
   @override
-  _AddButtonState createState() => _AddButtonState(this._product, this._updateTotal);
+  _AddButtonState createState() => _AddButtonState(this._product);
 }
 
 class _AddButtonState extends State<AddButton> {
 
   int count = 0;
   var _product;
-  Function() _updateTotal;
   final Utils _utils = new Utils();
 
-  _AddButtonState(this._product, this._updateTotal);
+  _AddButtonState(this._product);
 
   @override
   void initState() {
@@ -50,13 +47,9 @@ class _AddButtonState extends State<AddButton> {
               };
               globals.cartSize += 1;
               print(globals.cart.toString());
-              globals.total += double.parse(this._product['price']);
               setState(() {
                 this.count += 1;
               });
-              if(this._updateTotal != null){
-                this._updateTotal();
-              }
             },
             
             color: _utils.colors['theme'],
@@ -74,7 +67,7 @@ class _AddButtonState extends State<AddButton> {
       ) : 
       ListTile(
         contentPadding: const EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 0),
-        trailing: ButtonTheme(
+        leading: ButtonTheme(
           minWidth: 5,
           // height: 30,
           // padding: EdgeInsets.all(0),
@@ -93,12 +86,8 @@ class _AddButtonState extends State<AddButton> {
                 this.count += 1;
                 globals.cart[this._product['id']]['count'] = this.count.toString();
                 globals.cartSize += 1;
-                globals.total += double.parse(this._product['price']);
               });
               print(globals.cart.toString());
-              if(this._updateTotal != null){
-                this._updateTotal();
-              }
             }
           ),
         ),
@@ -110,7 +99,7 @@ class _AddButtonState extends State<AddButton> {
             ),
           ),
         ),
-        leading: ButtonTheme(
+        trailing: ButtonTheme(
           minWidth: 5,
           // height: 10,
           child: RaisedButton(
@@ -131,13 +120,9 @@ class _AddButtonState extends State<AddButton> {
                 }
                 if(globals.cartSize > 0){
                   globals.cartSize -= 1;
-                  globals.total -= double.parse(this._product['price']);
                 }
               });
               print(globals.cart.toString());
-              if(this._updateTotal != null){
-                this._updateTotal();
-              }
             },
           ),
         ),
