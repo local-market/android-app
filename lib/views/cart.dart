@@ -98,7 +98,14 @@ class _CartState extends State<Cart> {
         color: Colors.white,
         child:Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
+          child: this.cart.length == 0 ? 
+          MaterialButton(onPressed: (){
+            Navigator.pop(context);
+          },
+            child:new Text("Continue Shopping",style: TextStyle(color: Colors.white,fontSize: 20.0),),
+            color: _utils.colors['theme'],
+          )
+          : Row(
             children: <Widget>[
               Expanded(
                 child: ListTile(
@@ -122,7 +129,34 @@ class _CartState extends State<Cart> {
           ),
         ),
       ),
-      children: 
+      children: this.cart.length == 0 ? [
+        PageList(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Center(
+                child: Icon(
+                  OMIcons.shoppingCart,
+                  size: 100,
+                  color: _utils.colors['icons'],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  "You don't have any items...",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey.shade700
+                  ),
+                )
+              ),
+            )
+          ],
+        )
+      ] :
       
       <Widget>[
         PageList.builder(
@@ -182,14 +216,14 @@ class _CartState extends State<Cart> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new Text("Price:",
+                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 8.0, 0.0),
+                  child: new Text("Offer Price:",
                     style: TextStyle(fontSize: 13.0),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
-                  child: new Text('Rs $prod_price',
+                  padding: const EdgeInsets.fromLTRB(0.0, 4.0, 8.0, 0.0),
+                  child: new Text('Rs $prod_discountedprice',
                     style: TextStyle(color: Colors.green, fontSize: 13.0),
                   ),
                 ),
@@ -198,19 +232,20 @@ class _CartState extends State<Cart> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
-                  child: new Text("Discounted Price:",
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text("Price:",
                     style: TextStyle(fontSize: 13.0),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
-                  child: new Text('Rs $prod_discountedprice',
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text('Rs $prod_price',
                     style: TextStyle(color: Colors.red, fontSize: 13.0),
                   ),
                 ),
               ],
             ),
+            
             Container(
                 alignment: Alignment.topLeft,
                 child: AddButton(product, this.updateTotal)

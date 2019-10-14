@@ -258,12 +258,20 @@ class _ProductViewState extends State<ProductView> {
                   ),
                   children: [
                     TextSpan(
-                      text: _product['price'] != null ? '₹ ' + _product['price'] : '',
+                      text: _product['offerPrice'] != null ? '₹ ' + _product['offerPrice']+ '  ' : '',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 27
                       )
                     ),
+                    TextSpan(
+                      text: '₹ ${_product['price']}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey.shade700,
+                        decoration: TextDecoration.lineThrough
+                      )
+                    )
                     // TextSpan(
                     //   text: "   Incl. of all taxes",
                     // )
@@ -358,7 +366,7 @@ class _ProductViewState extends State<ProductView> {
                 SpinKitCircle(color: _utils.colors['loading'])
               ] : 
               this._vendors.map((v){
-                return listTileItem(v['name'], v['price'], v['address'], v['id']);
+                return listTileItem(v['name'], v['price'], v['offerPrice'], v['address'], v['id']);
               }).toList()
             ),
           ],
@@ -425,7 +433,7 @@ class _ProductViewState extends State<ProductView> {
     );
   }
 
-  Widget listTileItem(item, price, address, vendorId) {
+  Widget listTileItem(item, price, offerPrice, address, vendorId) {
   return ListTile(
     title: Text(
       item.length > 30 ? item.substring(0, 30) + '...' : item,
@@ -434,13 +442,34 @@ class _ProductViewState extends State<ProductView> {
     subtitle: Text(
       address
     ),
-    trailing:Text(
-      '₹ ' + price,
-      style: TextStyle(fontSize: 16, 
-        color: Colors.red.shade500,
-        fontWeight: FontWeight.bold
+    trailing: RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '₹ ${offerPrice}',
+            style: TextStyle(fontSize: 16, 
+              color: Colors.red.shade500,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+          // TextSpan(
+          //   text: ' ₹ ${offerPrice}',
+          //   style: TextStyle(
+          //     fontSize: 14,
+          //     color: Colors.grey.shade700,
+          //     decoration: TextDecoration.lineThrough
+          //   )
+          // )
+        ]
       ),
-    ),
+    )
+    // Text(
+    //   '₹ ' + price,
+    //   style: TextStyle(fontSize: 16, 
+    //     color: Colors.red.shade500,
+    //     fontWeight: FontWeight.bold
+    //   ),
+    // ),
           // Padding(
           //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
           //     child: ButtonTheme(

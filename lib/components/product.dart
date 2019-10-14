@@ -77,11 +77,32 @@ class _ProductState extends State<Product> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 8, 8.0, 0),
-              child: Text('₹ ${this._product['price']}',
-                style: TextStyle(
-                  fontSize: 15
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '₹ ${this._product['offerPrice']}  ',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black
+                      ),
+                    ),
+                    TextSpan(
+                      text : '₹ ${this._product['price']}',
+                      style: TextStyle(
+                        fontSize: 13,
+                        decoration: TextDecoration.lineThrough,
+                        color: Colors.grey.shade700
+                      ),
+                    )
+                  ]
                 ),
-              ),
+              )
+              // Text('₹ ${this._product['price']}',
+              //   style: TextStyle(
+              //     fontSize: 15
+              //   ),
+              // ),
             ),
             AddButton(this._product, null)
           ],
