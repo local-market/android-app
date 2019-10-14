@@ -30,6 +30,25 @@ class _AddButtonState extends State<AddButton> {
     });
   }
 
+  void updateCount(){
+    setState((){
+      if(globals.cart.containsKey(this._product['id'])){
+        this.count = int.parse(globals.cart[this._product['id']]['count']);
+      }else{
+        this.count = 0;
+      }
+    });
+  }
+
+  void updateAllProductCount(String productId){
+    if(globals.productListener.containsKey(productId)){
+      for(var i = 0; i < globals.productListener[productId].length; i++){
+        print(globals.productListener[productId][i].toString());
+        globals.productListener[productId][i]();
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +57,13 @@ class _AddButtonState extends State<AddButton> {
       setState(() {
         this.count = int.parse(globals.cart[this._product['id']]['count']);
       });
+    }
+
+    if(globals.productListener.containsKey(this._product['id'])){
+      globals.productListener[this._product['id']].add(this.updateCount);
+    }else{
+      globals.productListener[this._product['id']] = new List<dynamic>();
+      globals.productListener[this._product['id']].add(this.updateCount);
     }
   }
 
@@ -64,6 +90,8 @@ class _AddButtonState extends State<AddButton> {
               if(this._updateTotal != null){
                 this._updateTotal();
               }
+
+              updateAllProductCount(this._product['id']);
             },
             
             color: _utils.colors['theme'],
@@ -96,15 +124,19 @@ class _AddButtonState extends State<AddButton> {
               ),
             ),
             onPressed : (){
-              setState(() {
-                this.count += 1;
-                globals.cart[this._product['id']]['count'] = this.count.toString();
-                globals.cartSize += 1;
-                globals.total += double.parse(this._product['price']);
-              });
-              print(globals.cart.toString());
-              if(this._updateTotal != null){
-                this._updateTotal();
+              if(this.count < 5){
+                setState(() {
+                  this.count += 1;
+                  globals.cart[this._product['id']]['count'] = this.count.toString();
+                  globals.cartSize += 1;
+                  globals.total += double.parse(this._product['price']);
+                });
+                print(globals.cart.toString());
+                if(this._updateTotal != null){
+                  this._updateTotal();
+                }
+
+                updateAllProductCount(this._product['id']);
               }
             }
           ),
@@ -130,22 +162,24 @@ class _AddButtonState extends State<AddButton> {
               ),
             ),
             onPressed: (){
-              setState(() {
-                this.count -= 1;
-                globals.cart[this._product['id']]['count'] = this.count.toString();
-                if(this.count == 0){
-                  globals.cart[this._product['id']]['clearCount']();
-                  globals.cart.remove(this._product['id']);
-                  this.count = 0;
-                }
-                if(globals.cartSize > 0){
+              if(this.count > 0){
+                setState(() {
+                  this.count -= 1;
+                  globals.cart[this._product['id']]['count'] = this.count.toString();
+                  if(this.count == 0){
+                    globals.cart[this._product['id']]['clearCount']();
+                    globals.cart.remove(this._product['id']);
+                    this.count = 0;
+                  }
                   globals.cartSize -= 1;
                   globals.total -= double.parse(this._product['price']);
+                });
+                print(globals.cart.toString());
+                if(this._updateTotal != null){
+                  this._updateTotal();
                 }
-              });
-              print(globals.cart.toString());
-              if(this._updateTotal != null){
-                this._updateTotal();
+
+                updateAllProductCount(this._product['id']);
               }
             },
           ),

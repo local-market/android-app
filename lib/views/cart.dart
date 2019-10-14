@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/add_button.dart';
 import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/no_animation_page_route.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -60,11 +61,11 @@ class _CartState extends State<Cart> {
       this.cart = globals.cart;
     });
 
-    new Timer.periodic(const Duration(seconds: 1), (Timer t){
-      setState(() {
-        this.total = globals.total;
-      });
-    });
+    // new Timer.periodic(const Duration(seconds: 1), (Timer t){
+    //   setState(() {
+    //     this.total = globals.total;
+    //   });
+    // });
   }
 
   @override
@@ -136,7 +137,7 @@ class _CartState extends State<Cart> {
                 this.cart[keys[i]]['data']["name"],
                 this.cart[keys[i]]['data']["price"],
                 this.cart[keys[i]]['data']["price"],
-
+                this.cart[keys[i]]['data']
             );
           }
         )
@@ -163,22 +164,22 @@ class _CartState extends State<Cart> {
   //   return results;
   // }
 
-  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice, product) {
     return Card(
       child: ListTile(
-        leading: new Image.network(prod_image,
+        leading: Image.network(prod_image,
           width: 60.0,
           // height: 0.0,
           // fit: BoxFit.cover,
         ),
-        title: new Text(
+        title: Text(
           prod_name.length > 30
               ? prod_name.substring(0, 30) + "..."
               : prod_name,
           style: TextStyle(fontSize: 15.0),),
         subtitle: new Column(
           children: <Widget>[
-            new Row(
+            Row(
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -194,7 +195,7 @@ class _CartState extends State<Cart> {
                 ),
               ],
             ),
-            new Row(
+            Row(
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
@@ -210,23 +211,27 @@ class _CartState extends State<Cart> {
                 ),
               ],
             ),
-            new Container(
+            Container(
                 alignment: Alignment.topLeft,
-                child: AddButton(this.cart[prod_id]['data'], null)
+                child: AddButton(product, this.updateTotal)
             ),
           ],
         ),
         trailing: InkWell(
           onTap: () {
-            globals.total -= double.parse(globals.cart[prod_id]['data']['price']) * double.parse(globals.cart[prod_id]['count']);
-            globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
-            globals.cart[prod_id]['clearCount']();
-            globals.cart.remove(prod_id);
+            if(globals.cart.containsKey(prod_id)){
+              globals.total -= double.parse(globals.cart[prod_id]['data']['price']) * double.parse(globals.cart[prod_id]['count']);
+              globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
+              globals.cart[prod_id]['clearCount']();
+              globals.cart.remove(prod_id);
 
-            setState(() {
-              this.cart = globals.cart;
-              this.total = globals.total;
-            });
+              Navigator.pushReplacement(context, NoAnimationMaterialPageRoute(builder: ((context) => Cart())));
+
+              // setState(() {
+              //   // this.cart = globals.cart;
+              //   // this.total = globals.total;
+              // });
+            }
           },
           child: Icon(
             OMIcons.delete,
