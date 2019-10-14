@@ -83,7 +83,7 @@ class _AddButtonState extends State<AddButton> {
               };
               globals.cartSize += 1;
               print(globals.cart.toString());
-              globals.total += double.parse(this._product['price']);
+              globals.total += double.parse(this._product['offerPrice']);
               setState(() {
                 this.count += 1;
               });
@@ -129,7 +129,7 @@ class _AddButtonState extends State<AddButton> {
                   this.count += 1;
                   globals.cart[this._product['id']]['count'] = this.count.toString();
                   globals.cartSize += 1;
-                  globals.total += double.parse(this._product['price']);
+                  globals.total += double.parse(this._product['offerPrice']);
                 });
                 print(globals.cart.toString());
                 if(this._updateTotal != null){
@@ -172,7 +172,7 @@ class _AddButtonState extends State<AddButton> {
                     this.count = 0;
                   }
                   globals.cartSize -= 1;
-                  globals.total -= double.parse(this._product['price']);
+                  globals.total -= double.parse(this._product['offerPrice']);
                 });
                 print(globals.cart.toString());
                 if(this._updateTotal != null){

@@ -71,12 +71,18 @@ class _PaymentState extends State<Payment> {
 //                validateAndUpdate();
                   FirebaseUser _user = await UserController().getCurrentUser();
                   if(_user != null){
+                    setState(() {
+                      _loading = true;
+                    });
                     await _orderController.add(globals.cart, _user.uid.toString(), this.name, this.address, this.phone, this.landmark).then((orderId){
                       globals.cart = new Map<String, dynamic>();
                       globals.cartSize = 0;
                       globals.total = 0;
                       Navigator.pushReplacement(context, CupertinoPageRoute(builder:(context) => OrderStatus(orderId)));
                     }).catchError((e){
+                      setState(() {
+                        _loading = false;
+                      });
                       print('Payment Page Error: ${e.toString()}');
                     });
                   }
@@ -137,7 +143,7 @@ class _PaymentState extends State<Payment> {
                 this.cart[keys[i]]['data']["image"],
                 this.cart[keys[i]]['data']["name"],
                 this.cart[keys[i]]['data']["price"],
-                this.cart[keys[i]]['data']["price"],
+                this.cart[keys[i]]['data']["offerPrice"],
                 this.cart[keys[i]]['count']
 
               );
@@ -231,7 +237,23 @@ class _PaymentState extends State<Payment> {
           style: TextStyle(fontSize: 15.0),),
         subtitle: new Column(
           children: <Widget>[
-            new Row(
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 8.0, 0.0),
+                  child: new Text("Offer Price:",
+                    style: TextStyle(fontSize: 13.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 4.0, 8.0, 0.0),
+                  child: new Text('Rs $prod_discountedprice',
+                    style: TextStyle(color: Colors.green, fontSize: 13.0),
+                  ),
+                ),
+              ],
+            ),
+            Row(
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -240,24 +262,8 @@ class _PaymentState extends State<Payment> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                  padding: const EdgeInsets.all(4.0),
                   child: new Text('Rs $prod_price',
-                    style: TextStyle(color: Colors.green, fontSize: 13.0),
-                  ),
-                ),
-              ],
-            ),
-            new Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
-                  child: new Text("Discounted Price:",
-                    style: TextStyle(fontSize: 13.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
-                  child: new Text('Rs $prod_discountedprice',
                     style: TextStyle(color: Colors.red, fontSize: 13.0),
                   ),
                 ),
@@ -266,13 +272,19 @@ class _PaymentState extends State<Payment> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
-                  child: new Text('Quantity $prod_count',
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text("Quantity:",
+                    style: TextStyle(fontSize: 13.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text('$prod_count',
                     style: TextStyle( fontSize: 13.0),
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

@@ -170,7 +170,7 @@ class _CartState extends State<Cart> {
                 this.cart[keys[i]]['data']["image"],
                 this.cart[keys[i]]['data']["name"],
                 this.cart[keys[i]]['data']["price"],
-                this.cart[keys[i]]['data']["price"],
+                this.cart[keys[i]]['data']["offerPrice"],
                 this.cart[keys[i]]['data']
             );
           }
@@ -255,7 +255,7 @@ class _CartState extends State<Cart> {
         trailing: InkWell(
           onTap: () {
             if(globals.cart.containsKey(prod_id)){
-              globals.total -= double.parse(globals.cart[prod_id]['data']['price']) * double.parse(globals.cart[prod_id]['count']);
+              globals.total -= double.parse(globals.cart[prod_id]['data']['offerPrice']) * double.parse(globals.cart[prod_id]['count']);
               globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
               globals.cart[prod_id]['clearCount']();
               globals.cart.remove(prod_id);

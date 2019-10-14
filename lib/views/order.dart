@@ -92,7 +92,7 @@ class _OrderState extends State<Order> {
                 this._products[i]["image"],
                 this._products[i]["name"],
                 this._products[i]["price"],
-                this._products[i]["price"],
+                // this._products[i]["offerPrice"],
                 this._products[i]['quantity']
               );
             }
@@ -170,7 +170,7 @@ class _OrderState extends State<Order> {
     );
   }
 
-  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice,prod_count) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_count) {
     return Card(
       child: ListTile(
         leading: new Image.network(prod_image,
@@ -201,22 +201,22 @@ class _OrderState extends State<Order> {
                 ),
               ],
             ),
-            new Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
-                  child: new Text("Discounted Price:",
-                    style: TextStyle(fontSize: 13.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
-                  child: new Text('Rs $prod_discountedprice',
-                    style: TextStyle(color: Colors.red, fontSize: 13.0),
-                  ),
-                ),
-              ],
-            ),
+            // new Row(
+            //   children: <Widget>[
+            //     Padding(
+            //       padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
+            //       child: new Text("Discounted Price:",
+            //         style: TextStyle(fontSize: 13.0),
+            //       ),
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
+            //       child: new Text('Rs $prod_discountedprice',
+            //         style: TextStyle(color: Colors.red, fontSize: 13.0),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Row(
               children: <Widget>[
                 Padding(
