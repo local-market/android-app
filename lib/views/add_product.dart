@@ -147,7 +147,7 @@ class _AddProductState extends State<AddProduct> {
                       inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: "OfferPrice",
+                        hintText: "Offer Price",
                         // border: InputBorder.none
                       ),
                       validator: (value){
