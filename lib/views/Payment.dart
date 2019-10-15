@@ -113,22 +113,40 @@ class _PaymentState extends State<Payment> {
         PageList(
           children : <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(15.0, 15.0, 8, 8),
-              child: Text("Shipping details: "),
-            ),
-            ListTile(
-              title: Text(
-                this.name
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border :Border.all(color: Colors.grey)
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15.0, 15.0, 8, 8),
+                      child: Text("Delivery details: ",
+                        style: TextStyle(
+                            fontSize: 16
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      title: Text(
+                          this.name
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment:CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(this.phone),
+                          Text(this.address),
+                          Text(this.landmark)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              subtitle: Column(
-                crossAxisAlignment:CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(this.phone),
-                  Text(this.address),
-                  Text(this.landmark)
-                ],
-              ),
-            ),
+            )
+
           ]
         ),
 
@@ -153,47 +171,82 @@ class _PaymentState extends State<Payment> {
 
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Column(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey)
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
 //            crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text('Items',style: TextStyle(fontSize: 16),),
-                    Text(globals.total.toString(),style: TextStyle(fontSize: 16),)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Items',style: TextStyle(fontSize: 16),),
+                        Text('₹${globals.total.toString()}',style: TextStyle(fontSize: 16),)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Delivery',style: TextStyle(fontSize: 16),),
+                        Text('₹20',style: TextStyle(fontSize: 16),)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Total',
+                          style: TextStyle(
+                              fontSize: 16,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Text('₹${(globals.total+20)}'.toString(),style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
+                      ],
+                    ),
+                    globals.total < 250 ? Row() : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Promo(Free Delivery)',style: TextStyle(fontSize: 16),),
+                        Text('-₹${20}',style: TextStyle(fontSize: 16),)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('Order Total',
+                          style: TextStyle(
+                              fontSize: 20,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        Text('₹${globals.total < 250 ? globals.total + 20 : globals.total.toString()}',
+                          style: TextStyle(
+                              fontSize: 20,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Delivery',style: TextStyle(fontSize: 16),),
-                    Text('20',style: TextStyle(fontSize: 16),)
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Total',style: TextStyle(fontSize: 16),),
-                    Text((globals.total+20).toString(),style: TextStyle(fontSize: 16),)
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Promo(Free Delivery)',style: TextStyle(fontSize: 16),),
-                    Text('-20',style: TextStyle(fontSize: 16),)
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text('Order Total',style: TextStyle(fontSize: 16),),
-                    Text(globals.total.toString(),style: TextStyle(fontSize: 16),)
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
+        ),
+        PageItem(
+          child:Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: globals.total < 250 ? Text(
+                '* Free delivery above 249\n Add items worth ₹${250 - globals.total} or more to get free delivery',
+              style: TextStyle(
+                  color: _utils.colors['theme'],
+                fontWeight: FontWeight.bold
+              ),
+            ) : Row(),
+          )
         ),
         PageList(
           children: <Widget>[
@@ -223,69 +276,72 @@ class _PaymentState extends State<Payment> {
   }
 
   Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice,prod_count) {
-    return Card(
-      child: ListTile(
-        leading: new Image.network(prod_image,
-          width: 100.0,
-          // height: 150.0,
-          // fit: BoxFit.cover,
-        ),
-        title: new Text(
-          prod_name.length > 30
-              ? prod_name.substring(0, 30) + "..."
-              : prod_name,
-          style: TextStyle(fontSize: 15.0),),
-        subtitle: new Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 8.0, 0.0),
-                  child: new Text("Offer Price:",
-                    style: TextStyle(fontSize: 13.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: ListTile(
+          leading: new Image.network(prod_image,
+            width: 100.0,
+            // height: 150.0,
+            // fit: BoxFit.cover,
+          ),
+          title: new Text(
+            prod_name.length > 30
+                ? prod_name.substring(0, 30) + "..."
+                : prod_name,
+            style: TextStyle(fontSize: 15.0),),
+          subtitle: new Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4.0, 4.0, 8.0, 0.0),
+                    child: new Text("Offer Price:",
+                      style: TextStyle(fontSize: 13.0),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 4.0, 8.0, 0.0),
-                  child: new Text('Rs $prod_discountedprice',
-                    style: TextStyle(color: Colors.green, fontSize: 13.0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 4.0, 8.0, 0.0),
+                    child: new Text('Rs $prod_discountedprice',
+                      style: TextStyle(color: Colors.green, fontSize: 13.0),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new Text("Price:",
-                    style: TextStyle(fontSize: 13.0),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text("Price:",
+                      style: TextStyle(fontSize: 13.0),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new Text('Rs $prod_price',
-                    style: TextStyle(color: Colors.red, fontSize: 13.0),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text('Rs $prod_price',
+                      style: TextStyle(color: Colors.red, fontSize: 13.0),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new Text("Quantity:",
-                    style: TextStyle(fontSize: 13.0),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text("Quantity:",
+                      style: TextStyle(fontSize: 13.0),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: new Text('$prod_count',
-                    style: TextStyle( fontSize: 13.0),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text('$prod_count',
+                      style: TextStyle( fontSize: 13.0),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

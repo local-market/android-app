@@ -174,6 +174,17 @@ class _CartState extends State<Cart> {
                 this.cart[keys[i]]['data']
             );
           }
+        ),
+        PageItem(
+          child: Center(
+            child: Text(
+              '* Free delivery above 249',
+              style: TextStyle(
+                  color: _utils.colors['theme'],
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+          ),
         )
       ],
     );

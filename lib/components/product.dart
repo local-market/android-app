@@ -81,14 +81,15 @@ class _ProductState extends State<Product> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: '₹ ${this._product['offerPrice']}  ',
+                      text: '₹${this._product['offerPrice']}  ',
                       style: TextStyle(
                         fontSize: 15,
-                        color: Colors.black
+                        color: _utils.colors['theme'],
+
                       ),
                     ),
                     TextSpan(
-                      text : '₹ ${this._product['price']}',
+                      text : '₹${this._product['price']}',
                       style: TextStyle(
                         fontSize: 13,
                         decoration: TextDecoration.lineThrough,

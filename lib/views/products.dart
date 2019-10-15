@@ -99,7 +99,7 @@ class _ProductsState extends State<Products> {
         ),
         this._loading ? PageItem(child:SpinKitCircle(color: _utils.colors['loading'])) : PageGrid.builder(
           itemCount: this._products == null ? 0 : this._products.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.8),
           itemBuilder: (context, i){
             return Product(this._products[i].data);
           }

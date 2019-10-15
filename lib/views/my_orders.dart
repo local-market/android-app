@@ -66,9 +66,14 @@ class _MyOrdersState extends State<MyOrders> {
               onTap: (){
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => Order(this._orders[i].data)));
               },
-              child: ListTile(
-                title: Text(
-                  this._orders[i].data['id']
+              child: Card(
+                child: ListTile(
+                  title: Text(
+                    'Order No ${this._orders[i].data['id'].split('-')[0]}'
+                  ),
+                  subtitle: Text(
+                    '${this._orders[i].data['date'].split('.')[0]}'
+                  ),
                 ),
               ),
             );

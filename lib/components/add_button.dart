@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:local_market/utils/utils.dart';
 
@@ -137,6 +138,8 @@ class _AddButtonState extends State<AddButton> {
                 }
 
                 updateAllProductCount(this._product['id']);
+              }else{
+                Fluttertoast.showToast(msg: "You can't add more than 5 of this items");
               }
             }
           ),

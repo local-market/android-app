@@ -241,6 +241,13 @@ class _ProductViewState extends State<ProductView> {
           CartIcon()
         ],
       ),
+      bottomNavigationBar: Container(
+        height: 60,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AddButton(_product, null),
+        ),
+      ),
       children: <Widget>[
         PageList(
           children: <Widget>[
@@ -248,6 +255,13 @@ class _ProductViewState extends State<ProductView> {
               width: double.infinity,
               height: 200,
               child: image(_product), 
+            ),
+            ListTile(
+              title: Text(_product['name'],
+                style: TextStyle(
+                    fontSize: 20
+                ),
+              ),
             ),
             // Divider(),
             ListTile(
@@ -260,7 +274,7 @@ class _ProductViewState extends State<ProductView> {
                     TextSpan(
                       text: _product['offerPrice'] != null ? '₹ ' + _product['offerPrice']+ '  ' : '',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        color: _utils.colors['theme'],
                         fontSize: 27
                       )
                     ),
@@ -292,14 +306,19 @@ class _ProductViewState extends State<ProductView> {
               //   ),
               // ),
             ),
-            ListTile(
-              title: Text(_product['name'],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 4),
+              child: Text("Description:",
                 style: TextStyle(
-                  fontSize: 17
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),
-            AddButton(_product, null),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 0),
+              child: Text(this._product['description']),
+            ),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,
@@ -332,28 +351,21 @@ class _ProductViewState extends State<ProductView> {
               ),
             ) : Divider(),
             ListTile(
-              title: Text(
-                "Seller",
+              leading: Text(
+                "Sold by :",
                 style: TextStyle(
                   color: _utils.colors['theme'],
-                  fontSize: 16
+                  fontSize: 12
+                ),
+              ),
+              trailing: Text(
+              this._vendor == null ? "" : this._vendor.data['username'],
+                style: TextStyle(
+                  fontSize: 12
                 ),
               ),
             ),
-            ListTile(
-              title: Text(
-                this._vendor == null ? "" : this._vendor.data['username'],
-                style: TextStyle(
-                  fontSize: 14
-                ),
-              ),
-              subtitle: Text(
-                this._vendor == null ? "" : this._vendor.data['address'],
-                style: TextStyle(
-                  fontSize: 14
-                ),
-              ),
-            ),
+            Divider(),
             ExpansionTile(
               title: Text(
                 "More Sellers",
@@ -448,7 +460,7 @@ class _ProductViewState extends State<ProductView> {
           TextSpan(
             text: '₹ ${offerPrice}',
             style: TextStyle(fontSize: 16, 
-              color: Colors.red.shade500,
+              color: _utils.colors['theme'],
               fontWeight: FontWeight.bold
             ),
           ),
