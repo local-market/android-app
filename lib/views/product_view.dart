@@ -181,6 +181,7 @@ class _ProductViewState extends State<ProductView> {
   int cartSize = 0;
   final Utils _utils = new Utils();
   DocumentSnapshot _user;
+  String _productDescription = '';
 
   _ProductViewState(product){
     this._product = product;
@@ -210,6 +211,19 @@ class _ProductViewState extends State<ProductView> {
         // print("vendors details : " + value.toString());
       });
     });
+    
+    var descriptionSplit = this._product['description'].split('\\n');
+    print(descriptionSplit);
+    if(descriptionSplit.length == 1){
+      descriptionSplit = this._product['description'].split('/n');
+    }
+    // this._product['description'] = '';
+    for(var i = 0; i < descriptionSplit.length; i++){
+      setState((){
+        this._productDescription += descriptionSplit[i] + '\n';
+      });
+      print(this._productDescription);
+    }
   }
 
   @override
@@ -259,7 +273,7 @@ class _ProductViewState extends State<ProductView> {
             ListTile(
               title: Text(_product['name'],
                 style: TextStyle(
-                    fontSize: 20
+                    fontSize: 16
                 ),
               ),
             ),
@@ -317,7 +331,7 @@ class _ProductViewState extends State<ProductView> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 0),
-              child: Text(this._product['description']),
+              child: Text(this._productDescription),
             ),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
