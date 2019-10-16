@@ -259,7 +259,28 @@ class _ProductViewState extends State<ProductView> {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: AddButton(_product, null),
+          child: _product['vendor'] == "false" ?
+          AddButton(_product, null) :
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
+              child: ButtonTheme(
+                  minWidth: double.infinity,
+                  child: RaisedButton(
+                    onPressed: (){},
+
+                    color: Colors.grey.shade500,
+                    child: Text(
+                      "SUKOON!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: _utils.colors['buttonText'],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  )
+              )
+          ),
         ),
       ),
       children: <Widget>[
@@ -351,7 +372,7 @@ class _ProductViewState extends State<ProductView> {
                       },
                       child: Chip(
                         backgroundColor: _utils.colors['theme'],
-                        label: Text("Add",
+                        label: Text("Add/Update product",
                           style: TextStyle(
                             color:_utils.colors['buttonText'],
                             fontWeight: FontWeight.bold,
@@ -392,7 +413,7 @@ class _ProductViewState extends State<ProductView> {
                 SpinKitCircle(color: _utils.colors['loading'])
               ] : 
               this._vendors.map((v){
-                return listTileItem(v['name'], v['price'], v['offerPrice'], v['address'], v['id']);
+                return listTileItem(v['name'], v['price'], v['offerPrice'], v['address'], v['id'], v['inStock']);
               }).toList()
             ),
           ],
@@ -459,7 +480,7 @@ class _ProductViewState extends State<ProductView> {
     );
   }
 
-  Widget listTileItem(item, price, offerPrice, address, vendorId) {
+  Widget listTileItem(item, price, offerPrice, address, vendorId, stock) {
   return ListTile(
     title: Text(
       item.length > 30 ? item.substring(0, 30) + '...' : item,
@@ -468,26 +489,42 @@ class _ProductViewState extends State<ProductView> {
     subtitle: Text(
       address
     ),
-    trailing: RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '₹ ${offerPrice}',
-            style: TextStyle(fontSize: 16, 
-              color: _utils.colors['theme'],
-              fontWeight: FontWeight.bold
-            ),
+    trailing: Column(
+      children:[
+        RichText(
+          text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '₹ ${offerPrice}',
+                  style: stock.toString() == "false" ?
+                      TextStyle(
+                        color:Colors.grey.shade700,
+                        decoration: TextDecoration.lineThrough
+                      )
+                  :TextStyle(fontSize: 16,
+                      color: _utils.colors['theme'],
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                // TextSpan(
+                //   text: ' ₹ ${offerPrice}',
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     color: Colors.grey.shade700,
+                //     decoration: TextDecoration.lineThrough
+                //   )
+                // )
+              ]
           ),
-          // TextSpan(
-          //   text: ' ₹ ${offerPrice}',
-          //   style: TextStyle(
-          //     fontSize: 14,
-          //     color: Colors.grey.shade700,
-          //     decoration: TextDecoration.lineThrough
-          //   )
-          // )
-        ]
-      ),
+        ),
+        Text(
+          stock.toString() == "false" ? "*Out of stock" : "",
+          style: TextStyle(
+            color:Colors.red,
+            fontSize: 12
+          ),
+        )
+      ]
     )
     // Text(
     //   '₹ ' + price,

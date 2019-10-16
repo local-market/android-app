@@ -9,6 +9,7 @@ import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
 import 'package:local_market/views/Update_password.dart';
 import 'package:local_market/views/my_orders.dart';
+import 'package:local_market/views/my_products_category.dart';
 import 'package:local_market/views/notification.dart';
 import 'package:local_market/views/products.dart';
 import 'package:local_market/controller/category_controller.dart';
@@ -305,7 +306,7 @@ class _HomeState extends State<Home> {
         children.add(
           InkWell(
             onTap: () {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => MyProducts()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => MyProductsCategory()));
             },
             child: ListTile(
               title: Text("My Products"),
