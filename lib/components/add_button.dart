@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:local_market/utils/utils.dart';
 
 class AddButton extends StatefulWidget {
   
   var _product;
+  
   Function() _updateTotal;
   AddButton(product, @required updateTotal){
     this._product = product;
@@ -20,6 +22,7 @@ class _AddButtonState extends State<AddButton> {
 
   int count = 0;
   var _product;
+  var _vendor;
   Function() _updateTotal;
   final Utils _utils = new Utils();
 
@@ -54,6 +57,16 @@ class _AddButtonState extends State<AddButton> {
   void initState() {
     super.initState();
     print(this._product['id']);
+
+    ProductController().getVendor(this._product['id'], this._product['vendorId']).then((vendor){
+      setState((){
+        this._vendor = vendor;
+        print(this._vendor);
+      });
+    });
+    
+
+    
     if(globals.cart.containsKey(this._product['id'])){
       setState(() {
         this.count = int.parse(globals.cart[this._product['id']]['count']);
@@ -75,7 +88,7 @@ class _AddButtonState extends State<AddButton> {
         padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
         child: ButtonTheme(
           minWidth: double.infinity,
-          child: RaisedButton(
+          child: /*this._vendor['inStock'].toString() == 'true' ? */RaisedButton(
             onPressed: (){
               globals.cart[this._product['id']] = {
                   "data" : this._product,
@@ -105,7 +118,16 @@ class _AddButtonState extends State<AddButton> {
                 fontSize: 13,
               ),
             ),
-          )                
+          ) /*: RaisedButton(
+            child: Text(
+              "Out of stock",
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade500
+              )
+            ),
+            onPressed: (){},
+          )     */        
         )
       ) : 
       ListTile(

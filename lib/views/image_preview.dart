@@ -19,11 +19,11 @@ class ImagePreview extends StatelessWidget {
         backgroundColor: _utils.colors['appBar'],
         brightness: Brightness.light,
         elevation: _utils.elevation,
-        title: Text("Image Preview",
-          style: TextStyle(
-            color: _utils.colors['appBarText'],
-          ),
-        ),
+        // title: Text("Image Preview",
+        //   style: TextStyle(
+        //     color: _utils.colors['appBarText'],
+        //   ),
+        // ),
       ),
       children: <Widget>[
         PageItem(

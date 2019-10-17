@@ -265,8 +265,7 @@ class _ProductViewState extends State<ProductView> {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _product['vendor'] == "false" ?
-          AddButton(_product, null) :
+          child: (_user != null && _user.data['vendor'] == 'true') ?
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
               child: ButtonTheme(
@@ -286,7 +285,7 @@ class _ProductViewState extends State<ProductView> {
                     ),
                   )
               )
-          ),
+          ) : AddButton(_product, null),
         ),
       ),
       children: <Widget>[
@@ -487,93 +486,102 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Widget listTileItem(item, price, offerPrice, address, vendorId, stock) {
-  return ListTile(
-    title: Text(
-      item.length > 30 ? item.substring(0, 30) + '...' : item,
-      style: TextStyle(fontSize: 16,)
-    ),
-    subtitle: Text(
-      address
-    ),
-    trailing: Column(
-      children:[
-        RichText(
-          text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '₹ ${offerPrice}',
-                  style: stock.toString() == "false" ?
-                      TextStyle(
-                        color:Colors.grey.shade700,
-                        decoration: TextDecoration.lineThrough
-                      )
-                  :TextStyle(fontSize: 16,
-                      color: _utils.colors['theme'],
-                      fontWeight: FontWeight.bold
+  return InkWell(
+    onTap: (){
+      setState((){
+        this._product['price'] = price;
+        this._product['offerPrice'] = offerPrice;
+        this._product['vendorId'] = vendorId;
+      });
+    },
+    child: ListTile(
+      title: Text(
+        item.length > 30 ? item.substring(0, 30) + '...' : item,
+        style: TextStyle(fontSize: 16,)
+      ),
+      subtitle: Text(
+        address
+      ),
+      trailing: Column(
+        children:[
+          RichText(
+            text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '₹ ${offerPrice}',
+                    style: stock.toString() == "false" ?
+                        TextStyle(
+                          color:Colors.grey.shade700,
+                          decoration: TextDecoration.lineThrough
+                        )
+                    :TextStyle(fontSize: 16,
+                        color: _utils.colors['theme'],
+                        fontWeight: FontWeight.bold
+                    ),
                   ),
-                ),
-                // TextSpan(
-                //   text: ' ₹ ${offerPrice}',
-                //   style: TextStyle(
-                //     fontSize: 14,
-                //     color: Colors.grey.shade700,
-                //     decoration: TextDecoration.lineThrough
-                //   )
-                // )
-              ]
+                  // TextSpan(
+                  //   text: ' ₹ ${offerPrice}',
+                  //   style: TextStyle(
+                  //     fontSize: 14,
+                  //     color: Colors.grey.shade700,
+                  //     decoration: TextDecoration.lineThrough
+                  //   )
+                  // )
+                ]
+            ),
           ),
-        ),
-        Text(
-          stock.toString() == "false" ? "*Out of stock" : "",
-          style: TextStyle(
-            color:Colors.red,
-            fontSize: 12
-          ),
-        )
-      ]
-    )
-    // Text(
-    //   '₹ ' + price,
-    //   style: TextStyle(fontSize: 16, 
-    //     color: Colors.red.shade500,
-    //     fontWeight: FontWeight.bold
-    //   ),
-    // ),
-          // Padding(
-          //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-          //     child: ButtonTheme(
-          //       minWidth: 10,
-          //       height: 40,
-          //       child: RaisedButton(
-          //         onPressed: (){
-          //           globals.cart.add(
-          //             {
-          //               "id" : this._product['id'],
-          //               "name" : this._product['name'],
-          //               "image" : this._product['image'],
-          //               "price" : price,
-          //               "vendorName" : item,
-          //               "vendorId" : vendorId,
-          //             });
-          //           print("Cart : ${globals.cart.toString()}");
-          //           globals.cartSize += 1;
-          //           setState(() {
-          //             this.cartSize += 1;
-          //           });
-          //         },
-                  
-          //         color: _utils.colors['theme'],
-          //         child: Text("Add",
-          //           textAlign: TextAlign.center,
-          //           style: TextStyle(
-          //             color: _utils.colors['buttonText'],
-          //             fontWeight: FontWeight.bold,
-          //             fontSize: 15,
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
+          Text(
+            stock.toString() == "false" ? "*Out of stock" : "",
+            style: TextStyle(
+              color:Colors.red,
+              fontSize: 12
+            ),
+          )
+        ]
+      )
+      // Text(
+      //   '₹ ' + price,
+      //   style: TextStyle(fontSize: 16, 
+      //     color: Colors.red.shade500,
+      //     fontWeight: FontWeight.bold
+      //   ),
+      // ),
+            // Padding(
+            //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+            //     child: ButtonTheme(
+            //       minWidth: 10,
+            //       height: 40,
+            //       child: RaisedButton(
+            //         onPressed: (){
+            //           globals.cart.add(
+            //             {
+            //               "id" : this._product['id'],
+            //               "name" : this._product['name'],
+            //               "image" : this._product['image'],
+            //               "price" : price,
+            //               "vendorName" : item,
+            //               "vendorId" : vendorId,
+            //             });
+            //           print("Cart : ${globals.cart.toString()}");
+            //           globals.cartSize += 1;
+            //           setState(() {
+            //             this.cartSize += 1;
+            //           });
+            //         },
+                    
+            //         color: _utils.colors['theme'],
+            //         child: Text("Add",
+            //           textAlign: TextAlign.center,
+            //           style: TextStyle(
+            //             color: _utils.colors['buttonText'],
+            //             fontWeight: FontWeight.bold,
+            //             fontSize: 15,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+    ),
   );
 }
 
