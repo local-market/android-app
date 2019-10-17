@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:local_market/components/add_button.dart';
 import 'package:local_market/components/app_bar.dart';
+import 'package:local_market/components/no_animation_page_route.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
@@ -60,11 +61,11 @@ class _CartState extends State<Cart> {
       this.cart = globals.cart;
     });
 
-    new Timer.periodic(const Duration(seconds: 1), (Timer t){
-      setState(() {
-        this.total = globals.total;
-      });
-    });
+    // new Timer.periodic(const Duration(seconds: 1), (Timer t){
+    //   setState(() {
+    //     this.total = globals.total;
+    //   });
+    // });
   }
 
   @override
@@ -97,7 +98,14 @@ class _CartState extends State<Cart> {
         color: Colors.white,
         child:Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
+          child: this.cart.length == 0 ? 
+          MaterialButton(onPressed: (){
+            Navigator.pop(context);
+          },
+            child:new Text("Continue Shopping",style: TextStyle(color: Colors.white,fontSize: 20.0),),
+            color: _utils.colors['theme'],
+          )
+          : Row(
             children: <Widget>[
               Expanded(
                 child: ListTile(
@@ -121,7 +129,34 @@ class _CartState extends State<Cart> {
           ),
         ),
       ),
-      children: 
+      children: this.cart.length == 0 ? [
+        PageList(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Center(
+                child: Icon(
+                  OMIcons.shoppingCart,
+                  size: 100,
+                  color: _utils.colors['icons'],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  "You don't have any items...",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey.shade700
+                  ),
+                )
+              ),
+            )
+          ],
+        )
+      ] :
       
       <Widget>[
         PageList.builder(
@@ -135,10 +170,21 @@ class _CartState extends State<Cart> {
                 this.cart[keys[i]]['data']["image"],
                 this.cart[keys[i]]['data']["name"],
                 this.cart[keys[i]]['data']["price"],
-                this.cart[keys[i]]['data']["price"],
-
+                this.cart[keys[i]]['data']["offerPrice"],
+                this.cart[keys[i]]['data']
             );
           }
+        ),
+        PageItem(
+          child: Center(
+            child: Text(
+              '* Free delivery above 249',
+              style: TextStyle(
+                  color: _utils.colors['theme'],
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+          ),
         )
       ],
     );
@@ -163,22 +209,38 @@ class _CartState extends State<Cart> {
   //   return results;
   // }
 
-  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice, product) {
     return Card(
       child: ListTile(
-        leading: new Image.network(prod_image,
+        leading: Image.network(prod_image,
           width: 60.0,
           // height: 0.0,
           // fit: BoxFit.cover,
         ),
-        title: new Text(
+        title: Text(
           prod_name.length > 30
               ? prod_name.substring(0, 30) + "..."
               : prod_name,
           style: TextStyle(fontSize: 15.0),),
         subtitle: new Column(
           children: <Widget>[
-            new Row(
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4.0, 4.0, 8.0, 0.0),
+                  child: new Text("Offer Price:",
+                    style: TextStyle(fontSize: 13.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 4.0, 8.0, 0.0),
+                  child: new Text('Rs $prod_discountedprice',
+                    style: TextStyle(color: Colors.green, fontSize: 13.0),
+                  ),
+                ),
+              ],
+            ),
+            Row(
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -187,46 +249,35 @@ class _CartState extends State<Cart> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 8.0, 8.0, 8.0),
+                  padding: const EdgeInsets.all(4.0),
                   child: new Text('Rs $prod_price',
-                    style: TextStyle(color: Colors.green, fontSize: 13.0),
-                  ),
-                ),
-              ],
-            ),
-            new Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(4.0, 0.0, 8.0, 8.0),
-                  child: new Text("Discounted Price:",
-                    style: TextStyle(fontSize: 13.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 8.0, 8.0),
-                  child: new Text('Rs $prod_discountedprice',
                     style: TextStyle(color: Colors.red, fontSize: 13.0),
                   ),
                 ),
               ],
             ),
-            new Container(
+            
+            Container(
                 alignment: Alignment.topLeft,
-                child: AddButton(this.cart[prod_id]['data'], null)
+                child: AddButton(product, this.updateTotal)
             ),
           ],
         ),
         trailing: InkWell(
           onTap: () {
-            globals.total -= double.parse(globals.cart[prod_id]['data']['price']) * double.parse(globals.cart[prod_id]['count']);
-            globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
-            globals.cart[prod_id]['clearCount']();
-            globals.cart.remove(prod_id);
+            if(globals.cart.containsKey(prod_id)){
+              globals.total -= double.parse(globals.cart[prod_id]['data']['offerPrice']) * double.parse(globals.cart[prod_id]['count']);
+              globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
+              globals.cart[prod_id]['clearCount']();
+              globals.cart.remove(prod_id);
 
-            setState(() {
-              this.cart = globals.cart;
-              this.total = globals.total;
-            });
+              Navigator.pushReplacement(context, NoAnimationMaterialPageRoute(builder: ((context) => Cart())));
+
+              // setState(() {
+              //   // this.cart = globals.cart;
+              //   // this.total = globals.total;
+              // });
+            }
           },
           child: Icon(
             OMIcons.delete,

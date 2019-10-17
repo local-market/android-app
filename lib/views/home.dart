@@ -9,6 +9,8 @@ import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
 import 'package:local_market/views/Update_password.dart';
 import 'package:local_market/views/my_orders.dart';
+import 'package:local_market/views/my_products_category.dart';
+import 'package:local_market/views/notification.dart';
 import 'package:local_market/views/products.dart';
 import 'package:local_market/controller/category_controller.dart';
 import 'package:local_market/controller/product_controller.dart';
@@ -43,11 +45,11 @@ class _HomeState extends State<Home> {
   Widget getCarousel(){
     return CarouselSlider(
       items: [
-        'assets/img/c1.jpg',
-        'assets/img/m1.jpeg',
-        'assets/img/w1.jpeg',
-        'assets/img/w3.jpeg',
-        'assets/img/w4.jpeg',
+        'assets/img/1.jpg',
+        'assets/img/2.jpg',
+        'assets/img/3.jpg',
+        'assets/img/4.jpg',
+        'assets/img/5.jpg',
       ].map((image){
         return Builder(
           builder: (BuildContext context){
@@ -152,10 +154,10 @@ class _HomeState extends State<Home> {
             getCarousel(),
 
             // padding
-            new Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Categories"),
-            ),
+//            new Padding(
+//              padding: const EdgeInsets.all(8.0),
+//              child: Text("Categories"),
+//            ),
 
             // horizintal list view
             HorizontalList(),
@@ -290,9 +292,21 @@ class _HomeState extends State<Home> {
       if(_user.data['vendor'] == 'true'){
 
         children.add(
+            InkWell(
+              onTap: () {
+                Navigator.push(context, CupertinoPageRoute(builder: (context) => ProductRequests()));
+              },
+              child: ListTile(
+                title: Text("Notification"),
+                leading: Icon(OMIcons.notifications, color: _utils.colors['drawerIcons']),
+              ),
+            )
+        );
+
+        children.add(
           InkWell(
             onTap: () {
-              Navigator.push(context, CupertinoPageRoute(builder: (context) => MyProducts()));
+              Navigator.push(context, CupertinoPageRoute(builder: (context) => MyProductsCategory()));
             },
             child: ListTile(
               title: Text("My Products"),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:local_market/utils/utils.dart';
 
@@ -30,6 +31,25 @@ class _AddButtonState extends State<AddButton> {
     });
   }
 
+  void updateCount(){
+    setState((){
+      if(globals.cart.containsKey(this._product['id'])){
+        this.count = int.parse(globals.cart[this._product['id']]['count']);
+      }else{
+        this.count = 0;
+      }
+    });
+  }
+
+  void updateAllProductCount(String productId){
+    if(globals.productListener.containsKey(productId)){
+      for(var i = 0; i < globals.productListener[productId].length; i++){
+        print(globals.productListener[productId][i].toString());
+        globals.productListener[productId][i]();
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +58,13 @@ class _AddButtonState extends State<AddButton> {
       setState(() {
         this.count = int.parse(globals.cart[this._product['id']]['count']);
       });
+    }
+
+    if(globals.productListener.containsKey(this._product['id'])){
+      globals.productListener[this._product['id']].add(this.updateCount);
+    }else{
+      globals.productListener[this._product['id']] = new List<dynamic>();
+      globals.productListener[this._product['id']].add(this.updateCount);
     }
   }
 
@@ -57,13 +84,15 @@ class _AddButtonState extends State<AddButton> {
               };
               globals.cartSize += 1;
               print(globals.cart.toString());
-              globals.total += double.parse(this._product['price']);
+              globals.total += double.parse(this._product['offerPrice']);
               setState(() {
                 this.count += 1;
               });
               if(this._updateTotal != null){
                 this._updateTotal();
               }
+
+              updateAllProductCount(this._product['id']);
             },
             
             color: _utils.colors['theme'],
@@ -96,15 +125,21 @@ class _AddButtonState extends State<AddButton> {
               ),
             ),
             onPressed : (){
-              setState(() {
-                this.count += 1;
-                globals.cart[this._product['id']]['count'] = this.count.toString();
-                globals.cartSize += 1;
-                globals.total += double.parse(this._product['price']);
-              });
-              print(globals.cart.toString());
-              if(this._updateTotal != null){
-                this._updateTotal();
+              if(this.count < 5){
+                setState(() {
+                  this.count += 1;
+                  globals.cart[this._product['id']]['count'] = this.count.toString();
+                  globals.cartSize += 1;
+                  globals.total += double.parse(this._product['offerPrice']);
+                });
+                print(globals.cart.toString());
+                if(this._updateTotal != null){
+                  this._updateTotal();
+                }
+
+                updateAllProductCount(this._product['id']);
+              }else{
+                Fluttertoast.showToast(msg: "You can't add more than 5 of this items");
               }
             }
           ),
@@ -130,22 +165,24 @@ class _AddButtonState extends State<AddButton> {
               ),
             ),
             onPressed: (){
-              setState(() {
-                this.count -= 1;
-                globals.cart[this._product['id']]['count'] = this.count.toString();
-                if(this.count == 0){
-                  globals.cart[this._product['id']]['clearCount']();
-                  globals.cart.remove(this._product['id']);
-                  this.count = 0;
-                }
-                if(globals.cartSize > 0){
+              if(this.count > 0){
+                setState(() {
+                  this.count -= 1;
+                  globals.cart[this._product['id']]['count'] = this.count.toString();
+                  if(this.count == 0){
+                    globals.cart[this._product['id']]['clearCount']();
+                    globals.cart.remove(this._product['id']);
+                    this.count = 0;
+                  }
                   globals.cartSize -= 1;
-                  globals.total -= double.parse(this._product['price']);
+                  globals.total -= double.parse(this._product['offerPrice']);
+                });
+                print(globals.cart.toString());
+                if(this._updateTotal != null){
+                  this._updateTotal();
                 }
-              });
-              print(globals.cart.toString());
-              if(this._updateTotal != null){
-                this._updateTotal();
+
+                updateAllProductCount(this._product['id']);
               }
             },
           ),

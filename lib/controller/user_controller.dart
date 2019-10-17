@@ -46,11 +46,32 @@ class UserController {
     for(var i = 0; i < products.documents.length; i++){
       DocumentSnapshot product = products.documents[i];
       DocumentSnapshot productDetails = await ProductController().get(product.data['id']);
-      results.add({
-        "id" : productDetails.data['id'],
-        "name" : productDetails.data['name'],
-        "image" : productDetails.data['image']
-      });
+      print(productDetails.data);
+      if(productDetails.data != null) {
+        results.add({
+          "id": productDetails.data['id'],
+          "name": productDetails.data['name'],
+          "image": productDetails.data['image']
+        });
+      }
+    }
+    return results;
+  }
+
+  Future<List<Map<String, String> > > getAllProductsBySubCategory(String uid, String subCategoryId) async {
+    List<Map<String, String> > results = new List<Map<String, String> >();
+    QuerySnapshot products = await _firestore.collection(ref).document(uid).collection('products').getDocuments();
+    for(var i = 0; i < products.documents.length; i++){
+      DocumentSnapshot product = products.documents[i];
+      DocumentSnapshot productDetails = await ProductController().get(product.data['id']);
+      print(productDetails.data);
+      if(productDetails.data != null && productDetails.data['subCategory'] == subCategoryId) {
+        results.add({
+          "id": productDetails.data['id'],
+          "name": productDetails.data['name'],
+          "image": productDetails.data['image'],
+        });
+      }
     }
     return results;
   }

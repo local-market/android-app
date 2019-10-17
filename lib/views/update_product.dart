@@ -30,6 +30,7 @@ class _UpdateProductState extends State<UpdateProduct> {
   String _productId;
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   TextEditingController _productPriceController = new TextEditingController();
+  TextEditingController _productOfferPriceController = new TextEditingController();
   final ProductController _productController = new ProductController();
   final UserController _userController = new UserController();
   final Utils _utils = new Utils();
@@ -52,6 +53,7 @@ class _UpdateProductState extends State<UpdateProduct> {
       _productController.getPrice(_productId, user.uid.toString()).then((product){
         setState(() {
           _productPriceController.text = product.data['price'];
+          _productOfferPriceController.text = product.data['offerPrice'];
           if(product.data['inStock'] == "true"){
             print(product.data['inStock']);
             inStock = true;
@@ -139,6 +141,33 @@ class _UpdateProductState extends State<UpdateProduct> {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: TextFormField(
+                      autofocus: false,
+                      controller: _productOfferPriceController,
+                      inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: "Offer Price",
+                        // border: InputBorder.none
+                      ),
+                      validator: (value){
+                        if(value.isEmpty){
+                          return "This field cannot be empty";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
                   Checkbox(value: inStock, onChanged: (value){
@@ -196,6 +225,7 @@ class _UpdateProductState extends State<UpdateProduct> {
       _productController.updatePrice(_productId, user.uid.toString(), {
         "id" : user.uid.toString(),
         "price" : _productPriceController.text,
+        "offerPrice" : _productOfferPriceController.text,
         "inStock" : inStock.toString(),
       }).then((value){
         _formState.reset();

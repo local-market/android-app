@@ -62,13 +62,11 @@ flutter:
   #  - images/a_dot_ham.jpeg
 
   assets:
-    - assets/img/logo.png
-    - assets/img/logo.png
-    - assets/img/c1.jpg
-    - assets/img/m1.jpeg
-    - assets/img/w1.jpeg
-    - assets/img/w3.jpeg
-    - assets/img/w4.jpeg
+    - assets/img/1.jpg
+    - assets/img/2.jpg
+    - assets/img/3.jpg
+    - assets/img/4.jpg
+    - assets/img/5.jpg
 
     - assets/cats/computer&mobiles-HJvNLhq9hOTzwOjAsYM4.webp
     - assets/cats/electronics-8oOsgXlOy4MyVUMsgk3q.webp

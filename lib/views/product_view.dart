@@ -181,6 +181,7 @@ class _ProductViewState extends State<ProductView> {
   int cartSize = 0;
   final Utils _utils = new Utils();
   DocumentSnapshot _user;
+  String _productDescription = '';
 
   _ProductViewState(product){
     this._product = product;
@@ -210,6 +211,19 @@ class _ProductViewState extends State<ProductView> {
         // print("vendors details : " + value.toString());
       });
     });
+    
+    var descriptionSplit = this._product['description'].split('\\n');
+    print(descriptionSplit);
+    if(descriptionSplit.length == 1){
+      descriptionSplit = this._product['description'].split('/n');
+    }
+    // this._product['description'] = '';
+    for(var i = 0; i < descriptionSplit.length; i++){
+      setState((){
+        this._productDescription += descriptionSplit[i] + '\n';
+      });
+      print(this._productDescription);
+    }
   }
 
   @override
@@ -241,6 +255,34 @@ class _ProductViewState extends State<ProductView> {
           CartIcon()
         ],
       ),
+      bottomNavigationBar: Container(
+        height: 60,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: _product['vendor'] == "false" ?
+          AddButton(_product, null) :
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
+              child: ButtonTheme(
+                  minWidth: double.infinity,
+                  child: RaisedButton(
+                    onPressed: (){},
+
+                    color: Colors.grey.shade500,
+                    child: Text(
+                      "SUKOON!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: _utils.colors['buttonText'],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  )
+              )
+          ),
+        ),
+      ),
       children: <Widget>[
         PageList(
           children: <Widget>[
@@ -248,6 +290,13 @@ class _ProductViewState extends State<ProductView> {
               width: double.infinity,
               height: 200,
               child: image(_product), 
+            ),
+            ListTile(
+              title: Text(_product['name'],
+                style: TextStyle(
+                    fontSize: 16
+                ),
+              ),
             ),
             // Divider(),
             ListTile(
@@ -258,12 +307,20 @@ class _ProductViewState extends State<ProductView> {
                   ),
                   children: [
                     TextSpan(
-                      text: _product['price'] != null ? '₹ ' + _product['price'] : '',
+                      text: _product['offerPrice'] != null ? '₹ ' + _product['offerPrice']+ '  ' : '',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        color: _utils.colors['theme'],
                         fontSize: 27
                       )
                     ),
+                    TextSpan(
+                      text: '₹ ${_product['price']}',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey.shade700,
+                        decoration: TextDecoration.lineThrough
+                      )
+                    )
                     // TextSpan(
                     //   text: "   Incl. of all taxes",
                     // )
@@ -284,14 +341,19 @@ class _ProductViewState extends State<ProductView> {
               //   ),
               // ),
             ),
-            ListTile(
-              title: Text(_product['name'],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 4),
+              child: Text("Description:",
                 style: TextStyle(
-                  fontSize: 17
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),
-            AddButton(_product, null),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 0),
+              child: Text(this._productDescription),
+            ),
             (_user != null && _user.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,
@@ -310,7 +372,7 @@ class _ProductViewState extends State<ProductView> {
                       },
                       child: Chip(
                         backgroundColor: _utils.colors['theme'],
-                        label: Text("Add",
+                        label: Text("Add/Update product",
                           style: TextStyle(
                             color:_utils.colors['buttonText'],
                             fontWeight: FontWeight.bold,
@@ -324,28 +386,21 @@ class _ProductViewState extends State<ProductView> {
               ),
             ) : Divider(),
             ListTile(
-              title: Text(
-                "Seller",
+              leading: Text(
+                "Sold by :",
                 style: TextStyle(
                   color: _utils.colors['theme'],
-                  fontSize: 16
+                  fontSize: 12
+                ),
+              ),
+              trailing: Text(
+              this._vendor == null ? "" : this._vendor.data['username'],
+                style: TextStyle(
+                  fontSize: 12
                 ),
               ),
             ),
-            ListTile(
-              title: Text(
-                this._vendor == null ? "" : this._vendor.data['username'],
-                style: TextStyle(
-                  fontSize: 14
-                ),
-              ),
-              subtitle: Text(
-                this._vendor == null ? "" : this._vendor.data['address'],
-                style: TextStyle(
-                  fontSize: 14
-                ),
-              ),
-            ),
+            Divider(),
             ExpansionTile(
               title: Text(
                 "More Sellers",
@@ -358,7 +413,7 @@ class _ProductViewState extends State<ProductView> {
                 SpinKitCircle(color: _utils.colors['loading'])
               ] : 
               this._vendors.map((v){
-                return listTileItem(v['name'], v['price'], v['address'], v['id']);
+                return listTileItem(v['name'], v['price'], v['offerPrice'], v['address'], v['id'], v['inStock']);
               }).toList()
             ),
           ],
@@ -425,7 +480,7 @@ class _ProductViewState extends State<ProductView> {
     );
   }
 
-  Widget listTileItem(item, price, address, vendorId) {
+  Widget listTileItem(item, price, offerPrice, address, vendorId, stock) {
   return ListTile(
     title: Text(
       item.length > 30 ? item.substring(0, 30) + '...' : item,
@@ -434,13 +489,50 @@ class _ProductViewState extends State<ProductView> {
     subtitle: Text(
       address
     ),
-    trailing:Text(
-      '₹ ' + price,
-      style: TextStyle(fontSize: 16, 
-        color: Colors.red.shade500,
-        fontWeight: FontWeight.bold
-      ),
-    ),
+    trailing: Column(
+      children:[
+        RichText(
+          text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '₹ ${offerPrice}',
+                  style: stock.toString() == "false" ?
+                      TextStyle(
+                        color:Colors.grey.shade700,
+                        decoration: TextDecoration.lineThrough
+                      )
+                  :TextStyle(fontSize: 16,
+                      color: _utils.colors['theme'],
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                // TextSpan(
+                //   text: ' ₹ ${offerPrice}',
+                //   style: TextStyle(
+                //     fontSize: 14,
+                //     color: Colors.grey.shade700,
+                //     decoration: TextDecoration.lineThrough
+                //   )
+                // )
+              ]
+          ),
+        ),
+        Text(
+          stock.toString() == "false" ? "*Out of stock" : "",
+          style: TextStyle(
+            color:Colors.red,
+            fontSize: 12
+          ),
+        )
+      ]
+    )
+    // Text(
+    //   '₹ ' + price,
+    //   style: TextStyle(fontSize: 16, 
+    //     color: Colors.red.shade500,
+    //     fontWeight: FontWeight.bold
+    //   ),
+    // ),
           // Padding(
           //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
           //     child: ButtonTheme(

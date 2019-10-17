@@ -58,6 +58,7 @@ class ProductController {
         "name" : doc.data['name'],
         "image" : doc.data['image'],
         "price" : doc.data['price'],
+        "offerPrice" : doc.data['offerPrice'],
         "vendorId" : doc.data['vendorId']
       });
     });
@@ -79,6 +80,7 @@ class ProductController {
             "name" : doc.data['name'],
             "image" : doc.data['image'],
             "price" : doc.data['price'],
+            "offerPrice" : doc.data['offerPrice'],
             "vendorId": doc.data['vendorId']
           });
           dp[doc.data['id']] = true;
@@ -99,6 +101,7 @@ class ProductController {
       // print(vendor.data.toString());
       results.add({
         "price" : doc.data['price'],
+        "offerPrice" : doc.data['offerPrice'],
         "inStock" : doc.data['inStock'],
         "name" : vendor.data['username'],
         "address" : vendor.data['address'],
