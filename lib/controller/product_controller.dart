@@ -81,7 +81,8 @@ class ProductController {
             "image" : doc.data['image'],
             "price" : doc.data['price'],
             "offerPrice" : doc.data['offerPrice'],
-            "vendorId": doc.data['vendorId']
+            "vendorId": doc.data['vendorId'],
+            "description" : doc.data['description']
           });
           dp[doc.data['id']] = true;
         }

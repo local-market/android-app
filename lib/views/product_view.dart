@@ -11,6 +11,7 @@ import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/add_vendor_to_product.dart';
+import 'package:local_market/views/image_preview.dart';
 import 'package:local_market/views/search.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 
@@ -27,10 +28,15 @@ class image extends StatelessWidget {
     // TODO: implement build
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
-      child: Center(
-        child: Image.network(_product['image'],
-          fit: BoxFit.cover,
-        )
+      child: InkWell(
+        onTap: (){
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => ImagePreview(this._product['image'])));
+        },
+        child: Center(
+          child: Image.network(_product['image'],
+            fit: BoxFit.cover,
+          )
+        ),
       ),
     );
     //return Container(
