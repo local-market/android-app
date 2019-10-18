@@ -11,6 +11,7 @@ import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/category_controller.dart';
 import "package:local_market/controller/product_controller.dart";
+import 'package:local_market/controller/size_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
@@ -41,7 +42,10 @@ class _AddProductState extends State<AddProduct> {
   final CategoryController _categoryController = new CategoryController();
   final Utils _utils = new Utils();
   final UserController userController = new UserController();
+  final SizeController _sizeController = new SizeController(); 
   bool _loading = false;
+  Map<String, bool> size = new Map<String, bool> ();
+  List<String> sizeKeys = new List<String>();
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +239,14 @@ class _AddProductState extends State<AddProduct> {
                         );
                       }).toList(),
                       onChanged: (value){
+                        _sizeController.get(value['id']).then((size){
+                          setState((){
+                            this.size = size;
+                            this.sizeKeys = size.keys.toList();
+                            print(this.size.toString());
+                          });
+                        });
+
                         _categoryController.getTag(this._selectedCategory['id'], value['id']).then((tags){
                           setState(() {
                             this._tags = tags;
@@ -273,6 +285,15 @@ class _AddProductState extends State<AddProduct> {
                   ),
                 ),
               ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: this.generateSizeView(this.sizeKeys)
+                ,),
+              ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
@@ -284,6 +305,7 @@ class _AddProductState extends State<AddProduct> {
                   Text("In Stock")
                 ],)
               ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 8, 20, 8),
                 child: Material(
@@ -312,6 +334,34 @@ class _AddProductState extends State<AddProduct> {
         ),
       ],
     );
+  }
+
+  List<Widget> generateSizeView(List<String> size){
+    List<Widget> results = new List<Widget>();
+    int n = (size.length / 5).ceil();
+    for(var i = 0 ; i < n; i++){
+      List<Widget> temp = new List<Widget>();
+      for(var j = i * 5; j < (i * 4) + 5 && j < size.length; j++){
+        temp.add(
+          Row(
+            children: <Widget>[
+              Checkbox(value: this.size[size[j]], onChanged: (value){
+              setState(() {
+                this.size[size[j]] = value;
+              });
+            }, checkColor: Colors.white, activeColor: _utils.colors['theme'],),
+            Text(size[j])
+            ],
+          )
+        );
+      }
+      results.add(
+        Row(
+          children: temp,
+        )
+      );
+    }
+    return results;
   }
   
   @override
@@ -354,6 +404,16 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
+  List<String> getSelectedSize(){
+    List<String> results = new List<String>();
+    for(var i = 0; i < this.sizeKeys.length; i++){
+      if(this.size[this.sizeKeys[i]]){
+        results.add(this.sizeKeys[i]);
+      }
+    }
+    return results;
+  }
+
   void validateAndUpload() async {
     // check();
     FormState _formState = _formKey.currentState;
@@ -366,6 +426,16 @@ class _AddProductState extends State<AddProduct> {
         Fluttertoast.showToast(msg:"Sub Category must be selected");
       }else if(this._selectedTag == null){
         Fluttertoast.showToast(msg:"Tag must be selected");
+      }else if(this.sizeKeys.length > 0){
+        bool flag = false;
+        for(var i = 0; i < this.sizeKeys.length; i++){
+          if(this.size[this.sizeKeys[i]]){
+            flag = true;
+            break;
+          }
+        }
+        if(!flag)
+          Fluttertoast.showToast(msg: "Size must be selected");
       }
       else{
         setState(() {
@@ -374,7 +444,7 @@ class _AddProductState extends State<AddProduct> {
         FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'], {
+        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'],this.getSelectedSize(),{
           "price": _productPriceController.text,
           "offerPrice" : _productOfferPriceController.text,
           "inStock": inStock.toString(),

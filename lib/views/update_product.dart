@@ -8,6 +8,7 @@ import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/controller/size_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 
@@ -34,10 +35,13 @@ class _UpdateProductState extends State<UpdateProduct> {
   final ProductController _productController = new ProductController();
   final UserController _userController = new UserController();
   final Utils _utils = new Utils();
+  final SizeController _sizeController = new SizeController();
   String _productImageUrl, _productName;
   bool inStock = true;
   bool _pageLoading = true;
   bool _buttonLoading = false;
+  Map<String, bool> size = new Map<String, bool> ();
+  List<String> sizeKeys = new List<String>();
 
   _UpdateProductState(String id, String name, String imageUrl){
     this._productId = id;
@@ -49,6 +53,14 @@ class _UpdateProductState extends State<UpdateProduct> {
   void initState(){
     super.initState();
     // check();
+    _productController.get(this._productId).then((product){
+      _sizeController.get(product.data['subCategory']).then((size){
+        setState((){
+          this.size = size;
+          this.sizeKeys = size.keys.toList();
+        });
+      });
+    });
     _userController.getCurrentUser().then((user){
       _productController.getPrice(_productId, user.uid.toString()).then((product){
         setState(() {
@@ -60,6 +72,11 @@ class _UpdateProductState extends State<UpdateProduct> {
           }else{
             print(product.data['inStock']);
             inStock = false;
+          }
+          if(product.data['size'] != null && product.data['size'].length > 0){
+            for(var i = 0; i < product.data['size'].length; i++){
+              this.size[product.data['size'][i]] = true;
+            }
           }
           _pageLoading = false;
         });
@@ -167,6 +184,14 @@ class _UpdateProductState extends State<UpdateProduct> {
                   ),
                 ),
               ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: this.generateSizeView(this.sizeKeys)
+                ,),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
@@ -207,6 +232,44 @@ class _UpdateProductState extends State<UpdateProduct> {
       ],
     );
   }
+
+  List<Widget> generateSizeView(List<String> size){
+    List<Widget> results = new List<Widget>();
+    int n = (size.length / 5).ceil();
+    for(var i = 0 ; i < n; i++){
+      List<Widget> temp = new List<Widget>();
+      for(var j = i * 5; j < (i * 4) + 5 && j < size.length; j++){
+        temp.add(
+          Row(
+            children: <Widget>[
+              Checkbox(value: this.size[size[j]], onChanged: (value){
+              setState(() {
+                this.size[size[j]] = value;
+              });
+            }, checkColor: Colors.white, activeColor: _utils.colors['theme'],),
+            Text(size[j])
+            ],
+          )
+        );
+      }
+      results.add(
+        Row(
+          children: temp,
+        )
+      );
+    }
+    return results;
+  }
+
+  List<String> getSelectedSize(){
+    List<String> results = new List<String>();
+    for(var i = 0; i < this.sizeKeys.length; i++){
+      if(this.size[this.sizeKeys[i]]){
+        results.add(this.sizeKeys[i]);
+      }
+    }
+    return results;
+  }
   
   // void check() async {
   //   if(!(await _utils.isLoggedIn())){
@@ -217,6 +280,12 @@ class _UpdateProductState extends State<UpdateProduct> {
   Future<void> validateAndUpdate() async {
     // check();
     FormState _formState = _formKey.currentState;
+    if(this.sizeKeys.length > 0){
+      if(this.getSelectedSize().length ==0){
+        Fluttertoast.showToast(msg: "Size must be selected");
+        return ;
+      }
+    }
     if(_formState.validate()){
       setState(() {
         _buttonLoading = true;
@@ -227,6 +296,7 @@ class _UpdateProductState extends State<UpdateProduct> {
         "price" : _productPriceController.text,
         "offerPrice" : _productOfferPriceController.text,
         "inStock" : inStock.toString(),
+        "size" : this.getSelectedSize()
       }).then((value){
         _formState.reset();
         Fluttertoast.showToast(msg: "Product updated");

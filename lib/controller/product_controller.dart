@@ -12,7 +12,7 @@ class ProductController {
   final String vendor_ref = "vendors";
   final UserController _userController = new UserController();
 
-  Future<void> add(File productImage, String productName, String productDescription,String userId, String tagId, String subCategoryId, String categoryId, Map<String, String> productDetails) async {
+  Future<void> add(File productImage, String productName, String productDescription,String userId, String tagId, String subCategoryId, String categoryId, List<String> size, Map<String, String> productDetails) async {
     String productId = Uuid().v1();
     String imageUrl = await Utils().uploadImage(productImage, productId);
     // print("Image Url " + imageUrl);
@@ -33,7 +33,8 @@ class ProductController {
       _firestore.collection(ref).document(productId).collection(vendor_ref).document(userId).setData(productDetails).then((value){
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
           "inStock":true,
-          "id" : productId
+          "id" : productId,
+          "size" : size
           }).catchError((e){
           throw e;
         });
@@ -82,7 +83,7 @@ class ProductController {
             "price" : doc.data['price'],
             "offerPrice" : doc.data['offerPrice'],
             "vendorId": doc.data['vendorId'],
-            "description" : doc.data['description']
+            "description" : doc.data['description'],
           });
           dp[doc.data['id']] = true;
         }
@@ -93,6 +94,11 @@ class ProductController {
 
   Future<Map<String, String>> getVendor(String productId, String vendorId) async {
     await _firestore.collection(ref).document(productId).collection('vendors').document(vendorId).get();
+  }
+
+  Future<List<String>> getVendorSize(String productId, String vendorId) async {
+    DocumentSnapshot doc = await _firestore.collection(ref).document(productId).collection('vendors').document(vendorId).get();
+    return doc.data['size'];
   }
 
   Future<List<Map<String, String> > > getVendors(String productId) async {
@@ -125,7 +131,7 @@ class ProductController {
     return (await _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).get());
   }
 
-  Future<void> updatePrice(String pid, String uid, Map<String, String> details) async {
+  Future<void> updatePrice(String pid, String uid, Map<String, dynamic> details) async {
     DocumentSnapshot product = await _firestore.collection(ref).document(pid).get();
     if(int.parse(details['price']) < int.parse(product.data['price'])){
       await _firestore.collection(ref).document(pid).updateData({

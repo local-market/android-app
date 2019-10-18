@@ -33,6 +33,7 @@ class OrderController {
           "price" : cart[keys[i]]['data']['offerPrice'],
           "vendorId" : cart[keys[i]]['data']['vendorId'],
           "quantity" : cart[keys[i]]['count'],
+          "size" : cart[keys[i]]['size']
         }).catchError((e){
           throw(e);
         });

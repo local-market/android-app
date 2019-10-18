@@ -9,13 +9,15 @@ class AddButton extends StatefulWidget {
   var _product;
   
   Function() _updateTotal;
-  AddButton(product, @required updateTotal){
+  String _size;
+  AddButton(product, @required updateTotal, size){
     this._product = product;
     this._updateTotal = updateTotal;
+    this._size;
   }
 
   @override
-  _AddButtonState createState() => _AddButtonState(this._product, this._updateTotal);
+  _AddButtonState createState() => _AddButtonState(this._product, this._updateTotal, this._size);
 }
 
 class _AddButtonState extends State<AddButton> {
@@ -23,10 +25,11 @@ class _AddButtonState extends State<AddButton> {
   int count = 0;
   var _product;
   var _vendor;
+  String _size;
   Function() _updateTotal;
   final Utils _utils = new Utils();
 
-  _AddButtonState(this._product, this._updateTotal);
+  _AddButtonState(this._product, this._updateTotal, this._size);
 
   void clearCount(){
     setState(() {
@@ -93,6 +96,7 @@ class _AddButtonState extends State<AddButton> {
               globals.cart[this._product['id']] = {
                   "data" : this._product,
                   "count" : "1",
+                  "size" : this._size,
                   "clearCount": this.clearCount
               };
               globals.cartSize += 1;
@@ -127,7 +131,7 @@ class _AddButtonState extends State<AddButton> {
               )
             ),
             onPressed: (){},
-          )     */        
+          )*/        
         )
       ) : 
       ListTile(

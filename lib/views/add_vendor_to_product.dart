@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/circular_loading_button.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/controller/size_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 
@@ -17,11 +19,12 @@ class AddVendorToProduct extends StatefulWidget {
   String _productId;
   String _productImageUrl;
   String _productName;
+  String _subCategory;
 
-  AddVendorToProduct(this._productId, this._productImageUrl, this._productName);
+  AddVendorToProduct(this._productId, this._productImageUrl, this._productName, this._subCategory);
 
   @override
-  _AddVendorToProductState createState() => _AddVendorToProductState(this._productId, this._productImageUrl, this._productName);
+  _AddVendorToProductState createState() => _AddVendorToProductState(this._productId, this._productImageUrl, this._productName, this._subCategory);
 }
 
 class _AddVendorToProductState extends State<AddVendorToProduct> {
@@ -29,14 +32,17 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
   final Utils _utils = new Utils();
   final UserController _userController = new UserController();
   final ProductController _productController = new ProductController();
+  final SizeController _sizeController = new SizeController();
   TextEditingController _productPriceController = new TextEditingController();
   TextEditingController _productOfferPriceController = new TextEditingController();
-  String _productId, _productImageUrl, _productName;
+  String _productId, _productImageUrl, _productName, _subCategory;
   bool inStock = true;
   bool _pageLoading = false;
   bool _buttonLoading = false;
+  Map<String, bool> size = new Map<String, bool> ();
+  List<String> sizeKeys = new List<String>();
   
-  _AddVendorToProductState(this._productId, this._productImageUrl, this._productName);
+  _AddVendorToProductState(this._productId, this._productImageUrl, this._productName, this._subCategory);
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +144,14 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
                   ),
                 ),
               ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: this.generateSizeView(this.sizeKeys)
+                ,),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
                 child: Row(children: <Widget>[
@@ -179,8 +193,52 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
     );
   }
 
+  List<Widget> generateSizeView(List<String> size){
+    List<Widget> results = new List<Widget>();
+    int n = (size.length / 5).ceil();
+    for(var i = 0 ; i < n; i++){
+      List<Widget> temp = new List<Widget>();
+      for(var j = i * 5; j < (i * 4) + 5 && j < size.length; j++){
+        temp.add(
+          Row(
+            children: <Widget>[
+              Checkbox(value: this.size[size[j]], onChanged: (value){
+              setState(() {
+                this.size[size[j]] = value;
+              });
+            }, checkColor: Colors.white, activeColor: _utils.colors['theme'],),
+            Text(size[j])
+            ],
+          )
+        );
+      }
+      results.add(
+        Row(
+          children: temp,
+        )
+      );
+    }
+    return results;
+  }
+
+  List<String> getSelectedSize(){
+    List<String> results = new List<String>();
+    for(var i = 0; i < this.sizeKeys.length; i++){
+      if(this.size[this.sizeKeys[i]]){
+        results.add(this.sizeKeys[i]);
+      }
+    }
+    return results;
+  }
+
   Future<void> validateAndAdd() async {
     FormState _formState = _formKey.currentState;
+    if(this.sizeKeys.length > 0){
+      if(this.getSelectedSize().length == 0){
+        Fluttertoast.showToast(msg: "Size must be selected");
+        return;
+      }
+    }
     if(_formState.validate()){
       setState(() {
         _buttonLoading = true;
@@ -190,7 +248,8 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
         "id" : _currentUser.uid.toString(),
         "price" : _productPriceController.text,
         "offerPrice": _productOfferPriceController.text,
-        "inStock" : inStock.toString()
+        "inStock" : inStock.toString(),
+        "size" : this.getSelectedSize()
       }).then((value){
         Navigator.pop(context);
       }).catchError((e){
@@ -205,6 +264,12 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
   @override
   void initState() {
     super.initState();
+    this._sizeController.get(this._subCategory).then((size){
+      setState(() {
+        this.size = size;
+        this.sizeKeys = size.keys.toList();
+      });
+    });
     // check();
   }
 

@@ -162,7 +162,8 @@ class _PaymentState extends State<Payment> {
                 this.cart[keys[i]]['data']["name"],
                 this.cart[keys[i]]['data']["price"],
                 this.cart[keys[i]]['data']["offerPrice"],
-                this.cart[keys[i]]['count']
+                this.cart[keys[i]]['count'],
+                this.cart[keys[i]]['size']
 
               );
             }
@@ -275,7 +276,7 @@ class _PaymentState extends State<Payment> {
     );
   }
 
-  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice,prod_count) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice,prod_count, prod_size) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -324,6 +325,22 @@ class _PaymentState extends State<Payment> {
                   ),
                 ],
               ),
+              prod_size != null ? Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text("Size:",
+                      style: TextStyle(fontSize: 13.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text('₹$prod_size',
+                      style: TextStyle(color: Colors.grey.shade700, fontSize: 13.0),
+                    ),
+                  ),
+                ],
+              ) : Container(),
               Row(
                 children: <Widget>[
                   Padding(

@@ -105,7 +105,7 @@ class _ProductState extends State<Product> {
               //   ),
               // ),
             ),
-            AddButton(this._product, null)
+            AddButton(this._product, null, null)
           ],
         )
       ),

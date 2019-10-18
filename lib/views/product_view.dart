@@ -188,14 +188,25 @@ class _ProductViewState extends State<ProductView> {
   final Utils _utils = new Utils();
   DocumentSnapshot _user;
   String _productDescription = '';
+  String _selectedSize = null;
+  List<String> size = new List<String>();
 
   _ProductViewState(product){
     this._product = product;
   }
 
+  void updateSize(String vendorId, String productId) async {
+    List<String> size = await _productController.getVendorSize(productId, vendorId);
+    setState(() {
+      this.size = size;
+    });
+  }
+
   @override
   void initState(){
     super.initState();
+
+    updateSize(this._product['vendorId'], this._product['id']);
 
     UserController().getUser(this._product['vendorId']).then((user){
       setState(() {
@@ -265,7 +276,7 @@ class _ProductViewState extends State<ProductView> {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: (_user != null && _user.data['vendor'] == 'true') ?
+          child: ((_user != null && _user.data['vendor'] == 'true') || (this.size.length > 0 && this._selectedSize == null)) ?
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
               child: ButtonTheme(
@@ -285,7 +296,7 @@ class _ProductViewState extends State<ProductView> {
                     ),
                   )
               )
-          ) : AddButton(_product, null),
+          ) : AddButton(_product, null, this._selectedSize),
         ),
       ),
       children: <Widget>[
@@ -346,6 +357,34 @@ class _ProductViewState extends State<ProductView> {
               //   ),
               // ),
             ),
+            this.size.length > 0 ? Padding (
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        this._selectedSize == null ? "Size" : this._selectedSize
+                      ),
+                      items: this.size.map((s){
+                        return new DropdownMenuItem<String>(
+                          value: s,
+                          child: Text(s)
+                        );
+                      }).toList(),
+                      onChanged: (value){
+                        setState(() {
+                          this._selectedSize = value;
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ) : Container()
+              ,
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 4),
               child: Text("Description:",
@@ -373,7 +412,7 @@ class _ProductViewState extends State<ProductView> {
                     ),
                     trailing: InkWell(
                       onTap: (){
-                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'])));
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'], _product['subCategory'])));
                       },
                       child: Chip(
                         backgroundColor: _utils.colors['theme'],
