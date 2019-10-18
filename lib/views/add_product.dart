@@ -426,16 +426,8 @@ class _AddProductState extends State<AddProduct> {
         Fluttertoast.showToast(msg:"Sub Category must be selected");
       }else if(this._selectedTag == null){
         Fluttertoast.showToast(msg:"Tag must be selected");
-      }else if(this.sizeKeys.length > 0){
-        bool flag = false;
-        for(var i = 0; i < this.sizeKeys.length; i++){
-          if(this.size[this.sizeKeys[i]]){
-            flag = true;
-            break;
-          }
-        }
-        if(!flag)
-          Fluttertoast.showToast(msg: "Size must be selected");
+      }else if(this.sizeKeys.length > 0 && getSelectedSize().length == 0){
+        Fluttertoast.showToast(msg: "Size must be selected");
       }
       else{
         setState(() {
@@ -444,12 +436,13 @@ class _AddProductState extends State<AddProduct> {
         FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'],this.getSelectedSize(),{
+        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'],{
           "price": _productPriceController.text,
           "offerPrice" : _productOfferPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
           "id": currentUser.uid.toString(),
+          "size" : this.getSelectedSize()
           // "vendorAddress": userDetails.data['address']
         }).then((value){
           _formState.reset();

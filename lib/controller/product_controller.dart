@@ -12,7 +12,8 @@ class ProductController {
   final String vendor_ref = "vendors";
   final UserController _userController = new UserController();
 
-  Future<void> add(File productImage, String productName, String productDescription,String userId, String tagId, String subCategoryId, String categoryId, List<String> size, Map<String, String> productDetails) async {
+  Future<void> add(File productImage, String productName, String productDescription,String userId, String tagId, String subCategoryId, String categoryId, Map<String, dynamic> productDetails) async {
+    // print('product Controller' + size.toString());
     String productId = Uuid().v1();
     String imageUrl = await Utils().uploadImage(productImage, productId);
     // print("Image Url " + imageUrl);
@@ -34,7 +35,6 @@ class ProductController {
         _firestore.collection('users').document(userId).collection(ref).document(productId).setData({
           "inStock":true,
           "id" : productId,
-          "size" : size
           }).catchError((e){
           throw e;
         });
@@ -96,7 +96,7 @@ class ProductController {
     await _firestore.collection(ref).document(productId).collection('vendors').document(vendorId).get();
   }
 
-  Future<List<String>> getVendorSize(String productId, String vendorId) async {
+  Future<List<dynamic>> getVendorSize(String productId, String vendorId) async {
     DocumentSnapshot doc = await _firestore.collection(ref).document(productId).collection('vendors').document(vendorId).get();
     return doc.data['size'];
   }

@@ -189,16 +189,17 @@ class _ProductViewState extends State<ProductView> {
   DocumentSnapshot _user;
   String _productDescription = '';
   String _selectedSize = null;
-  List<String> size = new List<String>();
+  List<dynamic> size = new List<String>();
 
   _ProductViewState(product){
     this._product = product;
   }
 
   void updateSize(String vendorId, String productId) async {
-    List<String> size = await _productController.getVendorSize(productId, vendorId);
+    List<dynamic> size = await _productController.getVendorSize(productId, vendorId);
     setState(() {
       this.size = size;
+      print(this.size);
     });
   }
 
@@ -276,7 +277,7 @@ class _ProductViewState extends State<ProductView> {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ((_user != null && _user.data['vendor'] == 'true') || (this.size.length > 0 && this._selectedSize == null)) ?
+          child: ((_user != null && _user.data['vendor'] == 'true') || (this.size != null && this.size.length > 0 && this._selectedSize == null)) ?
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
               child: ButtonTheme(
@@ -357,7 +358,7 @@ class _ProductViewState extends State<ProductView> {
               //   ),
               // ),
             ),
-            this.size.length > 0 ? Padding (
+            this.size != null && this.size.length > 0 ? Padding (
                 padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                 child: Material(
                   color: Colors.white.withOpacity(0.2),
