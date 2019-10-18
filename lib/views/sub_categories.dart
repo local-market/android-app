@@ -51,7 +51,7 @@ class _SubCategoriesState extends State<SubCategories> {
         // print(subCategories.toString());
         for(var i = 0; i < subCategories.length; i++){
           print(subCategories[i]);
-          List<DocumentSnapshot> products = await _productController.getNBySubCategory(subCategories[i]['id'], 4);
+          List<DocumentSnapshot> products = await _productController.getNBySubCategory(subCategories[i]['id'], 6);
           if(products.length > 0){
             products[0].data['subCategoryName'] = subCategories[i]['name'];
             results.add(products);

@@ -388,8 +388,18 @@ class _HomeState extends State<Home> {
 
   Future<void> getProduct() async {
     List<Map<String, String>> categories = await _categoryController.getAll();
+    // manually did that
+    _productController.getNBySubCategory('mobile-Whw9eENMAsH4bsAAROfz', 6).then((mobiles){
+      if(mobiles.length > 0){
+        mobiles[0].data['categoryName'] = 'Mobiles';
+        setState(() {
+          this._categoryWithProducts.add(mobiles);
+        });
+      }
+    });
+
     for(var i = 0; i < categories.length; i++){
-      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 4);
+      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 6);
       if(products.length > 0){
         products[0].data['categoryName'] = categories[i]['name'];
         setState(() {
