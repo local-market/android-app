@@ -287,7 +287,7 @@ class _ProductViewState extends State<ProductView> {
 
                     color: Colors.grey.shade500,
                     child: Text(
-                      "SUKOON!",
+                      "Local Market!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: _utils.colors['buttonText'],
@@ -297,16 +297,35 @@ class _ProductViewState extends State<ProductView> {
                     ),
                   )
               )
-          ) : AddButton(_product, null, this._selectedSize),
+          ) : AddButton(_product, null, this._selectedSize, true),
         ),
       ),
       children: <Widget>[
         PageList(
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              height: 200,
-              child: image(_product), 
+            Stack(
+              children: <Widget>[
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                  child: image(_product),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(50, 12, 0,0),
+                  child: CircleAvatar(
+                    radius: 18,
+                    child: Text(
+
+                      "${(((double.parse(this._product['price']) - double.parse(this._product['offerPrice'])) / double.parse(this._product['price']) ) * 100) .ceil() }%\n off",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),backgroundColor: Colors.red.shade700,
+                  ),
+                )
+              ],
             ),
             ListTile(
               title: Text(_product['name'],

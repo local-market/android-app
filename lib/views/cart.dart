@@ -268,7 +268,7 @@ class _CartState extends State<Cart> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: new Text('₹$prod_size',
+                  child: new Text('$prod_size',
                     style: TextStyle(color: Colors.grey.shade700, fontSize: 13.0),
                   ),
                 ),
@@ -277,7 +277,7 @@ class _CartState extends State<Cart> {
             
             Container(
                 alignment: Alignment.topLeft,
-                child: AddButton(product, this.updateTotal, prod_size)
+                child: AddButton(product, this.updateTotal, prod_size, false)
             ),
           ],
         ),

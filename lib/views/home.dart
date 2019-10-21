@@ -261,18 +261,21 @@ class _HomeState extends State<Home> {
         )
       );
 
-
-      children.add(
-        InkWell(
-          onTap: () {
-            Navigator.push(context, CupertinoPageRoute(builder: (context) => MyOrders()));
-          },
-          child: ListTile(
-            title: Text("My Orders"),
-            leading: Icon(OMIcons.addShoppingCart, color: _utils.colors['drawerIcons']),
-          ),
-          )
-      );
+      if(this._user.data['vendor'] == "false") {
+        children.add(
+            InkWell(
+              onTap: () {
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => MyOrders()));
+              },
+              child: ListTile(
+                title: Text("My Orders"),
+                leading: Icon(OMIcons.addShoppingCart,
+                    color: _utils.colors['drawerIcons']),
+              ),
+            )
+        );
+      }
 
       children.add(
         InkWell(
@@ -389,17 +392,17 @@ class _HomeState extends State<Home> {
   Future<void> getProduct() async {
     List<Map<String, String>> categories = await _categoryController.getAll();
     // manually did that
-    _productController.getNBySubCategory('mobile-Whw9eENMAsH4bsAAROfz', 6).then((mobiles){
-      if(mobiles.length > 0){
-        mobiles[0].data['categoryName'] = 'Mobiles';
-        setState(() {
-          this._categoryWithProducts.add(mobiles);
-        });
-      }
-    });
+//    _productController.getNBySubCategory('mobile-Whw9eENMAsH4bsAAROfz', 6).then((mobiles){
+//      if(mobiles.length > 0){
+//        mobiles[0].data['categoryName'] = 'Mobiles';
+//        setState(() {
+//          this._categoryWithProducts.add(mobiles);
+//        });
+//      }
+//    });
 
     for(var i = 0; i < categories.length; i++){
-      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 6);
+      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 20);
       if(products.length > 0){
         products[0].data['categoryName'] = categories[i]['name'];
         setState(() {
@@ -453,7 +456,7 @@ class _HomeState extends State<Home> {
                   scrollDirection: Axis.horizontal,
                   itemCount: product_list.length,
                   itemBuilder: (context, i){
-                    return Product(product_list[i].data);
+                    return Product(product_list[i].data, false);
                   },
                 ),
               ),
