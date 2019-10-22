@@ -111,7 +111,8 @@ class _OrderState extends State<Order> {
                 this._products[i]["name"],
                 this._products[i]["price"],
                 // this._products[i]["offerPrice"],
-                this._products[i]['quantity']
+                this._products[i]['quantity'],
+                this._products[i]['size']
               );
             }
         ),
@@ -211,7 +212,7 @@ class _OrderState extends State<Order> {
     );
   }
 
-  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_count) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_count, prod_size) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
@@ -260,6 +261,22 @@ class _OrderState extends State<Order> {
               //     ),
               //   ],
               // ),
+              prod_size != null ? Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text("Size:",
+                      style: TextStyle(fontSize: 13.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: new Text('₹$prod_size',
+                      style: TextStyle(color: Colors.grey.shade700, fontSize: 13.0),
+                    ),
+                  ),
+                ],
+              ) : Container(),
               Row(
                 children: <Widget>[
                   Padding(

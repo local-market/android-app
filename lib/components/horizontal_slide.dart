@@ -21,6 +21,10 @@ class _HorizontalListState extends State<HorizontalList> {
     .then((categories){
       setState(() {
         this._categories = categories;
+        this._categories.sort(( a , b){
+          return a['name'].length.compareTo(b['name'].length + 8);
+        });
+//        this._categories.sort
       });
     });
   }

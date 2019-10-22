@@ -1,29 +1,44 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/product_view.dart';
 
 class AddButton extends StatefulWidget {
   
   var _product;
+  
   Function() _updateTotal;
-  AddButton(product, @required updateTotal){
+  String _size;
+  bool _inner;
+  AddButton(product, @required updateTotal, size, inner){
     this._product = product;
     this._updateTotal = updateTotal;
+    this._size = size;
+    this._inner = inner;
   }
 
   @override
-  _AddButtonState createState() => _AddButtonState(this._product, this._updateTotal);
+  _AddButtonState createState() => _AddButtonState(this._product, this._updateTotal, this._size, this._inner);
 }
 
 class _AddButtonState extends State<AddButton> {
 
   int count = 0;
   var _product;
+  var _vendor;
+  String _size;
   Function() _updateTotal;
   final Utils _utils = new Utils();
+  DocumentSnapshot user = null;
+  bool _inner;
 
-  _AddButtonState(this._product, this._updateTotal);
+  _AddButtonState(this._product, this._updateTotal, this._size, this._inner);
 
   void clearCount(){
     setState(() {
@@ -45,7 +60,13 @@ class _AddButtonState extends State<AddButton> {
     if(globals.productListener.containsKey(productId)){
       for(var i = 0; i < globals.productListener[productId].length; i++){
         print(globals.productListener[productId][i].toString());
-        globals.productListener[productId][i]();
+        try {
+          globals.productListener[productId][i]();
+        }
+        catch(e){
+          continue;
+          print(e.toString());
+        }
       }
     }
   }
@@ -54,6 +75,22 @@ class _AddButtonState extends State<AddButton> {
   void initState() {
     super.initState();
     print(this._product['id']);
+
+    UserController().getCurrentUserDetails().then((user){
+      setState(() {
+        this.user = user;
+      });
+    });
+
+    ProductController().getVendor(this._product['id'], this._product['vendorId']).then((vendor){
+      setState((){
+        this._vendor = vendor;
+        print(this._vendor);
+      });
+    });
+    
+
+    
     if(globals.cart.containsKey(this._product['id'])){
       setState(() {
         this.count = int.parse(globals.cart[this._product['id']]['count']);
@@ -75,11 +112,28 @@ class _AddButtonState extends State<AddButton> {
         padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
         child: ButtonTheme(
           minWidth: double.infinity,
-          child: RaisedButton(
+          child: (this.user != null && this.user.data['vendor'] == "true") ?
+          Container() :
+          /*this._vendor['inStock'].toString() == 'true' ? */RaisedButton(
             onPressed: (){
+              if(this._inner == false) {
+                if (_product['category'] ==
+                    "computer&mobiles-HJvNLhq9hOTzwOjAsYM4" ||
+                    _product['category'] ==
+                        "electronics-8oOsgXlOy4MyVUMsgk3q" ||
+                    _product['category'] == "men'sFashion" ||
+                    _product['category'] ==
+                        "women'sFashion-UglnbJHAXwnTpybV5G2a") {
+                  Navigator.push(context, CupertinoPageRoute(
+                      builder: (context) => ProductView(_product)));
+                  return;
+                }
+              }
+
               globals.cart[this._product['id']] = {
                   "data" : this._product,
                   "count" : "1",
+                  "size" : this._size,
                   "clearCount": this.clearCount
               };
               globals.cartSize += 1;
@@ -105,7 +159,16 @@ class _AddButtonState extends State<AddButton> {
                 fontSize: 13,
               ),
             ),
-          )                
+          ) /*: RaisedButton(
+            child: Text(
+              "Out of stock",
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade500
+              )
+            ),
+            onPressed: (){},
+          )*/        
         )
       ) : 
       ListTile(

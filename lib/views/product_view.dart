@@ -188,14 +188,26 @@ class _ProductViewState extends State<ProductView> {
   final Utils _utils = new Utils();
   DocumentSnapshot _user;
   String _productDescription = '';
+  String _selectedSize = null;
+  List<dynamic> size = new List<String>();
 
   _ProductViewState(product){
     this._product = product;
   }
 
+  void updateSize(String vendorId, String productId) async {
+    List<dynamic> size = await _productController.getVendorSize(productId, vendorId);
+    setState(() {
+      this.size = size;
+      print(this.size);
+    });
+  }
+
   @override
   void initState(){
     super.initState();
+
+    updateSize(this._product['vendorId'], this._product['id']);
 
     UserController().getUser(this._product['vendorId']).then((user){
       setState(() {
@@ -265,8 +277,7 @@ class _ProductViewState extends State<ProductView> {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: _product['vendor'] == "false" ?
-          AddButton(_product, null) :
+          child: ((_user != null && _user.data['vendor'] == 'true') || (this.size != null && this.size.length > 0 && this._selectedSize == null)) ?
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
               child: ButtonTheme(
@@ -276,7 +287,7 @@ class _ProductViewState extends State<ProductView> {
 
                     color: Colors.grey.shade500,
                     child: Text(
-                      "SUKOON!",
+                      "Local Market!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: _utils.colors['buttonText'],
@@ -286,16 +297,35 @@ class _ProductViewState extends State<ProductView> {
                     ),
                   )
               )
-          ),
+          ) : AddButton(_product, null, this._selectedSize, true),
         ),
       ),
       children: <Widget>[
         PageList(
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              height: 200,
-              child: image(_product), 
+            Stack(
+              children: <Widget>[
+                Container(
+                  width: double.infinity,
+                  height: 200,
+                  child: image(_product),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(50, 12, 0,0),
+                  child: CircleAvatar(
+                    radius: 18,
+                    child: Text(
+
+                      "${(((double.parse(this._product['price']) - double.parse(this._product['offerPrice'])) / double.parse(this._product['price']) ) * 100) .ceil() }%\n off",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),backgroundColor: Colors.red.shade700,
+                  ),
+                )
+              ],
             ),
             ListTile(
               title: Text(_product['name'],
@@ -347,6 +377,34 @@ class _ProductViewState extends State<ProductView> {
               //   ),
               // ),
             ),
+            this.size != null && this.size.length > 0 ? Padding (
+                padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
+                child: Material(
+                  color: Colors.white.withOpacity(0.2),
+                  // elevation: _utils.elevation,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      hint: Text(
+                        this._selectedSize == null ? "Size" : this._selectedSize
+                      ),
+                      items: this.size.map((s){
+                        return new DropdownMenuItem<String>(
+                          value: s,
+                          child: Text(s)
+                        );
+                      }).toList(),
+                      onChanged: (value){
+                        setState(() {
+                          this._selectedSize = value;
+                        });
+                      },
+                    )
+                  ),
+                ),
+              ) : Container()
+              ,
             Padding(
               padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 4),
               child: Text("Description:",
@@ -374,7 +432,7 @@ class _ProductViewState extends State<ProductView> {
                     ),
                     trailing: InkWell(
                       onTap: (){
-                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'])));
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AddVendorToProduct(_product['id'], _product['image'], _product['name'], _product['subCategory'])));
                       },
                       child: Chip(
                         backgroundColor: _utils.colors['theme'],
@@ -487,93 +545,102 @@ class _ProductViewState extends State<ProductView> {
   }
 
   Widget listTileItem(item, price, offerPrice, address, vendorId, stock) {
-  return ListTile(
-    title: Text(
-      item.length > 30 ? item.substring(0, 30) + '...' : item,
-      style: TextStyle(fontSize: 16,)
-    ),
-    subtitle: Text(
-      address
-    ),
-    trailing: Column(
-      children:[
-        RichText(
-          text: TextSpan(
-              children: [
-                TextSpan(
-                  text: '₹ ${offerPrice}',
-                  style: stock.toString() == "false" ?
-                      TextStyle(
-                        color:Colors.grey.shade700,
-                        decoration: TextDecoration.lineThrough
-                      )
-                  :TextStyle(fontSize: 16,
-                      color: _utils.colors['theme'],
-                      fontWeight: FontWeight.bold
+  return InkWell(
+    onTap: (){
+      setState((){
+        this._product['price'] = price;
+        this._product['offerPrice'] = offerPrice;
+        this._product['vendorId'] = vendorId;
+      });
+    },
+    child: ListTile(
+      title: Text(
+        item.length > 30 ? item.substring(0, 30) + '...' : item,
+        style: TextStyle(fontSize: 16,)
+      ),
+      subtitle: Text(
+        address
+      ),
+      trailing: Column(
+        children:[
+          RichText(
+            text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '₹ ${offerPrice}',
+                    style: stock.toString() == "false" ?
+                        TextStyle(
+                          color:Colors.grey.shade700,
+                          decoration: TextDecoration.lineThrough
+                        )
+                    :TextStyle(fontSize: 16,
+                        color: _utils.colors['theme'],
+                        fontWeight: FontWeight.bold
+                    ),
                   ),
-                ),
-                // TextSpan(
-                //   text: ' ₹ ${offerPrice}',
-                //   style: TextStyle(
-                //     fontSize: 14,
-                //     color: Colors.grey.shade700,
-                //     decoration: TextDecoration.lineThrough
-                //   )
-                // )
-              ]
+                  // TextSpan(
+                  //   text: ' ₹ ${offerPrice}',
+                  //   style: TextStyle(
+                  //     fontSize: 14,
+                  //     color: Colors.grey.shade700,
+                  //     decoration: TextDecoration.lineThrough
+                  //   )
+                  // )
+                ]
+            ),
           ),
-        ),
-        Text(
-          stock.toString() == "false" ? "*Out of stock" : "",
-          style: TextStyle(
-            color:Colors.red,
-            fontSize: 12
-          ),
-        )
-      ]
-    )
-    // Text(
-    //   '₹ ' + price,
-    //   style: TextStyle(fontSize: 16, 
-    //     color: Colors.red.shade500,
-    //     fontWeight: FontWeight.bold
-    //   ),
-    // ),
-          // Padding(
-          //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-          //     child: ButtonTheme(
-          //       minWidth: 10,
-          //       height: 40,
-          //       child: RaisedButton(
-          //         onPressed: (){
-          //           globals.cart.add(
-          //             {
-          //               "id" : this._product['id'],
-          //               "name" : this._product['name'],
-          //               "image" : this._product['image'],
-          //               "price" : price,
-          //               "vendorName" : item,
-          //               "vendorId" : vendorId,
-          //             });
-          //           print("Cart : ${globals.cart.toString()}");
-          //           globals.cartSize += 1;
-          //           setState(() {
-          //             this.cartSize += 1;
-          //           });
-          //         },
-                  
-          //         color: _utils.colors['theme'],
-          //         child: Text("Add",
-          //           textAlign: TextAlign.center,
-          //           style: TextStyle(
-          //             color: _utils.colors['buttonText'],
-          //             fontWeight: FontWeight.bold,
-          //             fontSize: 15,
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
+          Text(
+            stock.toString() == "false" ? "*Out of stock" : "",
+            style: TextStyle(
+              color:Colors.red,
+              fontSize: 12
+            ),
+          )
+        ]
+      )
+      // Text(
+      //   '₹ ' + price,
+      //   style: TextStyle(fontSize: 16, 
+      //     color: Colors.red.shade500,
+      //     fontWeight: FontWeight.bold
+      //   ),
+      // ),
+            // Padding(
+            //     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+            //     child: ButtonTheme(
+            //       minWidth: 10,
+            //       height: 40,
+            //       child: RaisedButton(
+            //         onPressed: (){
+            //           globals.cart.add(
+            //             {
+            //               "id" : this._product['id'],
+            //               "name" : this._product['name'],
+            //               "image" : this._product['image'],
+            //               "price" : price,
+            //               "vendorName" : item,
+            //               "vendorId" : vendorId,
+            //             });
+            //           print("Cart : ${globals.cart.toString()}");
+            //           globals.cartSize += 1;
+            //           setState(() {
+            //             this.cartSize += 1;
+            //           });
+            //         },
+                    
+            //         color: _utils.colors['theme'],
+            //         child: Text("Add",
+            //           textAlign: TextAlign.center,
+            //           style: TextStyle(
+            //             color: _utils.colors['buttonText'],
+            //             fontWeight: FontWeight.bold,
+            //             fontSize: 15,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+    ),
   );
 }
 

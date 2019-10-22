@@ -171,7 +171,8 @@ class _CartState extends State<Cart> {
                 this.cart[keys[i]]['data']["name"],
                 this.cart[keys[i]]['data']["price"],
                 this.cart[keys[i]]['data']["offerPrice"],
-                this.cart[keys[i]]['data']
+                this.cart[keys[i]]['data'],
+                this.cart[keys[i]]['size']
             );
           }
         ),
@@ -209,7 +210,7 @@ class _CartState extends State<Cart> {
   //   return results;
   // }
 
-  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice, product) {
+  Widget product_instance_cart(prod_id,prod_image, prod_name, prod_price, prod_discountedprice, product, prod_size) {
     return Card(
       child: ListTile(
         leading: Image.network(prod_image,
@@ -234,8 +235,8 @@ class _CartState extends State<Cart> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 4.0, 8.0, 0.0),
-                  child: new Text('Rs $prod_discountedprice',
-                    style: TextStyle(color: Colors.green, fontSize: 13.0),
+                  child: new Text('₹ $prod_discountedprice',
+                    style: TextStyle(color: _utils.colors['theme'], fontSize: 13.0),
                   ),
                 ),
               ],
@@ -250,16 +251,33 @@ class _CartState extends State<Cart> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: new Text('Rs $prod_price',
+                  child: new Text('₹ $prod_price',
                     style: TextStyle(color: Colors.red, fontSize: 13.0),
                   ),
                 ),
               ],
             ),
+
+            prod_size != null ? Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text("Size:",
+                    style: TextStyle(fontSize: 13.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: new Text('$prod_size',
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 13.0),
+                  ),
+                ),
+              ],
+            ) : Container(),
             
             Container(
                 alignment: Alignment.topLeft,
-                child: AddButton(product, this.updateTotal)
+                child: AddButton(product, this.updateTotal, prod_size, false)
             ),
           ],
         ),
