@@ -24,7 +24,7 @@ class Utils {
     "pageBackground" : Colors.white,
     "drawerBackground" : Colors.white,
     "drawerHeader" : Colors.white,
-    "drawerHeaderText" : Color(0xff83b735)
+    "drawerHeaderTe21xt" : Color(0xff83b735)
   };
 
   final String appName = "My Store";
