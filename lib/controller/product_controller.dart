@@ -141,6 +141,16 @@ class ProductController {
       }).catchError((e){
         throw e;
       });
+    }else{
+      if(product.data['vendorId'] == uid){
+        await _firestore.collection(ref).document(pid).updateData({
+          "price" : details['price'],
+          "offerPrice": details['price'],
+          "vendorId" : uid
+        }).catchError((e){
+          throw e;
+        });
+      }
     }
     await _firestore.collection(ref).document(pid).collection(vendor_ref).document(uid).setData(details).catchError((e){
       throw e;
@@ -155,8 +165,8 @@ class ProductController {
     // });
     return snapshot.documents;
   }
-  Future<List<DocumentSnapshot>> getByTag(String tag) async {
-    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('tag').startAt([tag]).endAt([tag + '\uf8ff']).getDocuments();
+  Future<List<DocumentSnapshot>> getByTag(String subCategory, String tag) async {
+    QuerySnapshot snapshot = await _firestore.collection(ref).orderBy('subCategory').startAt([subCategory]).endAt([subCategory + '\uf8ff']).orderBy('tag').startAt([tag]).endAt([tag + '\uf8ff']).getDocuments();
     // print(snapshot.documents.toString());
     // snapshot.documents.forEach((f){
     //   print(f.data.toString());

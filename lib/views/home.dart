@@ -8,6 +8,7 @@ import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
 import 'package:local_market/views/Update_password.dart';
+import 'package:local_market/views/contact_us.dart';
 import 'package:local_market/views/my_orders.dart';
 import 'package:local_market/views/my_products_category.dart';
 import 'package:local_market/views/notification.dart';
@@ -351,15 +352,29 @@ class _HomeState extends State<Home> {
 
     children.add(
       InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => ContactUs()));
+        },
         child: ListTile(
-          title: Text("Help"),
-          leading: Icon(OMIcons.helpOutline,
+          title: Text("Contact Us"),
+          leading: Icon(OMIcons.contactMail,
             color: _utils.colors['drawerIcons'],
           ),
         ),
       )
     );
+
+    // children.add(
+    //   InkWell(
+    //     onTap: () {},
+    //     child: ListTile(
+    //       title: Text("Help"),
+    //       leading: Icon(OMIcons.helpOutline,
+    //         color: _utils.colors['drawerIcons'],
+    //       ),
+    //     ),
+    //   )
+    // );
 
     if(_user != null){
 

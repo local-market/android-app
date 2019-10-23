@@ -140,7 +140,7 @@ class _OrderState extends State<Order> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text('Delivery',style: TextStyle(fontSize: 16),),
-                        Text('₹20',style: TextStyle(fontSize: 16),)
+                        Text('₹${this._order['deliveryCharge']}',style: TextStyle(fontSize: 16),)
                       ],
                     ),
                     Row(
@@ -152,16 +152,16 @@ class _OrderState extends State<Order> {
                               fontWeight: FontWeight.bold
                           ),
                         ),
-                        Text('₹${(this.total+20)}'.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),)
+                        Text('₹${(this.total + this._order['deliveryCharge'])}'.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),)
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Promo(Free Delivery)',style: TextStyle(fontSize: 16),),
-                        Text('-₹${20}',style: TextStyle(fontSize: 16),)
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: <Widget>[
+                    //     Text('Promo(Free Delivery)',style: TextStyle(fontSize: 16),),
+                    //     Text('-₹${20}',style: TextStyle(fontSize: 16),)
+                    //   ],
+                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[

@@ -328,7 +328,7 @@ class _ProductViewState extends State<ProductView> {
               ],
             ),
             ListTile(
-              title: Text(_product['name'],
+              title: Text(_utils.titleCase( _product['name']),
                 style: TextStyle(
                     fontSize: 16
                 ),
@@ -551,6 +551,11 @@ class _ProductViewState extends State<ProductView> {
         this._product['price'] = price;
         this._product['offerPrice'] = offerPrice;
         this._product['vendorId'] = vendorId;
+      });
+      UserController().getUser(this._product['vendorId']).then((user){
+        setState(() {
+          this._vendor = user;
+        });
       });
     },
     child: ListTile(

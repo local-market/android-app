@@ -22,6 +22,17 @@ class UserController {
     await _firebaseAuth.signOut();
   }
 
+  Future<bool> updatePassword(String password) async {
+    FirebaseUser user = await this.getCurrentUser();
+    await user.updatePassword(password).then((res){
+      return true;
+    }).catchError((e){
+      print(e);
+      return false;
+    });
+    return true;
+  }
+
   Future<FirebaseUser> getCurrentUser() async {
     // print((await _firebaseAuth.currentUser()).toString());
     return (await _firebaseAuth.currentUser());

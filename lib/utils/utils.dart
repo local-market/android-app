@@ -47,4 +47,19 @@ class Utils {
       return true;
     }
   }
+
+  String titleCase(String s){
+    List<String> parts = new List<String>();
+    parts = s.split(' ');
+    String result = "";
+    for(var i = 0; i < parts.length; i++){
+      if(parts[i].length > 1){
+        print(parts[i][0].substring(1));
+        result += parts[i][0].toUpperCase() + parts[i].substring(1) + ' ';
+      }else{
+        result += parts[i][0].toUpperCase() + ' ';
+      }
+    }
+    return result;
+  }
 }

@@ -4,6 +4,7 @@ import "package:flutter/gestures.dart";
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_market/components/circular_loading_button.dart';
+import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/signup.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -53,44 +54,44 @@ class _ChangePasswordState extends State<ChangePassword> {
                   shrinkWrap: true,
                   children: <Widget>[
                     
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: _utils.colors['textFieldBackground'].withOpacity(0.2),
-                        // elevation: _utils.elevation,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListTile(
-                            title: TextFormField(
-                              controller: _OldPasswordTextController,
-                              obscureText: hidePassword1,
-                              autofocus: false,
-                              decoration: InputDecoration(
-                                  hintText: "Current Password",
-                                  icon: Icon(OMIcons.lock),
-                                    suffixIcon: IconButton(icon: Icon(OMIcons.removeRedEye), onPressed: (){
-                                      setState(() {
-                                        hidePassword1 = !hidePassword1;
-                                      });
-                                    }),
-                                  // border: InputBorder.none
-                                  ),
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return "This field cannot be empty";
-                                } else if (value.length < 6)
-                                  return "Should be more than 6 length";
-                                else
-                                  return null;
-                              },
-                            ),
-                            // trailing: 
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    //   child: Material(
+                    //     borderRadius: BorderRadius.circular(20.0),
+                    //     color: _utils.colors['textFieldBackground'].withOpacity(0.2),
+                    //     // elevation: _utils.elevation,
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.all(8.0),
+                    //       child: ListTile(
+                    //         title: TextFormField(
+                    //           controller: _OldPasswordTextController,
+                    //           obscureText: hidePassword1,
+                    //           autofocus: false,
+                    //           decoration: InputDecoration(
+                    //               hintText: "Current Password",
+                    //               icon: Icon(OMIcons.lock),
+                    //                 suffixIcon: IconButton(icon: Icon(OMIcons.removeRedEye), onPressed: (){
+                    //                   setState(() {
+                    //                     hidePassword1 = !hidePassword1;
+                    //                   });
+                    //                 }),
+                    //               // border: InputBorder.none
+                    //               ),
+                    //           keyboardType: TextInputType.emailAddress,
+                    //           validator: (value) {
+                    //             if (value.isEmpty) {
+                    //               return "This field cannot be empty";
+                    //             } else if (value.length < 6)
+                    //               return "Should be more than 6 length";
+                    //             else
+                    //               return null;
+                    //           },
+                    //         ),
+                    //         // trailing: 
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     Padding(
                       padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
@@ -177,7 +178,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 text:"Forgot password "
                               ),
                               TextSpan(
-                                text: "-->",
+                                text: "",
                                 recognizer: TapGestureRecognizer()..onTap = (){
                                   Navigator.push(context, CupertinoPageRoute(builder: (context) => Signup()));
                                 },
@@ -221,43 +222,27 @@ class _ChangePasswordState extends State<ChangePassword> {
     });
     FormState _formState = _formKey.currentState;
     if(_formState.validate()){
-      await firebaseAuth.signInWithEmailAndPassword(
-          email: _OldPasswordTextController.text,
-          password: _passwordTextController.text).then((user){
-            if(user == null){
-              // print("Hello World");
-              setState(() {
-                _loading = false;
-                error = "Invalid email or password";
-                Fluttertoast.showToast(msg: error);
-              });
-            }else{
-              setState(() {
-                _loading = false;
-              });
-              Navigator.pop(context);
-              Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Home()));
-            }
-      }).catchError((e){
-        setState(() {
-          _loading = false;
-        });
-        if(e.code == "ERROR_USER_NOT_FOUND"){
-          setState(() {
-            error = "Invalid email or password";
-            Fluttertoast.showToast(msg: error);
+      await UserController().updatePassword(this._passwordTextController.text).then((status){
+        print(status);
+        if(status) {
+          setState((){
+            _loading = false;
           });
-        }else if(e.code == "ERROR_WRONG_PASSWORD"){
-          setState(() {
-            error = "Invalid email or password";
-            Fluttertoast.showToast(msg: error);
-          });
+          Fluttertoast.showToast(msg:"Password changed");
+          Navigator.pop(context);
         }
-        print("Error: ChangePassword page: " + e.toString());
+        else{
+          setState(() {
+           _loading = false; 
+          });
+          Fluttertoast.showToast(msg: "Something went wrong" );
+        }
+      }).catchError((e){
+        print(e);
       });
     }else{
       setState(() {
-        _loading = false;
+       _loading = false;
       });
     }
   }

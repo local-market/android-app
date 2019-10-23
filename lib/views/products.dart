@@ -57,7 +57,7 @@ class _ProductsState extends State<Products> {
         });
       });
     }else{
-      _productController.getByTag(this._tagId).then((products){
+      _productController.getByTag(this._subCategoryId, this._tagId).then((products){
         setState(() {
           this._products = products;
           this._loading = false;
