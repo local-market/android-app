@@ -11,7 +11,7 @@ description: Online Shopping App
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
@@ -35,7 +35,7 @@ dependencies:
   uuid: ^2.0.2
   flutter_spinkit: ^3.1.0
   pin_input_text_field: ^2.0.0
-  flutter_svg: ^0.12.0
+  flutter_svg: ^0.14.3
   outline_material_icons: ^0.1.0
 #  firebase_firestore: ^0.12.7+1
 
