@@ -186,7 +186,7 @@ class _ProductViewState extends State<ProductView> {
   bool _loading = true;
   int cartSize = 0;
   final Utils _utils = new Utils();
-  DocumentSnapshot _user;
+  // DocumentSnapshot _user;
   String _productDescription = '';
   String _selectedSize = null;
   List<dynamic> size = new List<String>();
@@ -216,11 +216,11 @@ class _ProductViewState extends State<ProductView> {
       });
     });
 
-    UserController().getCurrentUserDetails().then((user){
-      setState((){
-        this._user = user;
-      });
-    });
+    // UserController().getCurrentUserDetails().then((user){
+    //   setState((){
+    //     this._user = user;
+    //   });
+    // });
 
     _productController.getVendors(_product['id']).then((value){
       setState(() {
@@ -277,7 +277,7 @@ class _ProductViewState extends State<ProductView> {
         height: 60,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ((_user != null && _user.data['vendor'] == 'true') || (this.size != null && this.size.length > 0 && this._selectedSize == null)) ?
+          child: ((globals.currentUser != null && globals.currentUser.data['vendor'] == 'true') || (this.size != null && this.size.length > 0 && this._selectedSize == null)) ?
           Padding(
             padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
               child: ButtonTheme(
@@ -418,7 +418,7 @@ class _ProductViewState extends State<ProductView> {
               padding: const EdgeInsets.fromLTRB(14.0, 0, 14.0, 0),
               child: Text(this._productDescription),
             ),
-            (_user != null && _user.data['vendor'] == 'true') ? Card(
+            (globals.currentUser != null && globals.currentUser.data['vendor'] == 'true') ? Card(
               elevation: 1,
               borderOnForeground: true,
               child: Container(

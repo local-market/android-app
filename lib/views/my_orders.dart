@@ -11,6 +11,7 @@ import 'package:local_market/controller/order_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/order.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 class MyOrders extends StatefulWidget {
   @override
@@ -28,18 +29,16 @@ class _MyOrdersState extends State<MyOrders> {
   @override
   void initState() {
     super.initState();
-    _userController.getCurrentUser().then((user){
-      if(user != null){
-        _orderController.getByUserId(user.uid.toString()).then((orders){
-          print(orders[0].data.toString());
-          setState(() {
-            this._orders = orders;
-            this._loading = false;
-          });
+    if(globals.currentUser != null){
+      _orderController.getByUserId(globals.currentUser.data['id']).then((orders){
+        print(orders[0].data.toString());
+        setState(() {
+          this._orders = orders;
+          this._loading = false;
         });
-      }
-    });
-  }
+      });
+    }
+}
 
   @override
   Widget build(BuildContext context) {

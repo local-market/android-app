@@ -36,7 +36,6 @@ class _AddButtonState extends State<AddButton> {
   String _size;
   Function() _updateTotal;
   final Utils _utils = new Utils();
-  DocumentSnapshot user = null;
   bool _inner;
 
   _AddButtonState(this._product, this._updateTotal, this._size, this._inner);
@@ -81,18 +80,12 @@ class _AddButtonState extends State<AddButton> {
     super.initState();
     print(this._product['id']);
 
-    UserController().getCurrentUserDetails().then((user){
-      setState(() {
-        this.user = user;
-      });
-    });
-
-    ProductController().getVendor(this._product['id'], this._product['vendorId']).then((vendor){
-      setState((){
-        this._vendor = vendor;
-        print(this._vendor);
-      });
-    });
+    // ProductController().getVendor(this._product['id'], this._product['vendorId']).then((vendor){
+    //   setState((){
+    //     this._vendor = vendor;
+    //     print(this._vendor);
+    //   });
+    // });
     
 
     
@@ -117,7 +110,7 @@ class _AddButtonState extends State<AddButton> {
         padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
         child: ButtonTheme(
           minWidth: double.infinity,
-          child: (this.user != null && this.user.data['vendor'] == "true") ?
+          child: (globals.currentUser != null && globals.currentUser.data['vendor'] == "true") ?
           Container() :
           /*this._vendor['inStock'].toString() == 'true' ? */RaisedButton(
             onPressed: (){

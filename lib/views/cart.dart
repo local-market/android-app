@@ -26,7 +26,7 @@ class _CartState extends State<Cart> {
 
   final Utils _utils = new Utils();
   final UserController _userController = new UserController();
-  DocumentSnapshot _user;
+  // DocumentSnapshot _user;
   double total = 0;
 
   void updateTotal(){
@@ -39,11 +39,11 @@ class _CartState extends State<Cart> {
   void initState() {
     super.initState();
 
-    _userController.getCurrentUserDetails().then((user){
-      setState(() {
-        this._user = user;
-      });
-    });
+    // _userController.getCurrentUserDetails().then((user){
+    //   setState(() {
+    //     this._user = user;
+    //   });
+    // });
 
     setState(() {
       this.total = globals.total;
@@ -115,7 +115,7 @@ class _CartState extends State<Cart> {
               ),
               Expanded(
                 child:new MaterialButton(onPressed: (){
-                  if(this._user == null){
+                  if(globals.currentUser == null){
                     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login("cart")));
                   }else{
                     Navigator.push(context,CupertinoPageRoute(builder: (context)=> CustomerDetails()));

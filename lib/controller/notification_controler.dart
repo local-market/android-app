@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/rendering.dart';
 import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 import "package:uuid/uuid.dart";
 
@@ -42,9 +43,9 @@ class NotificationController {
 
   Future<List<Map<String, String> > > getAll() async {
     List<Map<String, String> > results = new List<Map<String, String> >();
-    FirebaseUser _userId = await _userController.getCurrentUser();
+    // FirebaseUser _userId = await _userController.getCurrentUser();
 
-    QuerySnapshot notifications = await _firestore.collection(ref).document(_userId.uid).collection(ref).getDocuments();
+    QuerySnapshot notifications = await _firestore.collection(ref).document(globals.currentUser.data['id']).collection(ref).getDocuments();
 
     for(var i = 0; i < notifications.documents.length; i++){
       DocumentSnapshot notification = notifications.documents[i];

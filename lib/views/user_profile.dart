@@ -11,6 +11,7 @@ import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/login.dart';
 import 'package:local_market/views/phone_verification.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 class UserProfile extends StatefulWidget {
   @override
@@ -33,16 +34,16 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     super.initState();
     // check();
-    _userController.getCurrentUserDetails().then((userDetails){
+    // _userController.getCurrentUserDetails().then((userDetails){
       setState(() {
         _pageLoading = false;
-        this._userId = userDetails.data['uid'];
-        this._fullNameTextController.text = userDetails.data['username'];
-        this._emailTextController.text = userDetails.data['email'];
-        this._phoneTextController.text = userDetails.data['phone'];
-        this._addressTextController.text = userDetails.data['address'];
+        this._userId = globals.currentUser.data['uid'];
+        this._fullNameTextController.text = globals.currentUser.data['username'];
+        this._emailTextController.text = globals.currentUser.data['email'];
+        this._phoneTextController.text = globals.currentUser.data['phone'];
+        this._addressTextController.text = globals.currentUser.data['address'];
       });
-    });
+    // });
   }
 
   @override

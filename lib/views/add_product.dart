@@ -15,6 +15,7 @@ import 'package:local_market/controller/size_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 import 'login.dart';
 
@@ -433,15 +434,15 @@ class _AddProductState extends State<AddProduct> {
         setState(() {
           _loading = true;
         });
-        FirebaseUser currentUser = await userController.getCurrentUser();
+        // FirebaseUser currentUser = await userController.getCurrentUser();
         // DocumentSnapshot userDetails = await userController.getUser(currentUser.uid.toString());
 
-        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,currentUser.uid.toString(), this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'],{
+        _productController.add(_productImage,_productNameController.text, _productDescriptionController.text,globals.currentUser.data['id'], this._selectedTag['id'], this._selectedSubCategory['id'], this._selectedCategory['id'],{
           "price": _productPriceController.text,
           "offerPrice" : _productOfferPriceController.text,
           "inStock": inStock.toString(),
           // "vendorName": userDetails.data['name'],
-          "id": currentUser.uid.toString(),
+          "id": globals.currentUser.data['id'],
           "size" : this.getSelectedSize()
           // "vendorAddress": userDetails.data['address']
         }).then((value){

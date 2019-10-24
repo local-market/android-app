@@ -70,12 +70,12 @@ class _PaymentState extends State<Payment> {
             child: _loading ? CircularLoadingButton() :  MaterialButton(
               onPressed: () async {
 //                validateAndUpdate();
-                  FirebaseUser _user = await UserController().getCurrentUser();
-                  if(_user != null){
+                  // FirebaseUser _user = await UserController().getCurrentUser();
+                  if(globals.currentUser != null){
                     setState(() {
                       _loading = true;
                     });
-                    await _orderController.add(globals.cart, globals.total < 250 ? this.deliverCharge : 0, _user.uid.toString(), this.name, this.address, this.phone, this.landmark).then((orderId){
+                    await _orderController.add(globals.cart, globals.total < 250 ? this.deliverCharge : 0, globals.currentUser.data['id'], this.name, this.address, this.phone, this.landmark).then((orderId){
                       globals.cart = new Map<String, dynamic>();
                       globals.cartSize = 0;
                       globals.total = 0;

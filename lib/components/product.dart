@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:local_market/components/add_button.dart';
 import 'package:local_market/components/page.dart';
-import 'package:local_market/components/product_details.dart';
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/product_view.dart';
 import 'package:local_market/views/products.dart';

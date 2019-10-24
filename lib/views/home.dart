@@ -39,7 +39,6 @@ class _HomeState extends State<Home> {
   final ProductController _productController = new ProductController();
   final UserController _userController = new UserController();
   final CategoryController _categoryController = new CategoryController();
-  DocumentSnapshot _user = null;
   List<List<DocumentSnapshot>> _categoryWithProducts = new List<List<DocumentSnapshot>> ();
   int cartSize = 0;
 
@@ -195,7 +194,7 @@ class _HomeState extends State<Home> {
     this.getProduct();
     _userController.getCurrentUserDetails().then((user){
       setState(() {
-        _user = user;
+        globals.currentUser = user;
       });
     });
   }
@@ -206,8 +205,8 @@ class _HomeState extends State<Home> {
 
     children.add(
       UserAccountsDrawerHeader(
-        accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
-        accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
+        accountName: Text( globals.currentUser != null ? globals.currentUser.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+        accountEmail: globals.currentUser != null ? Text( globals.currentUser != null ? globals.currentUser.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
           onTap: (){
             Navigator.push(context, CupertinoPageRoute(builder: (context) => Login(null)));
           },
@@ -217,7 +216,7 @@ class _HomeState extends State<Home> {
         currentAccountPicture: GestureDetector(
           child: new CircleAvatar(
             backgroundColor: _utils.colors['theme'],
-            child: Text( _user != null ? _user.data['username'][0] : "G",
+            child: Text( globals.currentUser != null ? globals.currentUser.data['username'][0] : "G",
               style: TextStyle(
                 fontSize: 25,
                 color: _utils.colors['buttonText']
@@ -248,7 +247,7 @@ class _HomeState extends State<Home> {
 
 
 
-    if(_user != null){
+    if(globals.currentUser != null){
 
       children.add(
         InkWell(
@@ -262,7 +261,7 @@ class _HomeState extends State<Home> {
         )
       );
 
-      if(this._user.data['vendor'] == "false") {
+      if(globals.currentUser.data['vendor'] == "false") {
         children.add(
             InkWell(
               onTap: () {
@@ -293,7 +292,7 @@ class _HomeState extends State<Home> {
 
 
 
-      if(_user.data['vendor'] == 'true'){
+      if(globals.currentUser.data['vendor'] == 'true'){
 
         children.add(
             InkWell(
@@ -338,17 +337,17 @@ class _HomeState extends State<Home> {
       Divider()
     );
 
-    children.add(
-      InkWell(
-        onTap: () {},
-        child: ListTile(
-          title: Text("Settings"),
-          leading: Icon(OMIcons.settings,
-            color: _utils.colors['drawerIcons'],
-          ),
-        ),
-      )
-    );
+    // children.add(
+    //   InkWell(
+    //     onTap: () {},
+    //     child: ListTile(
+    //       title: Text("Settings"),
+    //       leading: Icon(OMIcons.settings,
+    //         color: _utils.colors['drawerIcons'],
+    //       ),
+    //     ),
+    //   )
+    // );
 
     children.add(
       InkWell(
@@ -364,6 +363,44 @@ class _HomeState extends State<Home> {
       )
     );
 
+    children.add(
+      Divider()
+    );
+
+    children.add(
+      ExpansionTile(
+        title: Text(
+          "Legal",
+          style: TextStyle(
+            color: Colors.black
+          ),
+        ),
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+            },
+            child: ListTile(
+              title: Text("Terms of Use"),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+            },
+            child: ListTile(
+              title: Text("Privacy Policy"),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+            },
+            child: ListTile(
+              title: Text("Replacement Policy"),
+            ),
+          )
+        ],
+      )
+    );
+
     // children.add(
     //   InkWell(
     //     onTap: () {},
@@ -376,14 +413,14 @@ class _HomeState extends State<Home> {
     //   )
     // );
 
-    if(_user != null){
+    if(globals.currentUser != null){
 
       children.add(
         InkWell(
           onTap: () {
             userController.logout();
             setState(() {
-              _user = null;
+              globals.currentUser = null;
             });
           },
           child: ListTile(
