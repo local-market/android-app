@@ -9,7 +9,7 @@ class OrderController {
   final String ref = "orders";
   final NotificationController _notificationController = new NotificationController();
 
-  Future<String> add(Map<String, dynamic> cart, String userId, String username, String address, String phone, String landmark) async {
+  Future<String> add(Map<String, dynamic> cart, int deliveryCharge,String userId, String username, String address, String phone, String landmark) async {
     String orderId = Uuid().v1();
     var keys = cart.keys.toList();
     debugPrint("Adding to notification");
@@ -21,7 +21,8 @@ class OrderController {
       "username" : username,
       "address" : address,
       "phone" : phone,
-      "landmark" : landmark
+      "landmark" : landmark,
+      "deliveryCharge": deliveryCharge
     }).then((res){
 
       for(var i = 0; i < keys.length; i++){

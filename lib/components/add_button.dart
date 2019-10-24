@@ -7,6 +7,7 @@ import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/globals.dart' as globals;
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/views/cart.dart';
 import 'package:local_market/views/product_view.dart';
 
 class AddButton extends StatefulWidget {
@@ -35,7 +36,6 @@ class _AddButtonState extends State<AddButton> {
   String _size;
   Function() _updateTotal;
   final Utils _utils = new Utils();
-  DocumentSnapshot user = null;
   bool _inner;
 
   _AddButtonState(this._product, this._updateTotal, this._size, this._inner);
@@ -47,13 +47,17 @@ class _AddButtonState extends State<AddButton> {
   }
 
   void updateCount(){
-    setState((){
-      if(globals.cart.containsKey(this._product['id'])){
-        this.count = int.parse(globals.cart[this._product['id']]['count']);
-      }else{
-        this.count = 0;
-      }
-    });
+    try{
+      setState((){
+        if(globals.cart.containsKey(this._product['id'])){
+          this.count = int.parse(globals.cart[this._product['id']]['count']);
+        }else{
+          this.count = 0;
+        }
+      });
+    }catch(e){
+      print(e);
+    }
   }
 
   void updateAllProductCount(String productId){
@@ -76,18 +80,12 @@ class _AddButtonState extends State<AddButton> {
     super.initState();
     print(this._product['id']);
 
-    UserController().getCurrentUserDetails().then((user){
-      setState(() {
-        this.user = user;
-      });
-    });
-
-    ProductController().getVendor(this._product['id'], this._product['vendorId']).then((vendor){
-      setState((){
-        this._vendor = vendor;
-        print(this._vendor);
-      });
-    });
+    // ProductController().getVendor(this._product['id'], this._product['vendorId']).then((vendor){
+    //   setState((){
+    //     this._vendor = vendor;
+    //     print(this._vendor);
+    //   });
+    // });
     
 
     
@@ -112,7 +110,7 @@ class _AddButtonState extends State<AddButton> {
         padding: const EdgeInsets.fromLTRB(8.0, 5.0, 8.0, 0),
         child: ButtonTheme(
           minWidth: double.infinity,
-          child: (this.user != null && this.user.data['vendor'] == "true") ?
+          child: (globals.currentUser != null && globals.currentUser.data['vendor'] == "true") ?
           Container() :
           /*this._vendor['inStock'].toString() == 'true' ? */RaisedButton(
             onPressed: (){
@@ -189,21 +187,24 @@ class _AddButtonState extends State<AddButton> {
             ),
             onPressed : (){
               if(this.count < 5){
-                setState(() {
-                  this.count += 1;
-                  globals.cart[this._product['id']]['count'] = this.count.toString();
-                  globals.cartSize += 1;
-                  globals.total += double.parse(this._product['offerPrice']);
-                });
-                print(globals.cart.toString());
-                if(this._updateTotal != null){
-                  this._updateTotal();
+                try{
+                  setState(() {
+                    this.count += 1;
+                    globals.cart[this._product['id']]['count'] = this.count.toString();
+                    globals.cartSize += 1;
+                    globals.total += double.parse(this._product['offerPrice']);
+                  });
+                  print(globals.cart.toString());
+                  if(this._updateTotal != null){
+                    this._updateTotal();
+                  }
+                }catch(e){
+                  print(e);
                 }
-
-                updateAllProductCount(this._product['id']);
               }else{
                 Fluttertoast.showToast(msg: "You can't add more than 5 of this items");
               }
+              updateAllProductCount(this._product['id']);
             }
           ),
         ),
@@ -229,17 +230,22 @@ class _AddButtonState extends State<AddButton> {
             ),
             onPressed: (){
               if(this.count > 0){
-                setState(() {
-                  this.count -= 1;
-                  globals.cart[this._product['id']]['count'] = this.count.toString();
-                  if(this.count == 0){
-                    globals.cart[this._product['id']]['clearCount']();
-                    globals.cart.remove(this._product['id']);
-                    this.count = 0;
-                  }
-                  globals.cartSize -= 1;
-                  globals.total -= double.parse(this._product['offerPrice']);
-                });
+                try{
+                  setState(() {
+                    this.count -= 1;
+                    globals.cart[this._product['id']]['count'] = this.count.toString();
+                    if(this.count == 0){
+                      // globals.cart[this._product['id']]['clearCount']();
+                      // globals.cart.remove(this._product['id']);
+                      globals.cart[this._product['id']]['count'] = "0";
+                      this.count = 0;
+                    }
+                    globals.cartSize -= 1;
+                    globals.total -= double.parse(this._product['offerPrice']);
+                  });
+                }catch(e){
+                  // Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Cart()));
+                }
                 print(globals.cart.toString());
                 if(this._updateTotal != null){
                   this._updateTotal();

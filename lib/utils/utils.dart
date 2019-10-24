@@ -24,7 +24,7 @@ class Utils {
     "pageBackground" : Colors.white,
     "drawerBackground" : Colors.white,
     "drawerHeader" : Colors.white,
-    "drawerHeaderText" : Color(0xff83b735)
+    "drawerHeaderTe21xt" : Color(0xff83b735)
   };
 
   final String appName = "My Store";
@@ -46,5 +46,21 @@ class Utils {
     }else{
       return true;
     }
+  }
+
+  String titleCase(String s){
+    List<String> parts = new List<String>();
+    parts = s.split(' ');
+    String result = "";
+    for(var i = 0; i < parts.length; i++){
+      if(parts[i].length > 1){
+        // print(parts[i][0].substring(1));
+        result += parts[i][0].toUpperCase() + parts[i].substring(1) + ' ';
+      }else if (parts[i].length > 0){
+        // print('hello');
+        result += parts[i][0].toUpperCase() + ' ';
+      }
+    }
+    return result;
   }
 }

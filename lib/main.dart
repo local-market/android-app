@@ -3,7 +3,15 @@ import 'package:local_market/utils/utils.dart';
 import "package:local_market/views/home.dart";
 import 'package:flutter/services.dart';
 
+// void main() {
+//       WidgetsFlutterBinding.ensureInitialized();
+//       runApp(Delta(
+//         model: ProductDataModel(),
+//       ));
+// }
+
 void main(){
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.white,
     statusBarBrightness: Brightness.light,

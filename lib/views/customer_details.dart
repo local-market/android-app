@@ -209,7 +209,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
       setState(() {
         _loading = true;
       });
-      FirebaseUser _currentUser = await _userController.getCurrentUser();
+      // FirebaseUser _currentUser = await _userController.getCurrentUser();
       Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Payment(_fullNameTextController.text, _phoneTextController.text, _addressTextController.text, _landmarkTextController.text)));
     }
   }

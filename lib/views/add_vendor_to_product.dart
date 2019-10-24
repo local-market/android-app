@@ -11,6 +11,7 @@ import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/size_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 import 'login.dart';
 
@@ -243,9 +244,9 @@ class _AddVendorToProductState extends State<AddVendorToProduct> {
       setState(() {
         _buttonLoading = true;
       });
-      FirebaseUser _currentUser = await _userController.getCurrentUser();
-      await _productController.updatePrice(_productId, _currentUser.uid.toString(), {
-        "id" : _currentUser.uid.toString(),
+      // FirebaseUser _currentUser = await _userController.getCurrentUser();
+      await _productController.updatePrice(_productId, globals.currentUser.data['id'], {
+        "id" : globals.currentUser.data['id'],
         "price" : _productPriceController.text,
         "offerPrice": _productOfferPriceController.text,
         "inStock" : inStock.toString(),

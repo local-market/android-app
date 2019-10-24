@@ -10,6 +10,7 @@ import "package:local_market/controller/user_controller.dart";
 import 'package:local_market/utils/utils.dart';
 import 'package:local_market/views/phone_verification.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 class Signup extends StatefulWidget {
   @override
@@ -261,8 +262,8 @@ class _SignupState extends State<Signup> {
     });
     FormState formState = _formKey.currentState;
     if(formState.validate()){
-      FirebaseUser user = await userController.getCurrentUser();
-      if(user == null){
+      // FirebaseUser user = await userController.getCurrentUser();
+      if(globals.currentUser == null){
         firebaseAuth.createUserWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text).then((user){
           Map<String, String> values = {
             "username" : _fullNameTextController.text.toLowerCase(),

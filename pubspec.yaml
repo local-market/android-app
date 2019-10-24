@@ -1,5 +1,5 @@
 name: local_market
-description: local market
+description: Online Shopping App
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -11,7 +11,7 @@ description: local market
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=2.2.0 <3.0.0"
@@ -35,8 +35,9 @@ dependencies:
   uuid: ^2.0.2
   flutter_spinkit: ^3.1.0
   pin_input_text_field: ^2.0.0
-  flutter_svg: ^0.12.0
+  flutter_svg: ^0.14.3
   outline_material_icons: ^0.1.0
+  url_launcher: "^5.2.3"
 #  firebase_firestore: ^0.12.7+1
 
 dev_dependencies:
@@ -78,12 +79,6 @@ flutter:
     - assets/cats/Beauty&PersonalCare.webp
     - assets/cats/Beverages-534wwlmPBwDQ8MYCy7VJ.webp
 
-    - assets/products/blazer1.jpeg
-    - assets/products/blazer2.jpeg
-    - assets/products/dress1.jpeg
-    - assets/products/dress2.jpeg
-    - assets/illustrations/login.png
-    - assets/illustrations/signup.png
     - assets/illustrations/mobile_verification.png
     - assets/illustrations/otp.png
 
@@ -91,7 +86,6 @@ flutter:
 
     - assets/svg/cart.svg
     - assets/svg/logo.svg
-    - assets/svg/shopping-cart (1).svg
     - assets/svg/phone_verification.svg
     - assets/svg/otp.svg
 

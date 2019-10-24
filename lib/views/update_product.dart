@@ -11,6 +11,7 @@ import 'package:local_market/controller/product_controller.dart';
 import 'package:local_market/controller/size_controller.dart';
 import 'package:local_market/controller/user_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 import 'login.dart';
 
@@ -61,8 +62,9 @@ class _UpdateProductState extends State<UpdateProduct> {
         });
       });
     });
-    _userController.getCurrentUser().then((user){
-      _productController.getPrice(_productId, user.uid.toString()).then((product){
+
+    // _userController.getCurrentUser().then((user){
+      _productController.getPrice(_productId, globals.currentUser.data['id']).then((product){
         setState(() {
           _productPriceController.text = product.data['price'];
           _productOfferPriceController.text = product.data['offerPrice'];
@@ -81,7 +83,7 @@ class _UpdateProductState extends State<UpdateProduct> {
           _pageLoading = false;
         });
       });
-    });
+    // });
   }
 
   @override
@@ -290,9 +292,9 @@ class _UpdateProductState extends State<UpdateProduct> {
       setState(() {
         _buttonLoading = true;
       });
-      FirebaseUser user = await _userController.getCurrentUser();
-      _productController.updatePrice(_productId, user.uid.toString(), {
-        "id" : user.uid.toString(),
+      // FirebaseUser user = await _userController.getCurrentUser();
+      _productController.updatePrice(_productId, globals.currentUser.data['id'], {
+        "id" : globals.currentUser.data['id'],
         "price" : _productPriceController.text,
         "offerPrice" : _productOfferPriceController.text,
         "inStock" : inStock.toString(),

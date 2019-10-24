@@ -8,6 +8,7 @@ import 'package:local_market/components/horizontal_slide.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product.dart';
 import 'package:local_market/views/Update_password.dart';
+import 'package:local_market/views/contact_us.dart';
 import 'package:local_market/views/my_orders.dart';
 import 'package:local_market/views/my_products_category.dart';
 import 'package:local_market/views/notification.dart';
@@ -38,7 +39,6 @@ class _HomeState extends State<Home> {
   final ProductController _productController = new ProductController();
   final UserController _userController = new UserController();
   final CategoryController _categoryController = new CategoryController();
-  DocumentSnapshot _user = null;
   List<List<DocumentSnapshot>> _categoryWithProducts = new List<List<DocumentSnapshot>> ();
   int cartSize = 0;
 
@@ -194,7 +194,7 @@ class _HomeState extends State<Home> {
     this.getProduct();
     _userController.getCurrentUserDetails().then((user){
       setState(() {
-        _user = user;
+        globals.currentUser = user;
       });
     });
   }
@@ -205,8 +205,8 @@ class _HomeState extends State<Home> {
 
     children.add(
       UserAccountsDrawerHeader(
-        accountName: Text( _user != null ? _user.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
-        accountEmail: _user != null ? Text( _user != null ? _user.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
+        accountName: Text( globals.currentUser != null ? globals.currentUser.data['username'] : 'Guest', style: TextStyle(color: _utils.colors['drawerHeaderText']),),
+        accountEmail: globals.currentUser != null ? Text( globals.currentUser != null ? globals.currentUser.data['email'] : '', style: TextStyle(color: _utils.colors['drawerHeaderText']),) : InkWell(
           onTap: (){
             Navigator.push(context, CupertinoPageRoute(builder: (context) => Login(null)));
           },
@@ -216,7 +216,7 @@ class _HomeState extends State<Home> {
         currentAccountPicture: GestureDetector(
           child: new CircleAvatar(
             backgroundColor: _utils.colors['theme'],
-            child: Text( _user != null ? _user.data['username'][0] : "G",
+            child: Text( globals.currentUser != null ? globals.currentUser.data['username'][0] : "G",
               style: TextStyle(
                 fontSize: 25,
                 color: _utils.colors['buttonText']
@@ -247,7 +247,7 @@ class _HomeState extends State<Home> {
 
 
 
-    if(_user != null){
+    if(globals.currentUser != null){
 
       children.add(
         InkWell(
@@ -261,7 +261,7 @@ class _HomeState extends State<Home> {
         )
       );
 
-      if(this._user.data['vendor'] == "false") {
+      if(globals.currentUser.data['vendor'] == "false") {
         children.add(
             InkWell(
               onTap: () {
@@ -292,7 +292,7 @@ class _HomeState extends State<Home> {
 
 
 
-      if(_user.data['vendor'] == 'true'){
+      if(globals.currentUser.data['vendor'] == 'true'){
 
         children.add(
             InkWell(
@@ -337,12 +337,26 @@ class _HomeState extends State<Home> {
       Divider()
     );
 
+    // children.add(
+    //   InkWell(
+    //     onTap: () {},
+    //     child: ListTile(
+    //       title: Text("Settings"),
+    //       leading: Icon(OMIcons.settings,
+    //         color: _utils.colors['drawerIcons'],
+    //       ),
+    //     ),
+    //   )
+    // );
+
     children.add(
       InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context, CupertinoPageRoute(builder: (context) => ContactUs()));
+        },
         child: ListTile(
-          title: Text("Settings"),
-          leading: Icon(OMIcons.settings,
+          title: Text("Contact Us"),
+          leading: Icon(OMIcons.contactMail,
             color: _utils.colors['drawerIcons'],
           ),
         ),
@@ -350,25 +364,63 @@ class _HomeState extends State<Home> {
     );
 
     children.add(
-      InkWell(
-        onTap: () {},
-        child: ListTile(
-          title: Text("Help"),
-          leading: Icon(OMIcons.helpOutline,
-            color: _utils.colors['drawerIcons'],
+      Divider()
+    );
+
+    children.add(
+      ExpansionTile(
+        title: Text(
+          "Legal",
+          style: TextStyle(
+            color: Colors.black
           ),
         ),
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+            },
+            child: ListTile(
+              title: Text("Terms of Use"),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+            },
+            child: ListTile(
+              title: Text("Privacy Policy"),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+            },
+            child: ListTile(
+              title: Text("Replacement Policy"),
+            ),
+          )
+        ],
       )
     );
 
-    if(_user != null){
+    // children.add(
+    //   InkWell(
+    //     onTap: () {},
+    //     child: ListTile(
+    //       title: Text("Help"),
+    //       leading: Icon(OMIcons.helpOutline,
+    //         color: _utils.colors['drawerIcons'],
+    //       ),
+    //     ),
+    //   )
+    // );
+
+    if(globals.currentUser != null){
 
       children.add(
         InkWell(
           onTap: () {
             userController.logout();
             setState(() {
-              _user = null;
+              globals.currentUser = null;
             });
           },
           child: ListTile(
@@ -402,7 +454,7 @@ class _HomeState extends State<Home> {
 //    });
 
     for(var i = 0; i < categories.length; i++){
-      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 20);
+      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 6);
       if(products.length > 0){
         products[0].data['categoryName'] = categories[i]['name'];
         setState(() {
@@ -454,9 +506,13 @@ class _HomeState extends State<Home> {
                 height: 258,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: product_list.length,
+                  itemCount: product_list.length + 1,
                   itemBuilder: (context, i){
-                    return Product(product_list[i].data, false);
+                    if(i == product_list.length) {
+                      // print(i);
+                      return Product(product_list[i - 1].data, false, true);
+                    }
+                    else return Product(product_list[i].data, false, false);
                   },
                 ),
               ),

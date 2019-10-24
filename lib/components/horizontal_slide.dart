@@ -83,7 +83,10 @@ class Category extends StatelessWidget {
             subtitle: Padding(
               padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
               child: Text(name, textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold
+                ),
               ),
             ),
             ),

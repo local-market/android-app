@@ -26,7 +26,7 @@ class _CartState extends State<Cart> {
 
   final Utils _utils = new Utils();
   final UserController _userController = new UserController();
-  DocumentSnapshot _user;
+  // DocumentSnapshot _user;
   double total = 0;
 
   void updateTotal(){
@@ -39,11 +39,11 @@ class _CartState extends State<Cart> {
   void initState() {
     super.initState();
 
-    _userController.getCurrentUserDetails().then((user){
-      setState(() {
-        this._user = user;
-      });
-    });
+    // _userController.getCurrentUserDetails().then((user){
+    //   setState(() {
+    //     this._user = user;
+    //   });
+    // });
 
     setState(() {
       this.total = globals.total;
@@ -115,7 +115,7 @@ class _CartState extends State<Cart> {
               ),
               Expanded(
                 child:new MaterialButton(onPressed: (){
-                  if(this._user == null){
+                  if(globals.currentUser == null){
                     Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => Login("cart")));
                   }else{
                     Navigator.push(context,CupertinoPageRoute(builder: (context)=> CustomerDetails()));
@@ -166,6 +166,7 @@ class _CartState extends State<Cart> {
             // total = 0;
             var keys = this.cart.keys.toList();
 //            this.total += double.parse(this.cart[keys[i]]['data']['price']) * double.parse(this.cart[keys[i]]['count']);
+            if(this.cart[keys[i]]['count'] == "0") return Container();
             return product_instance_cart(this.cart[keys[i]]['data']["id"],
                 this.cart[keys[i]]['data']["image"],
                 this.cart[keys[i]]['data']["name"],
@@ -286,8 +287,11 @@ class _CartState extends State<Cart> {
             if(globals.cart.containsKey(prod_id)){
               globals.total -= double.parse(globals.cart[prod_id]['data']['offerPrice']) * double.parse(globals.cart[prod_id]['count']);
               globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
-              globals.cart[prod_id]['clearCount']();
-              globals.cart.remove(prod_id);
+              // globals.cart[prod_id]['clearCount']();
+              // globals.cart.remove(prod_id);
+              globals.cart[prod_id]['count'] = "0";
+              
+              this.updateAllProductCount(prod_id);
 
               Navigator.pushReplacement(context, NoAnimationMaterialPageRoute(builder: ((context) => Cart())));
 
@@ -304,5 +308,20 @@ class _CartState extends State<Cart> {
         ),
       ),
     );
+  }
+
+  void updateAllProductCount(String productId){
+    if(globals.productListener.containsKey(productId)){
+      for(var i = 0; i < globals.productListener[productId].length; i++){
+        print(globals.productListener[productId][i].toString());
+        try {
+          globals.productListener[productId][i]();
+        }
+        catch(e){
+          continue;
+          print(e.toString());
+        }
+      }
+    }
   }
 }

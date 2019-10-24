@@ -35,6 +35,7 @@ class _PaymentState extends State<Payment> {
   double total = 0;
   _PaymentState(this.name, this.phone,this.address, this.landmark);
   bool _loading = false;
+  int deliverCharge = 20;
 
   @override void initState() {
     super.initState();
@@ -69,12 +70,12 @@ class _PaymentState extends State<Payment> {
             child: _loading ? CircularLoadingButton() :  MaterialButton(
               onPressed: () async {
 //                validateAndUpdate();
-                  FirebaseUser _user = await UserController().getCurrentUser();
-                  if(_user != null){
+                  // FirebaseUser _user = await UserController().getCurrentUser();
+                  if(globals.currentUser != null){
                     setState(() {
                       _loading = true;
                     });
-                    await _orderController.add(globals.cart, _user.uid.toString(), this.name, this.address, this.phone, this.landmark).then((orderId){
+                    await _orderController.add(globals.cart, globals.total < 250 ? this.deliverCharge : 0, globals.currentUser.data['id'], this.name, this.address, this.phone, this.landmark).then((orderId){
                       globals.cart = new Map<String, dynamic>();
                       globals.cartSize = 0;
                       globals.total = 0;
@@ -192,7 +193,7 @@ class _PaymentState extends State<Payment> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text('Delivery',style: TextStyle(fontSize: 16),),
-                        Text('₹20',style: TextStyle(fontSize: 16),)
+                        Text('₹${this.deliverCharge}',style: TextStyle(fontSize: 16),)
                       ],
                     ),
                     Row(
@@ -204,14 +205,14 @@ class _PaymentState extends State<Payment> {
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        Text('₹${(globals.total+20)}'.toString(),style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
+                        Text('₹${(globals.total+this.deliverCharge)}'.toString(),style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
                       ],
                     ),
                     globals.total < 250 ? Row() : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text('Promo(Free Delivery)',style: TextStyle(fontSize: 16),),
-                        Text('-₹${20}',style: TextStyle(fontSize: 16),)
+                        Text('-₹${this.deliverCharge}',style: TextStyle(fontSize: 16),)
                       ],
                     ),
                     Row(
@@ -223,7 +224,7 @@ class _PaymentState extends State<Payment> {
                             fontWeight: FontWeight.bold
                           ),
                         ),
-                        Text('₹${globals.total < 250 ? globals.total + 20 : globals.total.toString()}',
+                        Text('₹${globals.total < 250 ? globals.total + this.deliverCharge : globals.total.toString()}',
                           style: TextStyle(
                               fontSize: 20,
                             fontWeight: FontWeight.bold

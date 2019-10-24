@@ -14,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:local_market/views/product_view.dart';
 import 'package:local_market/views/update_product.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 class MyProducts extends StatefulWidget {
   String subCategoryId;
@@ -41,8 +42,8 @@ class _MyProductsState extends State<MyProducts> {
 
   void fillProducts() async {
     _loading = true;
-    FirebaseUser user = await _userController.getCurrentUser();
-    QuerySnapshot products = await Firestore.instance.collection('users').document(user.uid.toString()).collection('products').getDocuments();
+    // FirebaseUser user = await _userController.getCurrentUser();
+    QuerySnapshot products = await Firestore.instance.collection('users').document(globals.currentUser.data['id']).collection('products').getDocuments();
     for(var i = 0; i < products.documents.length; i++){
       DocumentSnapshot product = await _productController.get(products.documents[i]['id']);
       if(product.data != null && product.data['subCategory'] == this.subCategoryId) {

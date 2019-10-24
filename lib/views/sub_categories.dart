@@ -49,12 +49,12 @@ class _SubCategoriesState extends State<SubCategories> {
     List<List<DocumentSnapshot>> results = new List<List<DocumentSnapshot>>();
     List<Map<String, String>> subCategories = await _categoryController.getSubCategory(this._categoryId);
         // print(subCategories.toString());
-      subCategories.sort((a,b){
-        return a['name'].length.compareTo(b['name'].length);
-      });
+      // subCategories.sort((a,b){
+      //   return a['name'].length.compareTo(b['name'].length);
+      // });
         for(var i = 0; i < subCategories.length; i++){
           print(subCategories[i]);
-          List<DocumentSnapshot> products = await _productController.getNBySubCategory(subCategories[i]['id'], 20);
+          List<DocumentSnapshot> products = await _productController.getNBySubCategory(subCategories[i]['id'], 6);
           if(products.length > 0){
             products[0].data['subCategoryName'] = subCategories[i]['name'];
             results.add(products);
@@ -172,9 +172,11 @@ class _SubCategoriesState extends State<SubCategories> {
                     height: 258,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: product_list.length,
+                      itemCount: product_list.length + 1,
                       itemBuilder: (context, i){
-                        return Product(product_list[i].data, false);
+                        // print(product_list[i].data);
+                        if(i == product_list.length) return Product(product_list[i - 1].data, false, true);
+                        else return Product(product_list[i].data, false, false);
                       },
                     ),
                   ),
