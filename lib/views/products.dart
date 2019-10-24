@@ -101,7 +101,7 @@ class _ProductsState extends State<Products> {
           itemCount: this._products == null ? 0 : this._products.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 0.7),
           itemBuilder: (context, i){
-            return Product(this._products[i].data, false);
+            return Product(this._products[i].data, false, false);
           }
         )
       ],

@@ -469,10 +469,13 @@ class _HomeState extends State<Home> {
                 height: 258,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: product_list.length,
+                  itemCount: product_list.length + 1,
                   itemBuilder: (context, i){
-                    // if(i == product_list.length) return 
-                    return Product(product_list[i].data, false);
+                    if(i == product_list.length) {
+                      // print(i);
+                      return Product(product_list[i - 1].data, false, true);
+                    }
+                    else return Product(product_list[i].data, false, false);
                   },
                 ),
               ),
