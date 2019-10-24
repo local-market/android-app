@@ -417,7 +417,7 @@ class _HomeState extends State<Home> {
 //    });
 
     for(var i = 0; i < categories.length; i++){
-      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 20);
+      List<DocumentSnapshot> products = await _productController.getNByCategory(categories[i]['id'], 6);
       if(products.length > 0){
         products[0].data['categoryName'] = categories[i]['name'];
         setState(() {
@@ -471,6 +471,7 @@ class _HomeState extends State<Home> {
                   scrollDirection: Axis.horizontal,
                   itemCount: product_list.length,
                   itemBuilder: (context, i){
+                    // if(i == product_list.length) return 
                     return Product(product_list[i].data, false);
                   },
                 ),

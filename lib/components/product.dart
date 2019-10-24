@@ -81,13 +81,16 @@ class _ProductState extends State<Product> {
                                     this._product
                                 )));
                           },
-                          child: Text(
-                            this._product['name'].length > 20 ? _utils.titleCase(this
-                                ._product['name'].substring(0, 20) + "...") : _utils.titleCase(this._product['name']),
-                            style: TextStyle(
-                                fontSize: 15
-                            ),
+                          child: Container(
+                            height: 37,
+                            child: Text(
+                              this._product['name'].length > 20 ? _utils.titleCase(this
+                                  ._product['name'].substring(0, 20) + "...") : _utils.titleCase(this._product['name']),
+                              style: TextStyle(
+                                  fontSize: 15
+                              ),
 
+                            ),
                           ),
                         ),
                       ),

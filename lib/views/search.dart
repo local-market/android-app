@@ -4,7 +4,9 @@ import 'package:local_market/components/app_bar.dart';
 import 'package:local_market/components/page.dart';
 import 'package:local_market/components/product_list_generator.dart';
 import 'package:local_market/controller/product_controller.dart';
+import 'package:local_market/controller/search_controller.dart';
 import 'package:local_market/utils/utils.dart';
+import 'package:local_market/utils/globals.dart' as globals;
 
 class Search extends StatefulWidget {
   @override
@@ -16,8 +18,9 @@ class _SearchState extends State<Search> {
   TextEditingController _queryTextController = new TextEditingController();
   String query = "";
   final ProductController _productController = new ProductController();
+  final SearchController _searchController = new SearchController();
   List<Map<String, String> > _selectedProduct = new List<Map<String, String> >();
-  Map<String, List<Map<String, String> > > _dp = new Map<String, List<Map<String, String> > >();
+  // Map<String, List<Map<String, String> > > _dp = new Map<String, List<Map<String, String> > >();
   List<Map<String, String> >  _products = new List<Map<String, String> > ();
   final Utils _utils = new Utils();
   bool _loading = false;
@@ -116,13 +119,12 @@ class _SearchState extends State<Search> {
   Widget buildSuggestions(BuildContext context) {
 
     // print("Build Suggestions");
-    if(query != null && query.length == 1){
-      fillProducts(query);
+    if(query != null && query.length > 0){
+      fillProducts(query.toLowerCase());
     }
-    // print(query);
-    List<Map<String, String> > _productSuggestions = query.isEmpty ? _products : _products.where((product){
-      return product["name"].startsWith(query.toLowerCase());
-    }).toList();
+    print(query);
+    // print(_products);
+    List<Map<String, String> > _productSuggestions = _products;
 
     // print(_productSuggestions.toString());
     if(_productSuggestions == null){
@@ -151,17 +153,31 @@ class _SearchState extends State<Search> {
           leading: Icon(Icons.search,
             color: _utils.colors['searchBarIcons'],
           ),
-          title: RichText(
+          title: _productSuggestions[index]['name'].indexOf(query.toLowerCase()) == -1 ? 
+          Text(
+            _productSuggestions[index]['name'],
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold
+            ),
+          ) : 
+          RichText(
             text: TextSpan(
               
-              text: _productSuggestions[index]['name'].substring(0, query.length),
+              text: _productSuggestions[index]['name'].substring(0, _productSuggestions[index]['name'].indexOf(query.toLowerCase())),
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.grey,
                 fontWeight: FontWeight.bold
               ),
               children: [
                 TextSpan(
-                  text: _productSuggestions[index]['name'].substring(query.length),
+                  text: _productSuggestions[index]['name'].substring(_productSuggestions[index]['name'].indexOf(query.toLowerCase()), _productSuggestions[index]['name'].indexOf(query.toLowerCase()) + query.length),
+                  style: TextStyle(
+                    color: Colors.black
+                  )
+                ),
+                TextSpan(
+                  text: _productSuggestions[index]['name'].substring(_productSuggestions[index]['name'].indexOf(query.toLowerCase()) + query.length),
                   style: TextStyle(
                     color: Colors.grey
                   )
@@ -175,10 +191,38 @@ class _SearchState extends State<Search> {
   }
 
   Future<void> fillProducts(String pattern) async {
-    if(_dp[pattern] == null)
-      _dp[pattern] = await _productController.getWithPattern(pattern);
-      setState(() {
-        _products = _dp[pattern];
-      });
+    if(globals.searchCache[pattern] == null){
+      if(pattern.length == 1){
+        print('getting1..');
+        globals.searchCache[pattern] = await _searchController.getN(pattern, 20);
+      }else{
+        String relative_pattern = pattern.substring(0, pattern.length - 1);
+        if(globals.searchCache[relative_pattern] == null){
+          print('getting data');
+          globals.searchCache[pattern] = await _searchController.getN(pattern, 20);
+        }else{
+          bool pattern_found = false;
+
+          // _products = new List<Map<String, String>>();
+          globals.searchCache[pattern] = new List<Map<String, String>>();
+          for(var i = 0; i < globals.searchCache[relative_pattern].length; i++){
+            if(globals.searchCache[relative_pattern][i]['name'].indexOf(pattern) > 0){
+              // print('Hello');
+              pattern_found = true;
+              
+              globals.searchCache[pattern].add(globals.searchCache[relative_pattern][i]);
+            }
+          }
+          if(!pattern_found){
+            print('asdgetting data');
+            globals.searchCache[pattern] = await _searchController.getN(pattern, 15);
+          }
+        }
+      }
+    }
+    setState(() {
+      _products = globals.searchCache[pattern];
+      // print(_products);
+    });
   }
 }

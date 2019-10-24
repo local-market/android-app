@@ -166,6 +166,7 @@ class _CartState extends State<Cart> {
             // total = 0;
             var keys = this.cart.keys.toList();
 //            this.total += double.parse(this.cart[keys[i]]['data']['price']) * double.parse(this.cart[keys[i]]['count']);
+            if(this.cart[keys[i]]['count'] == "0") return Container();
             return product_instance_cart(this.cart[keys[i]]['data']["id"],
                 this.cart[keys[i]]['data']["image"],
                 this.cart[keys[i]]['data']["name"],
@@ -286,8 +287,11 @@ class _CartState extends State<Cart> {
             if(globals.cart.containsKey(prod_id)){
               globals.total -= double.parse(globals.cart[prod_id]['data']['offerPrice']) * double.parse(globals.cart[prod_id]['count']);
               globals.cartSize -= int.parse(globals.cart[prod_id]['count']);
-              globals.cart[prod_id]['clearCount']();
-              globals.cart.remove(prod_id);
+              // globals.cart[prod_id]['clearCount']();
+              // globals.cart.remove(prod_id);
+              globals.cart[prod_id]['count'] = "0";
+              
+              this.updateAllProductCount(prod_id);
 
               Navigator.pushReplacement(context, NoAnimationMaterialPageRoute(builder: ((context) => Cart())));
 
@@ -304,5 +308,20 @@ class _CartState extends State<Cart> {
         ),
       ),
     );
+  }
+
+  void updateAllProductCount(String productId){
+    if(globals.productListener.containsKey(productId)){
+      for(var i = 0; i < globals.productListener[productId].length; i++){
+        print(globals.productListener[productId][i].toString());
+        try {
+          globals.productListener[productId][i]();
+        }
+        catch(e){
+          continue;
+          print(e.toString());
+        }
+      }
+    }
   }
 }

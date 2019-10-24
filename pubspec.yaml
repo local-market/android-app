@@ -79,12 +79,6 @@ flutter:
     - assets/cats/Beauty&PersonalCare.webp
     - assets/cats/Beverages-534wwlmPBwDQ8MYCy7VJ.webp
 
-    - assets/products/blazer1.jpeg
-    - assets/products/blazer2.jpeg
-    - assets/products/dress1.jpeg
-    - assets/products/dress2.jpeg
-    - assets/illustrations/login.png
-    - assets/illustrations/signup.png
     - assets/illustrations/mobile_verification.png
     - assets/illustrations/otp.png
 
@@ -92,7 +86,6 @@ flutter:
 
     - assets/svg/cart.svg
     - assets/svg/logo.svg
-    - assets/svg/shopping-cart (1).svg
     - assets/svg/phone_verification.svg
     - assets/svg/otp.svg
 
